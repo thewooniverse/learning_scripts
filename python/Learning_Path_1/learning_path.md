@@ -1,4 +1,4 @@
-Fantastic! Python is a powerful, versatile language that's great for beginners and has the depth to handle advanced programming tasks as well. Here's a proposed learning path:
+Learning Path for GPT
 
 **Part 1: Python Fundamentals**
 
