@@ -1,4 +1,6 @@
-
+# pylint: disable=line-too-long
+## import strings
+import sys
 
 """
 Specifications
@@ -15,21 +17,19 @@ To Dos:
 - Define monster interaction 1 with item 1
 - Complete the storyline with the above loops
 - Complete the leaderboards logic
+- Add a feature for checking player inventory when prompted for action
+- Add wait times
+
+- Play again feature w/o restarting script:
+-- temp files and configuration files for session and automatic deletion of those session files.
 
 Object oriented programming would definitely be a better way to do this, especially with monsters, items etc...
 but lets try to do a solve now without it for now before we learn it.
 
 Do it again but with OOP afterwards, and randomly generated dungeon structures in node structures.
 """
+# define objects (to be migrated)
 
-# Define storyline along with dictionaries
-"""
-Storyline:
-
-Each room you enter, depending on whether there is a monster or an item - it gives different prompts / inputs
-Monsters - Vampire, Zombie, Succubus, Lich
-Items - Garlic, Crossbow, Holy Water, Various Monster Loots
-"""
 # items
 ancient_coin = {'points': 1, "dialogue": "You find an ancient coin, this could be worth something!"}
 garlic = {'points': 0, "dialogue": "You find some garlic in the kitchen, its strong!"}
@@ -39,29 +39,52 @@ st_paul_ash = {'points': 3, "dialogue": "You find an eery artefact, a small urn 
 
 # loot (would be, subclass of items)
 lucky_charm = {'points': 2, "dialogue": "The cat gives you a lucky charm! Black cats aren't bad luck!"}
-vampire_robe = {'points': 2, "dialogue": "The vampire evaporates, remaining his dripped out robe"}
-rotten_brain = {'points': 3, "dialogue": "The Zombie drops a half eaten, rotten brain. You take it for science, yuck."}
+vampire_robe = {'points': 2, "dialogue": "The vampire is slain, but its fire drip is not, you "}
+rotten_brain = {'points': 3, "dialogue": "The Zombie drops a half eaten, rotten brain. You take it for the sake science, yuck."}
 lich_crown = {'points': 10, "dialogue": "The lich screams and disintegrates into dust, leaving its crown behind."}
 
 # Monsters
-vampire = {"is_hostile": True, "loot": [vampire_robe], "weakness": "garlic"}
-zombie = {"is_hostile": True, "loot": [rotten_brain], "weakness": "shotgun"}
+vampire = {"is_hostile": True, "loot": [vampire_robe], "weakness": garlic,
+"dialogue": "You notice a Vampire, sucking away at the neck of a seemingly freshly killed goat",
+"dialogue_win": "You throw your Garlic at the vampire, and while it repulsively pukes you take the chance of his weakness to strike the back of its head and kill it.",
+"dialogue_loss": "You try to fight the vampire, however its strengths overpower you. As it sinks its teeth into your throat and your consciousness fades, you regret that you did not have anything to weaken its powers."
+}
+zombie = {"is_hostile": True, "loot": [vampire_robe], "weakness": shotgun,
+"dialogue": "You notice a zombie, digging away at what seems to be the remains of a wild deer",
+"dialogue_win": "As the zombie begins walking towards you, you instinctly shoot your shotgun as its head as commonly done in movies.",
+"dialogue_loss": "You try to fend off the zombie, however, you are simply unable to overpower it. If only you had a ranged weapon..."
+}
+
 
 monsters = [vampire]
 
 # items
 
-garden_entrance = {"options": ["garden hallway", "cemetary", "exit"], "dialogue": "You have entered the Garden Room"}
-cemetary = {"options": ['St.Paul\'s memorial', 'garden entrance', 'exit'], "dialogue": "You have entered the Garden Room"}
+garden_entrance = {"visited": True, "options": ["grand hallway", "cemetary", "exit"], "item": [], 
+"dialogue": "You have entered the Garden Entrance of the castle. I feel a slight sense of doubt about all this...",
+"monster": None,
+}
+cemetary = {"visited": False, "options": ['St.Paul\'s memorial', 'garden entrance', 'exit'], "item": [ancient_coin],
+"dialogue": "You have entered the Cemetary, something feels off.",
+"monster": zombie,
+}
 
+st_pauls = {"visited": False, "options": ['cemetary', 'exit'],  "item": [],
+"dialogue": "You have entered St Paul's memorial, "}
 
+grand_hallway = {"visited": False, "options": ['Kitchen', 'garden entrance', 'church' 'exit'], "item": [],
+"monster": None,
+ "dialogue": "You have entered the  Grand Hallway"}
 
+church = {"visited": False, "options": ['Kitchen', 'garden entrance', 'church' 'exit'],
+"dialogue": "You have entered the Garden Room"}
 
+names_of_rooms = {'St.Paul\'s memorial': st_pauls, "garden entrance": garden_entrance, "cemetary": cemetary,
+"grand hallway": grand_hallway, "church": church}
 
 
 # other variables / containers
-opening_dl = """
-You are tasked to explore a cursed castle.
+opening_dl = """You are tasked to explore a cursed castle.
 The castle is rumored to be under the curse and control of a lich that has summoned various monsters.
 Explore the castle, discover and collect items and artefacts and slay monsters to free the castle of the lich and its underlings.
 
@@ -70,34 +93,85 @@ Monsters often carry loot that count towards your final score.
 After each encounter with each room, you may choose to go to other rooms.
 You may always choose to exit the dungeon alive.
 
-So, what is your name adventurer?
-    """
-player = {'username': '', 'points': 0}
+So, what is your name adventurer?"""
+
+player = {'username': '', 'points': 0, 'inventory': [shotgun], "rooms_visited":[]}
 
 # Define Start Game
 def start_game():
-    print(f'{opening_dl}')
+    # opening dialogue / interaction to set up user
+    print(opening_dl)
     player_username = input(">> ")
     player['username'] = player_username
+    print(f"\nWelcome to the beginning of your adventure, {player['username']}!")
+    
+    # begin the game
     enter_room(garden_entrance)
 
 # Define Game Over
 def game_over(reason):
+    sys.exit()
 
+    # ask user if they want to play again?
+
+# Define Game Over
+def play_again():
+    pass
 
 # Define enterring room
+def enter_room(room):
+    print(room['dialogue'])
+    ## if not previously entered, proceed with encounter and then loot, then next step options
+    if room['visited'] == False:
+        # encounter to check monsters
+        if room['monster']:
+            encounter(room['monster'])
+        # collect remaining items
+        player['inventory'].append(room['item'])
+
+        # change room state to visited and display next step options
+        room['visited'] = True # needs to later be changed to player configs or temp files
+        choose_from(room)
+
+    # check if the room has been entered
+    ## if yes, proceed to action options for next steps
+    elif room['visited']:
+        choose_from(room)
 
 
-# Define Encounter
-# Define item checks
+# Define Encounter monster
+def encounter(monster):
+    print(monster['dialogue'])
+    # check item
+    ## yes - win dialogue and loot the enemy
+    if monster['weakness'] in player['inventory']:
+        print(monster['dialogue_win'])
+        player['inventory'].append(monster['loot'])
+    ## no - lose dialogue and game over
+    else:
+        print(monster['dialogue_loss'])
+        game_over("loss")
 
-# Define Loot
+
+# Define choose room
+def choose_from(room):
+    # display options
+    print("You decide where you want to go to next...\n")
+    # get user input and enter that room + error handling
+    for n in range(len(room['options'])):
+        print(f"{n}. {room['options'][n]}, type{n+1}")
+    print("To check inventory, type i.")
+    print("To give up, type x.")
+
+    # collect user input
+    user_input = input(">> ")
+    # process user input and enter that room
+    enter_room(names_of_rooms[room['options'][int(user_input)-1]])
 
 
-# Define options
+# Define error handling for user input
+def handled_input(accepted_responses):
+    pass
 
 
-
-
-
-
+start_game()
