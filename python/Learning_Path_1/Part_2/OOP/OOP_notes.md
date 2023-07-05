@@ -61,6 +61,28 @@
 
 These concepts are the foundation of OOP in Python. By understanding them, you'll be able to write more organized, efficient, and practical code.
 
+======================================================
+The `__init__()` method in Python is a special method that gets called when an object is instantiated. This method is also known as a constructor in Object Oriented Concepts. It is used to initialize the attributes of an object.
+
+The first argument of `__init__()` is always `self`, which is a reference to the instance of the class. The `self` keyword is used to access variables that belongs to the instance, allowing you to assign values to instance variables.
+
+Here's an example:
+
+```python
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+# Creating an object of the Person class
+p1 = Person("Alice", 25)
+
+# Accessing object information
+print(p1.name)
+print(p1.age)
+```
+
+In this example, `__init__()` takes `name` and `age` as arguments (in addition to the mandatory `self`), and assigns them to the `name` and `age` attributes of the instance. So when we create a new `Person` instance with `p1 = Person("Alice", 25)`, we're calling the `__init__()` method and passing "Alice" and 25 as the name and age, respectively. These values are then accessible as attributes of the `p1` object.
 
 ======================================================
 In Python, `raise` is a keyword used to generate an exception. An exception is a signal that an error or unusual condition has occurred. 
@@ -86,3 +108,8 @@ obj.do_something()  # Raises NotImplementedError
 In the above code, `do_something` is meant to be implemented by any class that inherits from `AbstractClass`. We haven't defined `do_something` in `SubClass`, so calling `obj.do_something()` will raise a `NotImplementedError`. This clearly signals to the user of the class that they need to provide an implementation for this method in their subclass. 
 
 Note that `NotImplementedError` and `NotImplemented` are different in Python. The former is an exception used for abstract methods that can't be called, while the latter is a special value returned by binary special methods (e.g., `__eq__`, `__lt__`, `__add__`, etc.) to indicate that the operation is not implemented with respect to the other type.
+
+
+
+
+
