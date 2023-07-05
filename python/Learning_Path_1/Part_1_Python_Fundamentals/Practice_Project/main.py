@@ -13,33 +13,34 @@ Specifications
 -- and creates leaderboard
 
 To Dos:
+- Game over logic
 - Complete the storyline with the above loops
+
 - Complete the leaderboards logic
-- Add a feature for checking player inventory when prompted for action
 - Add wait times
+- Add probabilities / fighting mechanics vs monsters
 
 - Play again feature w/o restarting script:
 -- temp files and configuration files for session and automatic deletion of those session files.
+-- or just reset user configurations? instead of changing states of rooms
 
 Object oriented programming would definitely be a better way to do this, especially with monsters, items etc...
 but lets try to do a solve now without it for now before we learn it.
-
 Do it again but with OOP afterwards, and randomly generated dungeon structures in node structures.
 """
-# define objects (to be migrated)
 
 # items
-ancient_coin = {'points': 1, "dialogue": "You find an ancient coin, this could be worth something!"}
-garlic = {'points': 0, "dialogue": "You find some garlic in the kitchen, its strong!"}
-shotgun = {'points': 0, "dialogue": "You find a shotgun, you feel a little more American, and a little safer"}
-holy_water = {'points': 0, "dialogue": "You collect some Holy Water into a vial, this could come in handy against demonic beings"}
-st_paul_ash = {'points': 3, "dialogue": "You find an eery artefact, a small urn that carries the ashes of the legendary Saint Paul, the protector Saint the castle's church was built in the grace of."}
+ancient_coin = {"name":'ancient coin', 'points': 1, "dialogue": "You find an ancient coin, this could be worth something!"}
+garlic = {"name":'garlic', 'points': 0, "dialogue": "You find some garlic in the kitchen, its strong!"}
+shotgun = {"name":'shotgun','points': 0, "dialogue": "You find a shotgun, you feel a little more American, and a little safer"}
+holy_water = {"name":'holy water','points': 0, "dialogue": "You collect some Holy Water into a vial, this could come in handy against demonic beings"}
+st_paul_ash = {"name":'St. Paul\'s Ashes', 'points': 3, "dialogue": "You find an eery artefact, a small urn that carries the ashes of the legendary Saint Paul, the protector Saint the castle's church was built in the grace of."}
 
 # loot (would be, subclass of items)
-lucky_charm = {'points': 2, "dialogue": "The cat gives you a lucky charm! Black cats aren't bad luck!"}
-vampire_robe = {'points': 2, "dialogue": "The vampire is slain, but its fire drip is not, you "}
-rotten_brain = {'points': 3, "dialogue": "The Zombie drops a half eaten, rotten brain. You take it for the sake science, yuck."}
-lich_crown = {'points': 10, "dialogue": "The lich screams and disintegrates into dust, leaving its crown behind."}
+lucky_charm = {"name":'lucky charm', 'points': 2, "dialogue": "The cat gives you a lucky charm! Black cats aren't bad luck!"}
+vampire_robe = {"name":'vampire robe','points': 2, "dialogue": "The vampire is slain, but its fire drip is not, you "}
+rotten_brain = {"name":'rotten brain', 'points': 3, "dialogue": "The Zombie drops a half eaten, rotten brain. You take it for the sake science, yuck."}
+lich_crown = {"name":'Lich Crown', 'points': 10, "dialogue": "The lich screams and disintegrates into dust, leaving its crown behind."}
 
 # Monsters
 vampire = {"is_hostile": True, "loot": [vampire_robe], "weakness": garlic,
@@ -67,7 +68,8 @@ cemetary = {"visited": False, "options": ['St.Paul\'s memorial', 'garden entranc
 "monster": zombie,
 }
 
-st_pauls = {"visited": False, "options": ['cemetary'],  "item": [],
+st_pauls = {"visited": False, "options": ['cemetary'],  "item": [st_paul_ash],
+"monster": None,
 "dialogue": "You have entered St Paul's memorial, "}
 
 grand_hallway = {"visited": False, "options": ['Kitchen', 'garden entrance', 'church'], "item": [],
@@ -125,7 +127,10 @@ def enter_room(room):
         if room['monster']:
             encounter(room['monster'])
         # collect remaining items
-        player['inventory'].append(room['item'])
+        if room['item'] != []:
+            for item in room['item']:
+                player['inventory'].append(item)
+                print(item['dialogue'])
 
         # change room state to visited and display next step options
         room['visited'] = True # needs to later be changed to player configs or temp files
@@ -144,7 +149,8 @@ def encounter(monster):
     ## yes - win dialogue and loot the enemy
     if monster['weakness'] in player['inventory']:
         print(monster['dialogue_win'])
-        player['inventory'].append(monster['loot'])
+        for loot in monster['loot']:
+            player['inventory'].append(loot)
         looted = monster['loot'][0]
         print(looted['dialogue'])
         
@@ -154,10 +160,10 @@ def encounter(monster):
         game_over("loss")
 
 
-# Define choose room
+# Define choose room function
 def choose_from(room):
     # display options
-    print("You decide where you want to go to next...\n")
+    print("\nYou decide where you want to go to next...\n")
     # give user input prompts for the options
     path_options = []
     for n in range(len(room['options'])):
@@ -193,11 +199,13 @@ def choose_from(room):
     else:
         choose_from(room)
 
-
-
+# inventory check function
 def inventory_check():
-    pass
+    print('------Inventory------')
+    for item in player['inventory']:
+        print("-- "+item['name'])
+    print('---------------------')
 
-
+# 
 
 start_game()
