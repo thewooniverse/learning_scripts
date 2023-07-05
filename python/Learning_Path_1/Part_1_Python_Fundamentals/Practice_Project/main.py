@@ -13,8 +13,6 @@ Specifications
 -- and creates leaderboard
 
 To Dos:
-- Define simple loop of entering room, discovering treasure and ending game / restarting game core loop
-- Define monster interaction 1 with item 1
 - Complete the storyline with the above loops
 - Complete the leaderboards logic
 - Add a feature for checking player inventory when prompted for action
@@ -49,7 +47,7 @@ vampire = {"is_hostile": True, "loot": [vampire_robe], "weakness": garlic,
 "dialogue_win": "You throw your Garlic at the vampire, and while it repulsively pukes you take the chance of his weakness to strike the back of its head and kill it.",
 "dialogue_loss": "You try to fight the vampire, however its strengths overpower you. As it sinks its teeth into your throat and your consciousness fades, you regret that you did not have anything to weaken its powers."
 }
-zombie = {"is_hostile": True, "loot": [vampire_robe], "weakness": shotgun,
+zombie = {"is_hostile": True, "loot": [rotten_brain], "weakness": shotgun,
 "dialogue": "You notice a zombie, digging away at what seems to be the remains of a wild deer",
 "dialogue_win": "As the zombie begins walking towards you, you instinctly shoot your shotgun as its head as commonly done in movies.",
 "dialogue_loss": "You try to fend off the zombie, however, you are simply unable to overpower it. If only you had a ranged weapon..."
@@ -147,6 +145,9 @@ def encounter(monster):
     if monster['weakness'] in player['inventory']:
         print(monster['dialogue_win'])
         player['inventory'].append(monster['loot'])
+        looted = monster['loot'][0]
+        print(looted['dialogue'])
+        
     ## no - lose dialogue and game over
     else:
         print(monster['dialogue_loss'])
@@ -157,21 +158,30 @@ def encounter(monster):
 def choose_from(room):
     # display options
     print("You decide where you want to go to next...\n")
-    # get user input and enter that room + error handling
+    # give user input prompts for the options
     for n in range(len(room['options'])):
-        print(f"{n}. {room['options'][n]}, type{n+1}")
-    print("To check inventory, type i.")
-    print("To give up, type x.")
+        print(f"{n+1}. {room['options'][n]}, type {n+1}")
+    print("I. To check inventory, type i.")
+    print("X. To give up, type x.")
 
-    # collect user input
+    # collect user input with error handling
+    accepted_inputs = ['i', 'x'] + [n+1 for n in range(len(room['options']))]
     user_input = input(">> ")
+    # handle different data types with try / excepts
+    if len(user_input) > 1:
+        
+
+
+    # else ask the user again
+
     # process user input and enter that room
     enter_room(names_of_rooms[room['options'][int(user_input)-1]])
 
 
-# Define error handling for user input
-def handled_input(accepted_responses):
+
+def inventory_check():
     pass
+
 
 
 start_game()
