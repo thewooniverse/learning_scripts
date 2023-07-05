@@ -58,23 +58,23 @@ monsters = [vampire]
 
 # items
 
-garden_entrance = {"visited": True, "options": ["grand hallway", "cemetary", "exit"], "item": [], 
-"dialogue": "You have entered the Garden Entrance of the castle. I feel a slight sense of doubt about all this...",
+garden_entrance = {"visited": True, "options": ["grand hallway", "cemetary"], "item": [], 
+"dialogue": "You have entered the Garden Entrance of the castle. You feel a slight sense of doubt about all this...",
 "monster": None,
 }
-cemetary = {"visited": False, "options": ['St.Paul\'s memorial', 'garden entrance', 'exit'], "item": [ancient_coin],
+cemetary = {"visited": False, "options": ['St.Paul\'s memorial', 'garden entrance'], "item": [ancient_coin],
 "dialogue": "You have entered the Cemetary, something feels off.",
 "monster": zombie,
 }
 
-st_pauls = {"visited": False, "options": ['cemetary', 'exit'],  "item": [],
+st_pauls = {"visited": False, "options": ['cemetary'],  "item": [],
 "dialogue": "You have entered St Paul's memorial, "}
 
-grand_hallway = {"visited": False, "options": ['Kitchen', 'garden entrance', 'church' 'exit'], "item": [],
+grand_hallway = {"visited": False, "options": ['Kitchen', 'garden entrance', 'church'], "item": [],
 "monster": None,
  "dialogue": "You have entered the  Grand Hallway"}
 
-church = {"visited": False, "options": ['Kitchen', 'garden entrance', 'church' 'exit'],
+church = {"visited": False, "options": ['Kitchen', 'garden entrance', 'church'],
 "dialogue": "You have entered the Garden Room"}
 
 names_of_rooms = {'St.Paul\'s memorial': st_pauls, "garden entrance": garden_entrance, "cemetary": cemetary,
@@ -159,23 +159,39 @@ def choose_from(room):
     # display options
     print("You decide where you want to go to next...\n")
     # give user input prompts for the options
+    path_options = []
     for n in range(len(room['options'])):
         print(f"{n+1}. {room['options'][n]}, type {n+1}")
-    print("I. To check inventory, type i.")
-    print("X. To give up, type x.")
+        path_options.append(f"{n+1}. {room['options'][n]}, type {n+1}")
+    print("I. To check inventory, type i.\nX. To give up, type x.")
+    path_options.append("I. To check inventory, type i.\nX. To give up, type x.")
 
     # collect user input with error handling
     accepted_inputs = ['i', 'x'] + [n+1 for n in range(len(room['options']))]
     user_input = input(">> ")
     # handle different data types with try / excepts
-    if len(user_input) > 1:
-        
-
-
-    # else ask the user again
-
-    # process user input and enter that room
-    enter_room(names_of_rooms[room['options'][int(user_input)-1]])
+    while len(user_input) != 1:
+        print(f"\nThis is not a valid input, please select from the options again:")
+        print('\n'.join(path_options))
+        user_input = input(">> ")
+    
+    # check if its a valid number
+    if user_input.isdigit():
+        if int(user_input) in accepted_inputs:
+            enter_room(names_of_rooms[room['options'][int(user_input)-1]])
+        else:
+            choose_from(room)
+    
+    elif user_input.isalpha():
+        if user_input.lower() == "i":
+            inventory_check()
+            choose_from(room)
+        elif user_input.lower() == "x":
+            game_over("quit")
+        else:
+            choose_from(room)
+    else:
+        choose_from(room)
 
 
 
