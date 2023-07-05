@@ -10,13 +10,13 @@ Specifications
 - This version will have a specific "solve" to kill all monsters and follows a on-rails storyline.
 - Treasure Score at the end of the game
 - Leaderboard text / sorting (leaderboard module from other files), creates temporary player profile files 
--- and creates leaderboard
 
 To Dos:
-- Game over logic
-- Complete the storyline with the above loops
+- Game over logics and points
+- Complete the storyline
+- Complete the leaderboards logic for File IO
+- Tidy up files with File I/O + config files and monster files aside from core main.py
 
-- Complete the leaderboards logic
 - Add wait times
 - Add probabilities / fighting mechanics vs monsters
 
@@ -77,6 +77,7 @@ grand_hallway = {"visited": False, "options": ['Kitchen', 'garden entrance', 'ch
  "dialogue": "You have entered the  Grand Hallway"}
 
 church = {"visited": False, "options": ['Kitchen', 'garden entrance', 'church'],
+"monster": vampire,
 "dialogue": "You have entered the Garden Room"}
 
 names_of_rooms = {'St.Paul\'s memorial': st_pauls, "garden entrance": garden_entrance, "cemetary": cemetary,
