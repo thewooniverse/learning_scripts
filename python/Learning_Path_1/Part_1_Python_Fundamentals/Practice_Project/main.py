@@ -1,8 +1,6 @@
 # pylint: disable=line-too-long
 ## import strings
-import sys
-import shutil
-from items_monsters import *
+import sys, shutil, os
 
 """
 Specifications
@@ -33,15 +31,21 @@ Do it again but with OOP afterwards, and randomly generated dungeon structures i
 """
 
 
+player_fresh = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]}
 player = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]}
-player_baseline = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]}
-
+# optionally, I will be using the rooms visited to handle replay sessions if it doesn't work
 
 
 
 ##### Define core loops #####
 
 # create temp files / player profiles
+source_path = os.getcwd() + "/" + 'data_master.py'
+dest_path = os.getcwd() + "/" + 'data_temp.py'
+shutil.copyfile(source_path, dest_path)
+from data_temp import *
+# from items_monsters import *
+player['inventory'].append(shotgun)
 
 # create temp copy of items_monsters
 # import that instead.

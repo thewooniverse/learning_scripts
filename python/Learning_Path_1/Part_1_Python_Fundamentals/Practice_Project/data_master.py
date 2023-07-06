@@ -13,8 +13,6 @@ rotten_brain = {"name":'rotten brain', 'points': 3, "dialogue": "The Zombie drop
 lich_crown = {"name":'Lich Crown', 'points': 10, "dialogue": "The lich screams and disintegrates into dust, leaving its crown behind."}
 
 
-
-
 # Monsters
 vampire = {"is_hostile": True, "loot": [vampire_robe], "weakness": garlic,
 "dialogue": "You notice a Vampire, sucking away at the neck of a seemingly freshly killed goat",
@@ -26,8 +24,6 @@ zombie = {"is_hostile": True, "loot": [rotten_brain], "weakness": shotgun,
 "dialogue_win": "As the zombie begins walking towards you, you instinctly shoot your shotgun as its head as commonly done in movies.",
 "dialogue_loss": "You try to fend off the zombie, however, you are simply unable to overpower it. If only you had a ranged weapon..."
 }
-
-
 
 # Rooms
 garden_entrance = {"visited": True, "options": ["grand hallway", "cemetary"], "item": [], 
