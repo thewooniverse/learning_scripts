@@ -1,6 +1,7 @@
 # pylint: disable=line-too-long
 ## import strings
 import sys
+import shutil
 from items_monsters import *
 
 """
@@ -33,13 +34,24 @@ Do it again but with OOP afterwards, and randomly generated dungeon structures i
 
 
 player = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]}
+player_baseline = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]}
+
+
 
 
 ##### Define core loops #####
 
 # create temp files / player profiles
+
 # create temp copy of items_monsters
 # import that instead.
+
+
+
+# Define deleting temp files / cleanup
+
+
+
 
 
 
