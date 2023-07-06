@@ -38,7 +38,9 @@ player = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]}
 ##### Define core loops #####
 
 # create temp files / player profiles
-# copy config file
+# create temp copy of items_monsters
+# import that instead.
+
 
 
 # Define Start Game
