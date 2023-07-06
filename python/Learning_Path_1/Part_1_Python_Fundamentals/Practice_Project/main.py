@@ -12,17 +12,18 @@ Specifications
 - Leaderboard text / sorting (leaderboard module from other files), creates temporary player profile files 
 
 To Dos:
-- Game over logics and points
-- Complete the storyline
-- Complete the leaderboards logic for File IO
-- Tidy up files with File I/O + config files and monster files aside from core main.py
+Next
+- organize files for configs / room settings with File IO
+- complete the storyline
+- complete the leaderboard logic with File IO
 
+Future features
 - Add wait times
 - Add probabilities / fighting mechanics vs monsters
 
-- Play again feature w/o restarting script:
--- temp files and configuration files for session and automatic deletion of those session files.
--- or just reset user configurations? instead of changing states of rooms
+- Gameplay history for each player and session / path log and error logs optionally
+- refactoring with OOP?
+
 
 Object oriented programming would definitely be a better way to do this, especially with monsters, items etc...
 but lets try to do a solve now without it for now before we learn it.
@@ -63,6 +64,7 @@ garden_entrance = {"visited": True, "options": ["grand hallway", "cemetary"], "i
 "dialogue": "You have entered the Garden Entrance of the castle. You feel a slight sense of doubt about all this...",
 "monster": None,
 }
+
 cemetary = {"visited": False, "options": ['St.Paul\'s memorial', 'garden entrance'], "item": [ancient_coin],
 "dialogue": "You have entered the Cemetary, something feels off.",
 "monster": zombie,
@@ -95,8 +97,18 @@ After each encounter with each room, you may choose to go to other rooms.
 You may always choose to exit the dungeon alive.
 
 So, what is your name adventurer?"""
+loss_dl = 'You have been defeated. Well done player. Try again...'
+win_dl = "You have slain the Lich and freed the Castle of its conjuring, you are now the new lord of the castle and live happily ever after. Triumph! \n+5 points!"
+quit_dl = "You have decided to leave the castle and chose to live instead of exploring further.\nTo be alive, is indeed worth something. \n+1 points!"
+replay_dl = "The game is now over, would you like to play again? Type Y/N (case insensitive)"
 
 player = {'username': '', 'points': 0, 'inventory': [shotgun], "rooms_visited":[]}
+
+
+##### Define core loops #####
+
+# create temp files / player profiles
+
 
 # Define Start Game
 def start_game():
@@ -111,14 +123,90 @@ def start_game():
 
 # Define Game Over
 def game_over(reason):
-    sys.exit()
+    # handle each type of reason, dialogue + points
+    print("\n\n-----Game Over-----\n\n")
+
+    if reason == "loss":
+        # print lost dialogue
+        print(loss_dl)
+
+    elif reason == "win":
+        # print win dialogue
+        print(win_dl)
+        player['points'] += 5
+    
+    elif reason == "quit":
+        # print quit dialogue
+        print(quit_dl)
+        player['points'] += 1
+    
+    # summarize points and add it to the leaderboard
+    inventory_points = inventory_point_calculation()
+    player['points'] += inventory_points
+
+    print(f'Your final points tally to {player["points"]}\n')
+
+    # print the new leaderboard and your position
+    print(f"Player Name: {player['username']} \nPlayer Score: {player['points']}\n")
+
+    # remove the temp files and clean up before play_again() exits the script
+
+    # call play again
+    play_again()
 
     # ask user if they want to play again?
 
-# Define Game Over
-def play_again():
-    pass
 
+
+# Define Play again?
+def play_again():
+    # yes - reset temporary files
+    print(replay_dl)
+    user_input = input(">> ")
+
+    while len(user_input) != 1:
+        print("\nThis is not a valid input.")
+        play_again()
+
+    accepted_response = ['y', 'n', 'Y', 'N']
+
+    if user_input in accepted_response:
+        if user_input == "y" or user_input == "Y":
+            print("\n\n\n\n\n\n\n\n\n")
+            start_game()
+        else:
+            print("\nThanks for playing!")
+            sys.exit()
+    else:
+        print('This is not a valid input')
+        play_again()
+
+    
+
+
+
+##### Leaderboard logics #####
+# define point calculation
+def inventory_point_calculation():
+
+    print("-----Point Calculation-----")
+    
+    total_points = 0
+    # goes through the player's list of items
+    for item in player['inventory']:
+        # print point calculations
+        print(f"{item['name']} is worth {item['points']} points!")
+        # sum up the points
+        total_points += item['points']
+    print(f"From your adventure, your loot and items are worth {total_points}. Well done adventurer!")
+    return(total_points)
+
+# define add to the leaderboard and display
+
+
+
+
+##### Core gameplay functions #####
 # Define enterring room
 def enter_room(room):
     print(room['dialogue'])
@@ -142,7 +230,6 @@ def enter_room(room):
     elif room['visited']:
         choose_from(room)
 
-
 # Define Encounter monster
 def encounter(monster):
     print(monster['dialogue'])
@@ -159,7 +246,6 @@ def encounter(monster):
     else:
         print(monster['dialogue_loss'])
         game_over("loss")
-
 
 # Define choose room function
 def choose_from(room):
@@ -207,6 +293,6 @@ def inventory_check():
         print("-- "+item['name'])
     print('---------------------')
 
-# 
+##### START GAME #####
 
 start_game()
