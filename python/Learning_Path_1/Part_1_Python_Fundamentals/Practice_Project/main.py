@@ -1,6 +1,7 @@
 # pylint: disable=line-too-long
 ## import strings
 import sys, shutil, os
+from data_temp import *
 
 """
 Specifications
@@ -13,8 +14,8 @@ Specifications
 
 To Dos:
 Next
-- organize files for configs / room settings with File IO
-- complete the storyline
+- Replay features
+- Finish storyline
 - complete the leaderboard logic with File IO
 
 Future features
@@ -30,7 +31,6 @@ but lets try to do a solve now without it for now before we learn it.
 Do it again but with OOP afterwards, and randomly generated dungeon structures in node structures.
 """
 
-
 player_fresh = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]}
 player = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]}
 # optionally, I will be using the rooms visited to handle replay sessions if it doesn't work
@@ -39,29 +39,19 @@ player = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]}
 
 ##### Define core loops #####
 
-# create temp files / player profiles
-source_path = os.getcwd() + "/" + 'data_master.py'
-dest_path = os.getcwd() + "/" + 'data_temp.py'
-shutil.copyfile(source_path, dest_path)
-from data_temp import *
-# from items_monsters import *
-player['inventory'].append(shotgun)
-
-# create temp copy of items_monsters
-# import that instead.
-
-
+# define refresh()
+def refresh():
+    player = player_fresh
+    source_path = os.getcwd() + "/" + 'data_master.py'
+    dest_path = os.getcwd() + "/" + 'data_temp.py'
+    shutil.copyfile(source_path, dest_path)
 
 # Define deleting temp files / cleanup
 
 
-
-
-
-
 # Define Start Game
 def start_game():
-    # opening dialogue / interaction to set up user
+    refresh()
     print(opening_dl)
     player_username = input(">> ")
     player['username'] = player_username
