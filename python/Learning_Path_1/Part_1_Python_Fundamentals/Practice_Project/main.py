@@ -1,7 +1,7 @@
 # pylint: disable=line-too-long
 ## import strings
 import sys, shutil, os
-from data_temp import *
+from data_master import *
 
 """
 Specifications
@@ -13,10 +13,9 @@ Specifications
 - Leaderboard text / sorting (leaderboard module from other files), creates temporary player profile files 
 
 To Dos:
-Next
-- Replay features
 - Finish storyline
-- complete the leaderboard logic with File IO
+- Add leaderboard logic with file systems, print it at the end of game sessions with where they are
+- Add wait times
 
 Future features
 - Add wait times
@@ -25,43 +24,47 @@ Future features
 - Gameplay history for each player and session / path log and error logs optionally
 - refactoring with OOP?
 
-
 Object oriented programming would definitely be a better way to do this, especially with monsters, items etc...
 but lets try to do a solve now without it for now before we learn it.
 Do it again but with OOP afterwards, and randomly generated dungeon structures in node structures.
 """
 
-player_fresh = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]}
-player = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]}
+player_fresh = {'username': '', 'points': 0, 'inventory': [shotgun], "rooms_visited":[]}
 # optionally, I will be using the rooms visited to handle replay sessions if it doesn't work
-
+# and refresh() will simply just reset player data, probably better tbh.
 
 
 ##### Define core loops #####
 
 # define refresh()
-def refresh():
-    player = player_fresh
-    source_path = os.getcwd() + "/" + 'data_master.py'
-    dest_path = os.getcwd() + "/" + 'data_temp.py'
-    shutil.copyfile(source_path, dest_path)
+# def refresh(player):
+#     player = player_fresh.copy()
+    ## archived for now, but may come into use later.
+    # source_path = os.getcwd() + "/" + 'data_master.py'
+    # dest_path = os.getcwd() + "/" + 'data_temp.py'
+    # shutil.copyfile(source_path, dest_path)
 
 # Define deleting temp files / cleanup
 
-
 # Define Start Game
 def start_game():
-    refresh()
+    player = player_fresh.copy()
+
+    # reset the inventory
+    player['inventory'] = [shotgun]
+    player['rooms_visited'] = []
+
+    print(player)
     print(opening_dl)
     player_username = input(">> ")
     player['username'] = player_username
     print(f"\nWelcome to the beginning of your adventure, {player['username']}!")
     
     # begin the game
-    enter_room(garden_entrance)
+    enter_room(garden_entrance, player)
 
 # Define Game Over
-def game_over(reason):
+def game_over(reason, player):
     # handle each type of reason, dialogue + points
     print("\n\n-----Game Over-----\n\n")
 
@@ -80,7 +83,7 @@ def game_over(reason):
         player['points'] += 1
     
     # summarize points and add it to the leaderboard
-    inventory_points = inventory_point_calculation()
+    inventory_points = inventory_point_calculation(player)
     player['points'] += inventory_points
 
     print(f'Your final points tally to {player["points"]}\n')
@@ -92,7 +95,6 @@ def game_over(reason):
 
     # call play again
     play_again()
-
     # ask user if they want to play again?
 
 
@@ -108,9 +110,8 @@ def play_again():
         play_again()
 
     accepted_response = ['y', 'n', 'Y', 'N']
-
     if user_input in accepted_response:
-        if user_input == "y" or user_input == "Y":
+        if user_input in ("y", 'Y'):
             print("\n\n\n\n\n\n\n\n\n")
             start_game()
         else:
@@ -126,7 +127,7 @@ def play_again():
 
 ##### Leaderboard logics #####
 # define point calculation
-def inventory_point_calculation():
+def inventory_point_calculation(player):
 
     print("-----Point Calculation-----")
     
@@ -142,18 +143,15 @@ def inventory_point_calculation():
 
 # define add to the leaderboard and display
 
-
-
-
 ##### Core gameplay functions #####
 # Define enterring room
-def enter_room(room):
+def enter_room(room, player):
     print(room['dialogue'])
     ## if not previously entered, proceed with encounter and then loot, then next step options
-    if room['visited'] == False:
-        # encounter to check monsters
+
+    if room not in player['rooms_visited']:
         if room['monster']:
-            encounter(room['monster'])
+            encounter(room['monster'], player)
         # collect remaining items
         if room['item'] != []:
             for item in room['item']:
@@ -161,16 +159,17 @@ def enter_room(room):
                 print(item['dialogue'])
 
         # change room state to visited and display next step options
-        room['visited'] = True # needs to later be changed to player configs or temp files
-        choose_from(room)
+        player['rooms_visited'].append(room)
+        choose_from(room, player)
 
     # check if the room has been entered
     ## if yes, proceed to action options for next steps
-    elif room['visited']:
-        choose_from(room)
+    elif room in player['rooms_visited']:
+        choose_from(room, player)
+
 
 # Define Encounter monster
-def encounter(monster):
+def encounter(monster, player):
     print(monster['dialogue'])
     # check item
     ## yes - win dialogue and loot the enemy
@@ -184,10 +183,10 @@ def encounter(monster):
     ## no - lose dialogue and game over
     else:
         print(monster['dialogue_loss'])
-        game_over("loss")
+        game_over("loss", player)
 
 # Define choose room function
-def choose_from(room):
+def choose_from(room, player):
     # display options
     print("\nYou decide where you want to go to next...\n")
     # give user input prompts for the options
@@ -210,23 +209,23 @@ def choose_from(room):
     # check if its a valid number
     if user_input.isdigit():
         if int(user_input) in accepted_inputs:
-            enter_room(names_of_rooms[room['options'][int(user_input)-1]])
+            enter_room(names_of_rooms[room['options'][int(user_input)-1]], player)
         else:
-            choose_from(room)
+            choose_from(room, player)
     
     elif user_input.isalpha():
         if user_input.lower() == "i":
-            inventory_check()
-            choose_from(room)
+            inventory_check(player)
+            choose_from(room, player)
         elif user_input.lower() == "x":
-            game_over("quit")
+            game_over("quit", player)
         else:
-            choose_from(room)
+            choose_from(room, player)
     else:
-        choose_from(room)
+        choose_from(room, player)
 
 # inventory check function
-def inventory_check():
+def inventory_check(player):
     print('------Inventory------')
     for item in player['inventory']:
         print("-- "+item['name'])

@@ -26,27 +26,30 @@ zombie = {"is_hostile": True, "loot": [rotten_brain], "weakness": shotgun,
 }
 
 # Rooms
-garden_entrance = {"visited": True, "options": ["grand hallway", "cemetary"], "item": [], 
+garden_entrance = { "options": ["grand hallway", "cemetary"], "item": [], 
 "dialogue": "You have entered the Garden Entrance of the castle. You feel a slight sense of doubt about all this...",
 "monster": None,
 }
 
-cemetary = {"visited": False, "options": ['St.Paul\'s memorial', 'garden entrance'], "item": [ancient_coin],
+cemetary = { "options": ['St.Paul\'s memorial', 'garden entrance'], "item": [ancient_coin],
 "dialogue": "You have entered the Cemetary, something feels off.",
 "monster": zombie,
 }
 
-st_pauls = {"visited": False, "options": ['cemetary'],  "item": [st_paul_ash],
+st_pauls = {"options": ['cemetary'],  "item": [st_paul_ash],
 "monster": None,
 "dialogue": "You have entered St Paul's memorial, "}
 
-grand_hallway = {"visited": False, "options": ['Kitchen', 'garden entrance', 'church'], "item": [],
+grand_hallway = {"options": ['Kitchen', 'garden entrance', 'church'], "item": [],
 "monster": None,
  "dialogue": "You have entered the  Grand Hallway"}
 
-church = {"visited": False, "options": ['Kitchen', 'garden entrance', 'church'],
+church = {"options": ['Kitchen', 'garden entrance', 'church'],
 "monster": vampire,
 "dialogue": "You have entered the Garden Room"}
+
+
+
 
 names_of_rooms = {'St.Paul\'s memorial': st_pauls, "garden entrance": garden_entrance, "cemetary": cemetary,
 "grand hallway": grand_hallway, "church": church}
