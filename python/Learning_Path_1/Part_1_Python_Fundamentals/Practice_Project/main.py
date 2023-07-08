@@ -18,6 +18,7 @@ To Dos:
 Future features
 - Add wait times
 - Add probabilities / fighting mechanics vs monsters
+- Add number of moves to it score counts to make complex leaderboards and sorting functions.
 
 
 - Gameplay history for each player and session / path log and error logs optionally
@@ -26,8 +27,6 @@ Future features
 Fixes:
 - multi loot features
 - refactor loot logic to not use list containers but use None instead
-
-
 
 
 Object oriented programming would definitely be a better way to do this, especially with monsters, items etc...
@@ -59,8 +58,6 @@ def start_game():
     # reset the inventory
     player['inventory'] = []
     player['rooms_visited'] = []
-
-    print(player)
     print(opening_dl)
     player_username = input(">> ")
     player['username'] = player_username
@@ -97,9 +94,12 @@ def game_over(reason, player):
     # print the new leaderboard and your position
     print(f"Player Name: {player['username']} \nPlayer Score: {player['points']}\n")
 
-    # remove the temp files and clean up before play_again() exits the script
 
-    # call play again
+
+
+
+
+    # call play again?
     play_again()
     # ask user if they want to play again?
 
@@ -183,6 +183,11 @@ def encounter(monster, player):
             player['inventory'].append(loot)
         looted = monster['loot'][0]
         print(looted['dialogue'])
+
+        if monster == lich:
+            game_over('win', player)
+        else:
+            pass
         
     ## no - lose dialogue and game over
     else:
