@@ -14,7 +14,6 @@ print(x)
 
 
 
-
 """
 
 **Global Variables**

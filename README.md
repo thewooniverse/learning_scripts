@@ -5,7 +5,6 @@ daily 10-15m learning:
 Python first, and then JS, then Solidity, AI etc..
 
 Complete python learning path + bash + selenium and other API based automations using Python scripts.
-(Skip Python for Web Development)
 ==> Begin building scripts for work as well as personal life enhancements
 ==> Data Science projects, full stack web development using Python
 
