@@ -1,6 +1,7 @@
 # pylint: disable=line-too-long
 ## import strings
-import sys, shutil, os
+import sys
+# import os, shutil
 from data_master import *
 
 """
@@ -37,7 +38,6 @@ Do it again but with OOP afterwards, and randomly generated dungeon structures i
 player_fresh = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]}
 # optionally, I will be using the rooms visited to handle replay sessions if it doesn't work
 # and refresh() will simply just reset player data, probably better tbh.
-
 
 ##### Define core loops #####
 
@@ -211,7 +211,7 @@ def choose_from(room, player):
     user_input = input(">> ")
     # handle different data types with try / excepts
     while len(user_input) != 1:
-        print(f"\nThis is not a valid input, please select from the options again:")
+        print("\nThis is not a valid input, please select from the options again:")
         print('\n'.join(path_options))
         user_input = input(">> ")
     
@@ -240,6 +240,36 @@ def inventory_check(player):
         print("-- "+item['name'])
     print('---------------------')
 
-##### START GAME #####
 
+
+
+### Define leaderboard logics ###
+# Define write to leaderboard:
+def write_leaderboard(player):
+    # read leaderboard
+    try:
+        with open('leaderboard.json', 'r') as f:
+            leaderboard = json.load(f)
+    except FileNotFoundError:
+        leaderboard = []
+    
+    # append to the leaderboard
+    leaderboard.append(player)
+
+    # sort the leaderboard
+
+    # print / display the leaderboard (Y/N)
+
+    # overwrite the leaderboard file
+    
+# Define get leaderboard:
+
+
+
+
+
+
+
+
+##### START GAME #####
 start_game()
