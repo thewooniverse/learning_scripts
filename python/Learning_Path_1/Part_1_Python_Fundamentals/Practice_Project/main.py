@@ -13,23 +13,29 @@ Specifications
 - Leaderboard text / sorting (leaderboard module from other files), creates temporary player profile files 
 
 To Dos:
-- Finish storyline
 - Add leaderboard logic with file systems, print it at the end of game sessions with where they are
-- Add wait times
 
 Future features
 - Add wait times
 - Add probabilities / fighting mechanics vs monsters
 
+
 - Gameplay history for each player and session / path log and error logs optionally
 - refactoring with OOP?
+
+Fixes:
+- multi loot features
+- refactor loot logic to not use list containers but use None instead
+
+
+
 
 Object oriented programming would definitely be a better way to do this, especially with monsters, items etc...
 but lets try to do a solve now without it for now before we learn it.
 Do it again but with OOP afterwards, and randomly generated dungeon structures in node structures.
 """
 
-player_fresh = {'username': '', 'points': 0, 'inventory': [shotgun], "rooms_visited":[]}
+player_fresh = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]}
 # optionally, I will be using the rooms visited to handle replay sessions if it doesn't work
 # and refresh() will simply just reset player data, probably better tbh.
 
@@ -43,15 +49,15 @@ player_fresh = {'username': '', 'points': 0, 'inventory': [shotgun], "rooms_visi
     # source_path = os.getcwd() + "/" + 'data_master.py'
     # dest_path = os.getcwd() + "/" + 'data_temp.py'
     # shutil.copyfile(source_path, dest_path)
-
 # Define deleting temp files / cleanup
+
 
 # Define Start Game
 def start_game():
     player = player_fresh.copy()
 
     # reset the inventory
-    player['inventory'] = [shotgun]
+    player['inventory'] = []
     player['rooms_visited'] = []
 
     print(player)
@@ -97,9 +103,7 @@ def game_over(reason, player):
     play_again()
     # ask user if they want to play again?
 
-
-
-# Define Play again?
+# Define Play again
 def play_again():
     # yes - reset temporary files
     print(replay_dl)
