@@ -14,5 +14,6 @@ Use it all to continue building fun fullstack web dev projects / websites, scrip
 Mostly, project based learning from there, branch into AI/ML stuff then too.
 The deepest interest for now is to be able to write scripts that do things for me, and enhance my productivity / workflow generally.
 
-
-
+**Mindset:**
+Daily practice >>> everything, put the hours in, even when you don't feel like it.
+There is always more things you want to do at a given time as your mind exponentially connects new ideas, stay focused, take one project at a time.
