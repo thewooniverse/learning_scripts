@@ -1,7 +1,8 @@
 # pylint: disable=line-too-long
 ## import strings
-import sys
-# import os, shutil
+import sys, os, json
+from datetime import datetime
+# import shutil
 from data_master import *
 
 """
@@ -94,10 +95,7 @@ def game_over(reason, player):
     # print the new leaderboard and your position
     print(f"Player Name: {player['username']} \nPlayer Score: {player['points']}\n")
 
-
-
-
-
+    write_leaderboard(player)
 
     # call play again?
     play_again()
@@ -246,21 +244,37 @@ def inventory_check(player):
 ### Define leaderboard logics ###
 # Define write to leaderboard:
 def write_leaderboard(player):
-    # read leaderboard
+    # try reading the leaderboard if the leaderboard is not present, then create a new file
     try:
-        with open('leaderboard.json', 'r') as f:
+        with open(os.getcwd() + '/' 'leaderboard.json', 'r') as f:
             leaderboard = json.load(f)
     except FileNotFoundError:
         leaderboard = []
     
-    # append to the leaderboard
-    leaderboard.append(player)
+    # get and format the datetime
+    current_datetime = datetime.now()
+    formatted_datetime = current_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
-    # sort the leaderboard
+
+    # construct a new leaderboard entry
+    new_entry = {'username': player['username'], 'points': player['points'], 'time': formatted_datetime}
+
+    # append to the leaderboard entry
+    leaderboard.append(new_entry)
+
+    # sort the leaderboard based on key points
+    leaderboard = sorted(leaderboard, key=lambda x: x['points'], reverse=True)
 
     # print / display the leaderboard (Y/N)
-
+    for entry in leaderboard:
+        if entry['time'] == new_entry['time']:
+            print(f"{entry['username']}: {entry['points']} - {entry['time']} <<< You!")
+        else:
+            print(f"{entry['username']}: {entry['points']} - {entry['time']}")
+        
     # overwrite the leaderboard file
+    with open(os.getcwd() + '/' + 'leaderboard.json', 'w') as f:
+        json.dump(leaderboard, f)
     
 # Define get leaderboard:
 
