@@ -22,7 +22,6 @@ Future features
 - Add probabilities / fighting mechanics vs monsters
 - Add number of moves to it score counts to make complex leaderboards and sorting functions.
 
-
 - Gameplay history for each player and session / path log and error logs optionally
 - refactoring with OOP?
 
