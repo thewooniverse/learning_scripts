@@ -112,4 +112,115 @@ Note that `NotImplementedError` and `NotImplemented` are different in Python. Th
 
 
 
+================================
+**Exercises**
+Absolutely, practicing coding exercises is a great way to reinforce your understanding of the concepts. Here are some exercises related to Object-Oriented Programming in Python:
+
+**Exercise 1:**
+
+Create a Python class named `Person` with two attributes: `name` and `age`. Add a method called `introduce_yourself` which prints a message introducing the person.
+
+Example:
+
+```python
+p = Person("Alice", 25)
+p.introduce_yourself()  # Should print "Hello, my name is Alice and I'm 25 years old."
+```
+
+**Exercise 2:**
+
+Create a Python class named `Student` which inherits from the `Person` class. Add an additional attribute: `grades` (a list). Also add methods to add a grade and to calculate the student's GPA.
+
+Example:
+
+```python
+s = Student("Bob", 20)
+s.add_grade(90)
+s.add_grade(80)
+s.calculate_gpa()  # Should return 85.0
+```
+
+**Exercise 3:**
+
+Demonstrate polymorphism by creating a `Teacher` class that also inherits from `Person`, but has a different `introduce_yourself` method that includes the subjects they teach.
+
+Example:
+
+```python
+t = Teacher("Charlie", 30, ["Math", "Physics"])
+t.introduce_yourself()  # Should print "Hello, my name is Charlie and I'm 30 years old. I teach Math and Physics."
+```
+
+When you're done with the exercises, you can share your code and I will provide feedback.
+
+
+
+
+
+
+
+
+
+====================
+**Optional parameters / attributes**
+
+In Python, you can specify optional parameters for a method (including the `__init__` method for a class) by providing default values for the parameters. If an argument is given in the method call, it's used as the parameter's value. If no argument is given, the parameter's default value is used.
+
+Here's an example where the `Student` class has an optional `gpa` attribute:
+
+```python
+class Student:
+    def __init__(self, name, student_id, gpa=None):
+        self.name = name
+        self.student_id = student_id
+        self.gpa = gpa  # This attribute is optional
+```
+
+Now you can create `Student` objects with or without a `gpa`:
+
+```python
+# Create a Student object with a gpa
+student_with_gpa = Student("Alice", "S123", 3.9)
+print(student_with_gpa.gpa)  # Output: 3.9
+
+# Create a Student object without a gpa
+student_without_gpa = Student("Bob", "S456")
+print(student_without_gpa.gpa)  # Output: None
+```
+
+In the `__init__` method of the `Student` class, `gpa=None` makes the `gpa` parameter optional. If you don't provide a value for `gpa` when creating a `Student` object, it will default to `None`.
+
+
+
+============================================================
+**Adding a new attribute to a subclass** in Python is quite straightforward. Here's how you can do it:
+
+1. Define your base class (also known as the parent or superclass).
+
+```python
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+```
+
+2. Define your subclass (also known as the child class) and add a new attribute.
+
+```python
+class Student(Person):
+    def __init__(self, name, age, student_id):
+        super().__init__(name, age)  # Call the __init__ of the superclass
+        self.student_id = student_id  # Add new attribute
+```
+
+Here's how you can use the subclass:
+
+```python
+student = Student("Alice", 20, "S123")
+print(student.name)  # Output: Alice
+print(student.age)  # Output: 20
+print(student.student_id)  # Output: S123
+```
+
+In this example, the `Student` class is a subclass of the `Person` class and adds a new attribute `student_id`. The `super().__init__(name, age)` line is calling the initializer of the `Person` class to handle setting up the name and age attributes, allowing `Student` to add its own initialization (i.e., setting up the `student_id`).
 
