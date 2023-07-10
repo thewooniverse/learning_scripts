@@ -4,6 +4,8 @@ import sys, os, json
 from datetime import datetime
 # import shutil
 from data_master import *
+import logging
+
 
 """
 Specifications
@@ -51,10 +53,13 @@ player_fresh = {'username': '', 'points': 0, 'inventory': [], "rooms_visited":[]
 # Define deleting temp files / cleanup
 
 
+# Add Debugging / logging
+logging.basicConfig(filename=os.getcwd() + '/' + 'play.log', level=logging.DEBUG, format='%(asctime)s - %(message)s')
+
+
 # Define Start Game
 def start_game():
     player = player_fresh.copy()
-
     # reset the inventory
     player['inventory'] = []
     player['rooms_visited'] = []
@@ -62,7 +67,8 @@ def start_game():
     player_username = input(">> ")
     player['username'] = player_username
     print(f"\nWelcome to the beginning of your adventure, {player['username']}!")
-    
+    logging.info(f'Player {player["username"]} is beginning their play session')  # Log an info message
+
     # begin the game
     enter_room(garden_entrance, player)
 
