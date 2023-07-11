@@ -15,6 +15,8 @@ class Customer:
     def display_profile(self):
         print(f"Client Name: {self.name}\nClient Address: {self.address}")
     
+    def add_account(self, account):
+        self.accounts.append(account)
 
 
 class Account:
@@ -23,13 +25,17 @@ class Account:
         self.balance = balance
         self.customer = customer
 
-        customer.accounts.append(self)
+        customer.add_account(self)
     
     def deposit(self, amount):
         self.balance += amount
         print(f'Deposited {amount}\nNew account balance: {self.balance}')
     
     def withdraw(self, amount):
+        try:
+            assert self.balance >= amount
+        except AssertionError:
+            raise AssertionError(f"You are trying to withdraw more than you have in your balance {self.check_balance()}.")
         self.balance -= amount
         print(f'Withdrew {amount}\nNew account balance: {self.balance}')
     
@@ -51,7 +57,7 @@ class Bank:
             if account not in self.accounts:
                 print(f"Adding existing account {account.account_number} to accounts!")
                 self.accounts.append(account)
-        
+    
     
     def remove_customer(self, customer):
         try:
@@ -73,6 +79,12 @@ class Bank:
     
     def get_total_deposits(self):
         return sum([account.balance for account in self.accounts])
+
+
+
+
+
+
 
 
 
