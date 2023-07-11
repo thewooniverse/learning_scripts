@@ -6,6 +6,7 @@ class Customer:
         self.name = name
         self.address = address
         self.customer_id = customer_id
+        self.accounts = []
     
     def update_address(self, new_address):
         print(f"New address updated from {self.address} to {new_address}!")
@@ -15,11 +16,14 @@ class Customer:
         print(f"Client Name: {self.name}\nClient Address: {self.address}")
     
 
+
 class Account:
-    def __init__(self, account_number, customer_id, balance=None):
+    def __init__(self, customer, account_number=str(random.randint(1, 10000000)), balance=0):
         self.account_number = account_number
         self.balance = balance
-        self.customer_id = customer_id
+        self.customer = customer
+
+        customer.accounts.append(self)
     
     def deposit(self, amount):
         self.balance += amount
@@ -34,54 +38,41 @@ class Account:
         return(self.balance)
 
 class Bank:
-    def __init__(self, customers, accounts):
-        self.customers = customers
-        self.accounts = accounts
+    def __init__(self):
+        self.customers = []
+        self.accounts = []
     
-    def add_customer(self, name, address):
-        # randomly generate a Customer ID that is not already in use
-        random_num = random.randint(1, 100000)
-        current_datetime = datetime.now()
-        formatted_date = current_datetime.strftime('%Y%m%d')
-        new_customer_id = f"CID-{formatted_date}-{random_num}"
-        assert new_customer_id not in [customer.customer_id for customer in self.customers]
-        # this should be optimized in the future with sorting algorithms potentially
-        # and this would spur me to try out testing / runtimes and begin learning on optimizations!
+    def add_customer(self, customer):
+        print(f"Adding customer {customer.name}...")
+        self.customers.append(customer)
 
-        new_customer = Customer(name, address, new_customer_id)
-        print("New customer created")
-        new_customer.display_profile()
-        self.customers.append(new_customer)
-    
-
-    def remove_customer(self, rm_customer_id):
-        # try to find
-        for customer in self.customers:
-            if customer.customer_id == rm_customer_id:
-                self.customers.remove(customer)
-                print(f"Removed customer: {rm_customer_id}")
-                return
+        # add all of the customer's existing accounts to the bank accounts
+        for account in customer.accounts:
+            if account not in self.accounts:
+                print(f"Adding existing account {account.account_number} to accounts!")
+                self.accounts.append(account)
         
-        # if it loops through without finding it, we print not found message and return
-        print(f"Customer: {rm_customer_id} does not exist in the system")
-        return
+    
+    def remove_customer(self, customer):
+        try:
+            self.customers.remove(customer)
+        except:
+            print(f"This customer {customer.name} does not exist")
     
     def create_account(self, customer):
-        # randomly generate a Account ID that is not already in use
-        random_num = random.randint(1, 100000)
-        current_datetime = datetime.now()
-        formatted_date = current_datetime.strftime('%Y%m%d')
-        new_account_id = f"AID-{formatted_date}-{random_num}"
-        assert new_account_id not in [account.account_id for account in self.accounts]
-
-        # create and add the new account into accounts
-        new_account = Account(new_account_id, customer.customer_id)
+        # create and add new account
+        new_account = Account(customer)
         self.accounts.append(new_account)
     
-    def remove_account()
+    def remove_account(self, account):
+        try:
+            self.accounts.remove(account)
+        except:
+            print(f"This account {account.account_number} does not exist")
 
-
-
+    
+    def get_total_deposits(self):
+        return sum([account.balance for account in self.accounts])
 
 
 
@@ -90,12 +81,48 @@ customer1 = Customer("Alice", "123 Cherry Lane", "CID152945")
 assert customer1.name == "Alice"
 assert customer1.address == "123 Cherry Lane"
 # customer1.display_profile()
-customer1.update_address("Newfoundland 1592")
+# customer1.update_address("Newfoundland 1592")
 # assert customer1.address == "123 Cherry Lane" # prints assertion error
 # customer1.display_profile()
 
 
+# Test 2: Can we create an account?
+account1 = Account(customer1)
+assert account1.balance == 0
+print(account1)
+print(account1.account_number)
+print(customer1.accounts)
 
+
+# Test 3: Can we deposit and withdraw money?
+account1.deposit(100)
+assert account1.balance == 100
+account1.withdraw(50)
+assert account1.balance == 50
+
+# Test 4: Can we create a bank and add customers and accounts?
+bank = Bank()
+bank.add_customer(customer1)
+assert customer1 in bank.customers
+
+bank.create_account(customer1)
+print(bank.accounts)
+assert account1 in bank.accounts
+
+# Test 5: Do the bank's total deposits match the sum of its accounts?
+assert bank.get_total_deposits() == 50
+
+# Test 6: Can we update a customer's address?
+customer1.update_address("456 Oak Street")
+assert customer1.address == "456 Oak Street"
+
+# Test 7: Can we remove an account?
+bank.remove_account(account1)
+assert account1 not in bank.accounts
+
+# Test 8: Can we remove a customer?
+bank.remove_customer(customer1)
+assert customer1 not in bank.customers
 
 
 
