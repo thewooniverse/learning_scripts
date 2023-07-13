@@ -11,7 +11,8 @@
 - Accounts can deposit or withdraw balances
 
 **Banks**
-- Banks hold multiple customer information
+- Banks hold multiple customer information and holds / creates and maintains db of accounts and customers
+- Banks also interact with the user interface to retrieve and display different customer information
 
 - Banks can add (onboard) or remove customers
 - Banks can add or remove accounts from customers
@@ -37,4 +38,7 @@ Each has their pros and cons.
 
 
 **Development Roadmap**
+First develop everything without a separate database using lists;
+Then integrate objects into pickles.
+
 
