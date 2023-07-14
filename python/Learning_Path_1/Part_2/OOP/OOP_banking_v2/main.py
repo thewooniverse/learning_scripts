@@ -27,8 +27,6 @@ class Customer():
            
         
                 
-        
-
 
     
 
@@ -44,7 +42,7 @@ class Customer():
     
 
 # Customer class unit tests
-abby = Customer("Abby Lane","baby lane 19241", "BOA_49135_129", "1234", [])
+abby = Customer("Abby Lane","baby lane 19241", "BOA_49135_129", "1234")
 
 
 
