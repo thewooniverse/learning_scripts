@@ -11,6 +11,7 @@ class Customer():
         self.address = address
         self.customer_id = customer_id
         self.pin = pin
+
         # by default it is initially set to [], but this value MIGHT change if I need to use something else than a list
         self.accounts = []
         self.accounts_path = f'{os.getcwd()}/{customer_id}.pkl'
@@ -24,12 +25,6 @@ class Customer():
         with open(self.accounts_path, 'rb') as f:
             self.accounts = pickle.load(f)
         
-           
-        
-                
-
-    
-
     def authenticate(self):
         password_provided = getpass("Please enter your PIN: ")
         return password_provided == self.pin
@@ -42,10 +37,6 @@ class Customer():
     
 
 # Customer class unit tests
-abby = Customer("Abby Lane","baby lane 19241", "BOA_49135_129", "1234")
-
-
-
-
-
+# abby = Customer("Abby Lane","baby lane 19241", "BOA_49135_129", "1234")
+# pickle is to store the customer's accounts and account details
 
