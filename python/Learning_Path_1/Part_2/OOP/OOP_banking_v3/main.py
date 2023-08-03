@@ -8,20 +8,33 @@ import os
 import pickle
 
 """
+Still to do - complete the UI class and methods to provide baseline user features:
+- access account / login
+- deposit, withdraw etc...
+
 To do's:
-1. Develop UI methods
+1. Develop UI class and methods for interacting with bank objects ++ authenticating
 2. Add RNG for account IDs and others
 3. Removing customer and accounts
-4. Changing details of accounts
+4. Changing details of customers and sum methods
 5. Encryption and getpass / password access and controlled
 
-Docstrings and tidy up.
+6. Datetime of deposit logs / transaction logs
+7. Graph plot of balances in and out / balances over time
+** 8. Transferring balances between accounts **
+
+
+-- Docstrings and tidy up.
+
+Core functionality:
+- Users can access and unencrypt their accounts using their PIN
+- Users can create, remove and change their customer details
+- Users can create new accounts, close accounts and withdraw or deposit from their accounts
+- Users can access all these features using a clean User Interface
+- The application logs all transaction details into a CSV file
 """
 
-
-
 # create bank object
-
 class Bank:
     def __init__(self, name):
         self.name = name
@@ -37,9 +50,6 @@ class Bank:
             os.mkdir(self.path)
             os.mkdir(self.customers_path)
             os.mkdir(self.accounts_path)
-
-    # UI methods
-
 
 
     ## customer methods ##
@@ -74,13 +84,11 @@ class Bank:
         with open(self.customers_path + f'{os.path.sep}{customer_id}.pkl', 'wb') as f:
             pickle.dump(new_customer, f)
 
-    ## user_id / account_id then ask for PIN -> or perhaps the UI / terminal side shoudl be a separate object to interact with?
-    # Logging in and logging out UI
-
     ## account related methods ##
     # delete existing customer
     # change customer information
     # authenticate customer / access information
+
 
 
     def create_account(self, target_customer_id):
@@ -95,6 +103,34 @@ class Bank:
             customer_object = pickle.load(f)
             customer_object.create_account()
         
+    def authenticate(self):
+        """
+        Bank.Authenticate() prompts for the user ID, and password and tries to authenticate them.
+        Every loop they must enter their username, and then their PIN.
+        In the first version, authenticate will just check PIN entered = PIN.
+        In later versions, all user files created will be encrypted with thier PIN, and therefore, the data can only be decrypted
+        if the entered PIN is correct. So that the objects are not simply readable as they are in encrypted binary format.
+        """
+
+        # request for credentials
+        cid = input("Please enter your Customer ID")
+        pin = getpass("Please enter your 4 digit PIN number:")
+
+        if not os.path.exists(f"{self.customers_path}{os.path.sep}{cid}.pkl"):
+            print("Invalid Credentials: Customer does not exist")
+            return None # parent method will call this method again
+
+        else:
+            with open(f"{self.customers_path}{os.path.sep}{cid}.pkl", 'rb') as f:
+                customer_object = pickle.load(f)
+                
+                # check credentials
+                if (cid, pin) == (customer_object.cid, customer_object.pin):
+                    print(f'Welcome {customer_object.name} you are now logged in.')
+                    return customer_object
+                print(customer_object.cid, customer_object.pin)
+                return None
+
 
 
 class Customer:
@@ -102,7 +138,6 @@ class Customer:
     Customer objects are accessed by the user, through the banking UI.
     They are stored as pickle files and their methods / functions can only be accessed if the PIN they entered is correct
     Eventually, all of their files will be encrypted and in order to unlock them, you would need to enter the correct PIN
-
     >> To Do's
     > get total account sum / accounts overview
 
@@ -134,6 +169,7 @@ class Customer:
     
     # create new account
     def create_account(self):
+        
 
         # randomly generate a new account ID
         new_account_id = "185812959"
@@ -187,10 +223,13 @@ class Account:
     def reconcile(self):
         """
         account.reconcile()
-        - opens self.path and dumps itself into the path.
+        -- Description --
+        opens self.path and dumps itself into the path.
+        -- Usage --
         """
         with open(self.path, 'wb') as f:
             pickle.dump(self, f)
+
 
     def deposit(self, amount):
         self.balance += amount
@@ -209,6 +248,122 @@ class Account:
         return(self.balance)
 
     
+
+
+class UI():
+    def __init__(self, bank_name):
+        """
+        The UI object interacts with the user to call various methods in the Bank object to provide users with 
+        a clean user interface, dialogues and access.
+        """
+        self.bank = Bank(bank_name) # the UI object constructs an instance of the bank object based on the name of the bank
+
+        self.dialogues = {
+            # self.dialogues is a key value pair of dialogues prompts and texts accessed in methods
+            "welcome": "Hello user!"
+        }
+        # logging path
+        
+
+    # define welcome dialogue and begin the core loop
+    def begin(self):
+        # print welcome dialgoue
+        print(f"Welcome to {self.bank.name} Banking portal:\n\n")
+
+        
+        while True:
+            response = self.baseline_options()
+            if response == "exit":
+                print(f"Thanks for using {self.bank.name}, see you again")
+                break
+            elif response == "login":
+                loggedin_customer = self.bank.authenticate()
+                while not loggedin_customer:
+                    loggedin_customer = self.bank.authenticate()
+                    # loop / use logged in options to carry out actions.
+                    # then you can also choose to log out.
+
+            elif response == 'create_new_acc':
+                self.bank.create_customer()
+            
+            elif response == "forgot_password":
+                print("You forgot da password!")
+    
+    
+    def baseline_options(self):
+        """
+        provides baseline options pre-logging in - creating new account, forgotten password, exit.
+        """
+        options = {
+            "0": "exit",
+            "1": "login",
+            "2": "create_new_acc",
+            "3": "forgot_password"
+        ""}
+        input_str = f"""Please select from the following: 
+        0. Exit Portal
+        1. Log in
+        2. Create new account
+        3. Forgot Password
+        """
+
+        user_input = input(input_str)
+        
+        while user_input not in options.keys():
+            user_input = input(input_str)
+        return options[user_input]
+
+
+    
+    def loggedin_options(self):
+        """
+        provides options post logging in
+        change information, get total
+        deposit, withdrawmn 
+        """
+        options = {
+            "0": "exit",
+            "1": "login",
+            "2": "create_new_acc",
+            "3": "forgot_password"
+        ""}
+        input_str = f"""Please select from the following: 
+        0. Deposit Account
+        1. Withdraw Account
+        2. Change Customer Information
+        3. Get Total Accounts Balance
+        4. Open New Account
+        5. Close Account
+        6. Close All Acounts and Delete Data
+        # 7. Transfer
+        """
+
+        user_input = input(input_str)
+        
+        while user_input not in options.keys():
+            user_input = input(input_str)
+        return options[user_input]
+
+
+
+
+    def logging(self):
+        """
+        # define logging per each transaction with timestamp, and details of transaction
+        """
+        pass
+
+
+    
+
+
+    
+    
+
+
+
+
+
 
 
 
@@ -242,5 +397,7 @@ class Account:
 #     account = pickle.load(f)
 #     account.check_balance()
 
-
+user_interface = UI("BOA")
+# user_interface.begin()
+user_interface.begin()
 
