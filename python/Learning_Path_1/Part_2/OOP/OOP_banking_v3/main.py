@@ -8,33 +8,7 @@ import os
 import pickle
 import random
 
-"""
-Still to do - complete the UI class and methods to provide baseline user features:
-- logged in options and connecting them with necessary customer / account level objects to enable deposit / withdrawal features
 
-
-To do's:
-
-
-2. Add RNG for customerIDs account IDs creation
-3. Removing customer and accounts
-4. Changing details of customers and sum methods
-5. Encryption and getpass / password access and controlled
-
-6. Datetime of deposit logs / transaction logs into bank's database
-7. Graph plot of balances in and out / balances over time
-** 8. Transferring balances between accounts **
-
-
--- Docstrings and tidy up.
-
-Core functionality:
-- Users can access and unencrypt their accounts using their PIN
-- Users can create, remove and change their customer details
-- Users can create new accounts, close accounts and withdraw or deposit from their accounts
-- Users can access all these features using a clean User Interface
-- The application logs all transaction details into a CSV file
-"""
 
 
 
@@ -196,7 +170,9 @@ class Customer:
     def create_account(self):
         
         # randomly generate a new account ID
-        new_account_id = "185812959"
+        new_account_id = str(random.randint(1000000000, 9999999999))
+        while os.path.exists(f"{self.accounts_path}{os.path.sep}{new_account_id}.pkl"):
+            customer_id = str(random.randint(1000000000, 9999999999))
 
         # append account ID to self accounts
         self.accounts.append(new_account_id)
@@ -216,7 +192,7 @@ class Customer:
         if account_id not in self.accounts:
             print (f"Account ID: {account_id} does not exist or does not belong to you, please check and try agian")
             return False        
-        
+
         # find and open the account
         with open(f'{self.accounts_path}{os.path.sep}{account_id}.pkl', 'rb') as f:
             account_object = pickle.load(f)
@@ -289,7 +265,7 @@ class Account:
 
 
 #################################################################################
-##############################  UI CLASS  #####################################
+##############################  UI CLASS  #######################################
 #################################################################################
 
 
@@ -410,11 +386,31 @@ class UI():
         if action == "log_out":
             return
         elif action == "deposit":
-            customer.deposit_account("185812959", 100) 
-            # change to take the amount and account ID, if it doesnt go through anyway, 
-            # it will print error message and we will loop again anyway.
+            # Get amount to deposit / withdraw
+            deposit_amount = input("Enter deposit amount")
+            while not deposit_amount.isdigit():
+                # in this case, negatives are not allowed since it would fail in isdigit()
+                deposit_amount = input("Enter deposit amount")
+            
+            # Get the accounts available for deposit / withdrawals
+            account_indexes = [str(i) for i in range(len(customer.accounts))]
+            account_options = "Please select from the following accounts to deposit:"
+            for index in account_indexes:
+                account_options = account_options + f"\n{index}. {customer.accounts[int(index)]}"
+            
+            # receive and verify input is in format / within options
+            print(account_options)
+            account_choice = input(">> ")
+            while account_choice not in account_indexes:
+                print(account_options)
+                account_choice = input(">> ")
+            
+            customer.deposit_account(customer.accounts[int(index)], int(deposit_amount))
+            
+        
         elif action == "withdraw":
             customer.withdraw_account("185812959", 100) #change
+
         
 
         # not yet developed features for customer object
