@@ -409,8 +409,26 @@ class UI():
             
         
         elif action == "withdraw":
-            customer.withdraw_account("185812959", 100) #change
-
+            # Get amount to deposit / withdraw
+            withdraw_amount = input("Enter withdrawal amount")
+            while not withdraw_amount.isdigit():
+                # in this case, negatives are not allowed since it would fail in isdigit()
+                withdraw_amount = input("Enter withdrawal amount")
+            
+            # Get the accounts available for deposit / withdrawals
+            account_indexes = [str(i) for i in range(len(customer.accounts))]
+            account_options = "Please select from the following accounts to withdrawal:"
+            for index in account_indexes:
+                account_options = account_options + f"\n{index}. {customer.accounts[int(index)]}"
+            
+            # receive and verify input is in format / within options
+            print(account_options)
+            account_choice = input(">> ")
+            while account_choice not in account_indexes:
+                print(account_options)
+                account_choice = input(">> ")
+            
+            customer.withdraw_account(customer.accounts[int(index)], int(withdraw_amount))
         
 
         # not yet developed features for customer object
