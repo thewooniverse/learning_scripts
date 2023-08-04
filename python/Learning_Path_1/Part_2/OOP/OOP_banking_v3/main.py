@@ -6,6 +6,7 @@
 from getpass import getpass
 import os
 import pickle
+import random
 
 """
 Still to do - complete the UI class and methods to provide baseline user features:
@@ -13,13 +14,14 @@ Still to do - complete the UI class and methods to provide baseline user feature
 
 
 To do's:
-1. Develop UI class and methods for interacting with bank objects ++ authenticating
-2. Add RNG for account IDs and others
+
+
+2. Add RNG for customerIDs account IDs creation
 3. Removing customer and accounts
 4. Changing details of customers and sum methods
 5. Encryption and getpass / password access and controlled
 
-6. Datetime of deposit logs / transaction logs
+6. Datetime of deposit logs / transaction logs into bank's database
 7. Graph plot of balances in and out / balances over time
 ** 8. Transferring balances between accounts **
 
@@ -44,10 +46,9 @@ Core functionality:
 class Bank:
     def __init__(self, name):
         self.name = name
-
-        # other data in the future can be saved in a pickle and picked up / saved to keep it persistent
-
-        # check if there is already a directory with the name in current dir, if not create one and its sub directories
+        
+        # check if there is already a directory with the name in current dir,
+        # if not create one and its sub directories when the bank is initiated for the first time
         self.path = f'{os.getcwd()}/{name}'
         self.customers_path = self.path + os.path.sep + "customers"
         self.accounts_path = self.path + os.path.sep + "accounts"
@@ -58,7 +59,7 @@ class Bank:
             os.mkdir(self.accounts_path)
 
 
-    ## customer methods ##
+    ### customer methods ### 
     # create customer
     def create_customer(self):
         """
@@ -81,8 +82,11 @@ class Bank:
         customer_pin = input(">> ")
 
         # randomly generate a customer ID and create the customer path + check for duplicates
-        customer_id = "18238591"
-
+        customer_id = str(random.randint(1000000000, 9999999999))
+        while os.path.exists(f"{self.customers_path}{os.path.sep}{customer_id}.pkl"):
+            customer_id = str(random.randint(1000000000, 9999999999))
+        
+        print(f"Your new Customer ID is {customer_id}, please write this down as you will need it for logging into your account")
         # create the object
         new_customer = Customer(customer_name, customer_address, customer_id, customer_pin, self.path)
 
@@ -109,6 +113,9 @@ class Bank:
             customer_object = pickle.load(f)
             customer_object.create_account()
         
+
+
+
     def authenticate(self):
         """
         Bank.Authenticate() prompts for the user ID, and password and tries to authenticate them.
@@ -136,6 +143,12 @@ class Bank:
                     return customer_object
                 print(customer_object.cid, customer_object.pin)
                 return None
+
+
+
+
+
+
 
 
 
@@ -182,7 +195,6 @@ class Customer:
     # create new account
     def create_account(self):
         
-
         # randomly generate a new account ID
         new_account_id = "185812959"
 
@@ -307,6 +319,7 @@ class UI():
             if response == "exit":
                 print(f"Thanks for using {self.bank.name}, see you again")
                 return
+            
 
             elif response == "login":
                 # loop until there is a valid customer object that is not None => therefore logged in
@@ -314,7 +327,6 @@ class UI():
                 while not loggedin_customer:
                     loggedin_customer = self.bank.authenticate()
                 
-
                 # continuously loops (takes user input, carries it out) until user chooses to log out
                 while True:
                     loggedin_response = self.loggedin_options()
@@ -325,8 +337,8 @@ class UI():
                         break
                                         
 
-            # elif response == 'create_new_acc':
-            #     self.bank.create_customer()
+            elif response == 'create_new_acc':
+                self.bank.create_customer()
             
             elif response == "forgot_password":
                 print("You forgot da password!")
