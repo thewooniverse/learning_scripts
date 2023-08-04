@@ -9,8 +9,8 @@ import pickle
 
 """
 Still to do - complete the UI class and methods to provide baseline user features:
-- access account / login
-- deposit, withdraw etc...
+- logged in options and connecting them with necessary customer / account level objects to enable deposit / withdrawal features
+
 
 To do's:
 1. Develop UI class and methods for interacting with bank objects ++ authenticating
@@ -34,7 +34,13 @@ Core functionality:
 - The application logs all transaction details into a CSV file
 """
 
-# create bank object
+
+
+
+#################################################################################
+##############################  Bank CLASS  #####################################
+#################################################################################
+
 class Bank:
     def __init__(self, name):
         self.name = name
@@ -117,7 +123,7 @@ class Bank:
         pin = getpass("Please enter your 4 digit PIN number:")
 
         if not os.path.exists(f"{self.customers_path}{os.path.sep}{cid}.pkl"):
-            print("Invalid Credentials: Customer does not exist")
+            print(f"Invalid Credentials: Customer does not exist at {self.customers_path}{os.path.sep}{cid}.pkl")
             return None # parent method will call this method again
 
         else:
@@ -131,6 +137,12 @@ class Bank:
                 print(customer_object.cid, customer_object.pin)
                 return None
 
+
+
+
+#################################################################################
+############################  Customer CLASS  ###################################
+#################################################################################
 
 
 class Customer:
@@ -189,7 +201,9 @@ class Customer:
     # account_deposit (account, amount)
     def deposit_account(self, account_id, amount):
         # check that the account is indeed owned by this customer
-        assert account_id in self.accounts
+        if account_id not in self.accounts:
+            print (f"Account ID: {account_id} does not exist or does not belong to you, please check and try agian")
+            return False        
         
         # find and open the account
         with open(f'{self.accounts_path}{os.path.sep}{account_id}.pkl', 'rb') as f:
@@ -210,6 +224,14 @@ class Customer:
 
 
     # access account
+
+
+
+#################################################################################
+############################  ACCOUNT CLASS   ###################################
+#################################################################################
+
+
 
 
 class Account:
@@ -233,6 +255,7 @@ class Account:
 
     def deposit(self, amount):
         self.balance += amount
+        print(f'deposited {amount}, current balance {self.balance}')
         self.reconcile()
     
     def withdraw(self, amount):
@@ -240,6 +263,7 @@ class Account:
             print("Withdrawal unavailable, amount exceeds current balance")
         else:
             self.balance -= amount
+            print(f'withdrew {amount}, current balance {self.balance}')
         self.reconcile()
         
     
@@ -248,6 +272,13 @@ class Account:
         return(self.balance)
 
     
+
+
+
+
+#################################################################################
+##############################  UI CLASS  #####################################
+#################################################################################
 
 
 class UI():
@@ -275,16 +306,27 @@ class UI():
             response = self.baseline_options()
             if response == "exit":
                 print(f"Thanks for using {self.bank.name}, see you again")
-                break
+                return
+
             elif response == "login":
+                # loop until there is a valid customer object that is not None => therefore logged in
                 loggedin_customer = self.bank.authenticate()
                 while not loggedin_customer:
                     loggedin_customer = self.bank.authenticate()
-                    # loop / use logged in options to carry out actions.
-                    # then you can also choose to log out.
+                
 
-            elif response == 'create_new_acc':
-                self.bank.create_customer()
+                # continuously loops (takes user input, carries it out) until user chooses to log out
+                while True:
+                    loggedin_response = self.loggedin_options()
+                    action_taken = self.loggedin_actions(loggedin_response, loggedin_customer)
+                    
+                    # check if they chose to log out
+                    if loggedin_response == "log_out":
+                        break
+                                        
+
+            # elif response == 'create_new_acc':
+            #     self.bank.create_customer()
             
             elif response == "forgot_password":
                 print("You forgot da password!")
@@ -308,7 +350,6 @@ class UI():
         """
 
         user_input = input(input_str)
-        
         while user_input not in options.keys():
             user_input = input(input_str)
         return options[user_input]
@@ -322,20 +363,26 @@ class UI():
         deposit, withdrawmn 
         """
         options = {
-            "0": "exit",
-            "1": "login",
-            "2": "create_new_acc",
-            "3": "forgot_password"
+            "0": "log_out",
+            "1": "deposit",
+            "2": "withdraw",
+            "3": "change_info",
+            "4": "get_total",
+            "5": "open_new_acc",
+            "6": "close_acc",
+            "7": "close_customer"
+            # "7": "transfer",
+
         ""}
         input_str = f"""Please select from the following: 
-        0. Deposit Account
-        1. Withdraw Account
-        2. Change Customer Information
-        3. Get Total Accounts Balance
-        4. Open New Account
-        5. Close Account
-        6. Close All Acounts and Delete Data
-        # 7. Transfer
+        0. Log Out
+        1. Deposit Account
+        2. Withdraw Account
+        3. Change Customer Information
+        4. Get Total Accounts Balance
+        5. Open New Account
+        6. Close Account
+        7. Close All Acounts and Delete Data
         """
 
         user_input = input(input_str)
@@ -343,6 +390,32 @@ class UI():
         while user_input not in options.keys():
             user_input = input(input_str)
         return options[user_input]
+
+    def loggedin_actions(self, action, customer):
+        """
+        carries out the action options taken by the user onto the customer object that is passed to it.
+        """
+        if action == "log_out":
+            return
+        elif action == "deposit":
+            customer.deposit_account("185812959", 100) 
+            # change to take the amount and account ID, if it doesnt go through anyway, 
+            # it will print error message and we will loop again anyway.
+        elif action == "withdraw":
+            customer.withdraw_account("185812959", 100) #change
+        
+
+        # not yet developed features for customer object
+        elif action == "change_info":
+            pass
+        elif action == "get_total":
+            pass
+        elif action == "open_new_acc":
+            pass
+        elif action == "close_acc":
+            pass
+        elif action == "close_customer":
+            pass
 
 
 
@@ -371,7 +444,9 @@ class UI():
 
 
 
-#################################### testing ####################################
+#################################################################################
+################################  TESTING  ######################################
+#################################################################################
 
 
 # # testing bank creation
