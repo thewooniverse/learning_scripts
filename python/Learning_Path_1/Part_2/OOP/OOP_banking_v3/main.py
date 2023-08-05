@@ -63,6 +63,7 @@ class Bank:
         print(f"Your new Customer ID is {customer_id}, please write this down as you will need it for logging into your account")
         # create the object
         new_customer = Customer(customer_name, customer_address, customer_id, customer_pin, self.path)
+        new_customer.create_account()
 
         # save the object in self.path
         with open(self.customers_path + f'{os.path.sep}{customer_id}.pkl', 'wb') as f:
@@ -103,6 +104,7 @@ class Bank:
         cid = input("Please enter your Customer ID")
         pin = getpass("Please enter your 4 digit PIN number:")
 
+        
         if not os.path.exists(f"{self.customers_path}{os.path.sep}{cid}.pkl"):
             print(f"Invalid Credentials: Customer does not exist at {self.customers_path}{os.path.sep}{cid}.pkl")
             return None # parent method will call this method again
@@ -111,17 +113,13 @@ class Bank:
             with open(f"{self.customers_path}{os.path.sep}{cid}.pkl", 'rb') as f:
                 customer_object = pickle.load(f)
                 
-                # check credentials
+                # check credentials - if passed
                 if (cid, pin) == (customer_object.cid, customer_object.pin):
                     print(f'Welcome {customer_object.name} you are now logged in.')
                     return customer_object
-                print(customer_object.cid, customer_object.pin)
+                # otherwise
+                print("Invalid credentials: Please check Customer ID and PIN combinations again")
                 return None
-
-
-
-
-
 
 
 
@@ -211,7 +209,21 @@ class Customer:
 
 
 
-    # access account
+    def close_account(self, account_id):
+        # confirm they want to delete this account with this balance
+        confirm_response = input(f"Please type \"confirm\" to confirm that you want to delete Account{account_id}")
+        
+        if confirm_response.lower() == "confirm":
+            # checks if the destination account has positive balance
+            ## load the pickle file
+            ## if it is negative, carry out deletion and finish.
+
+            ## if it 
+
+            # carry out action to move funds and delete the account and print the actions taken
+
+        
+        
 
 
 
@@ -264,6 +276,12 @@ class Account:
 
 
 
+
+
+
+
+
+
 #################################################################################
 ##############################  UI CLASS  #######################################
 #################################################################################
@@ -300,17 +318,18 @@ class UI():
             elif response == "login":
                 # loop until there is a valid customer object that is not None => therefore logged in
                 loggedin_customer = self.bank.authenticate()
-                while not loggedin_customer:
-                    loggedin_customer = self.bank.authenticate()
-                
+
+                while loggedin_customer:
                 # continuously loops (takes user input, carries it out) until user chooses to log out
-                while True:
                     loggedin_response = self.loggedin_options()
                     action_taken = self.loggedin_actions(loggedin_response, loggedin_customer)
                     
                     # check if they chose to log out
                     if loggedin_response == "log_out":
                         break
+                else:
+                    pass
+                
                                         
 
             elif response == 'create_new_acc':

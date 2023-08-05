@@ -1,24 +1,27 @@
-Still to do - complete the UI class and methods to provide baseline user features:
-- logged in options and connecting them with necessary customer / account level objects to enable deposit / withdrawal features
 
 
 To do's:
-1. Account targeting for deposit / withdrawals and specifying amounts in the UI.
 
-
-2. Add RNG for customerIDs account IDs creation
 3. Removing customer and accounts
-4. Changing details of customers and sum methods
-5. Encryption and getpass / password access and controlled
+-- closing a customer means doing closing accounts for all acocunts belonging to customer -> and depositing it to another customer;
+
+4. Changing details of customers and sum methods to display amounts!
+5. Getpass / password access and controlled access
+
+Forgot password feature + change password feature
+-- this entails
 
 6. Datetime of deposit logs / transaction logs into bank's database
-7. Graph plot of balances in and out / balances over time
-** 8. Transferring balances between accounts **
+7. Graph plot of balances in and out / balances over time from transaction logs both on the user level, and on the bank level.
+8. Encryption features
+9. Transferring balances between accounts and reconciling
+
+Up to this point, would be amazing! I think 3-5 days of dev work can get us there.
 
 
 -- Docstrings and tidy up.
 
-Core functionality:
+Core functionality / features:
 - Users can access and unencrypt their accounts using their PIN
 - Users can create, remove and change their customer details
 - Users can create new accounts, close accounts and withdraw or deposit from their accounts
