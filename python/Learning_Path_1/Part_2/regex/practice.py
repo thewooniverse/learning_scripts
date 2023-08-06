@@ -41,7 +41,7 @@ generic_phone_pattern = r"""
 \d{1,3}?          # optional country code
 \(\d{3}\)?        # optional US area code
 [\-.\s]?          # optional divider
-\d{3,4}
+\d{3,4}           #
 \b
 """
 
