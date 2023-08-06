@@ -9,6 +9,8 @@ import pickle
 import random
 
 
+# 18238591
+
 
 
 
@@ -31,6 +33,11 @@ class Bank:
             os.mkdir(self.path)
             os.mkdir(self.customers_path)
             os.mkdir(self.accounts_path)
+        
+
+    def reconcile(self):
+        with open(self.path, 'wb') as f:
+            pickle.dump(self, f)
 
 
     ### customer methods ### 
@@ -123,6 +130,73 @@ class Bank:
 
 
 
+    def close_account(self, customer):
+        # check length of number of accounts
+        if len(customer.accounts) < 1:
+            print(f"You currently are holding one account with {self.name}, in order to close your accounts out fully with us, please select Delete Account from options")
+            return
+        
+        # dictionary to contain options for customers to choose from
+        options = {"x": "close"}
+
+        # list out all of the accounts available to the customer
+        for idx in list(range(len(customer.accounts))):
+            print(f"{idx}. ID:{customer.accounts[idx]} // Balance:{customer.check_account(customer.accounts[idx])}") 
+            options[f"{idx}"] = f"{customer.accounts[idx]}"
+
+        # select one among valid options, loop while or X to cancel
+        closing_account_idx = input("Please choose an account to close:")
+        while closing_account_idx not in options.keys():
+            closing_account_idx = input("Please choose an account to close:")
+            for key, value in options.items():
+                print(f"{key}. {value}")
+        if closing_account_idx.lower() == "x":
+            return
+        
+        # select one of the valid options, that is NOT the closing account selection;
+        invalid_option = options.pop(f"{closing_account_idx}")
+
+        destination_account_idx = input("Please choose a destination account to deposit remaining funds to:")
+        for key, value in options.items():
+            print(f"{key}. {value}")
+
+        while destination_account_idx not in options.keys():
+            destination_account_idx = input("Please choose an account to close:")
+            for key, value in options.items():
+                print(f"{key}. {value}")
+        
+        print(customer.accounts[int(closing_account_idx)], customer.accounts[int(destination_account_idx)])
+
+        # confirm deletion and procedure, if not, return as well
+        while True:
+            confirm = input("Please type \"confirm\" to proceed, and X to exit out")
+            if confirm.lower() == 'confirm':
+                customer.close_account(customer.accounts[int(closing_account_idx)], customer.accounts[int(destination_account_idx)])
+                return
+            if confirm.lower() == "x":
+                return
+    
+
+
+    def close_customer(self, customer):
+        # confirm with the user that they want to remove everything
+        while True:
+            confirm = input("You are about to delete your whole entire account type \"confirm\" to proceed, and X to exit out")
+            if confirm.lower() == 'confirm':
+                break
+            if confirm.lower() == "x":
+                return
+        
+        closed_accs_total = 0
+        # loop through every single account that they have and delete it and transfer the account balance
+        for account_id in customer.accounts:
+            closed_accs_total += customer.check_account(account_id)
+            os.remove(f"{self.accounts_path}{os.path.sep}{account_id}.pkl")
+        os.remove(f"{self.customers_path}{os.path.sep}{customer.cid}.pkl")
+        return True
+
+        
+
 
 
 #################################################################################
@@ -162,7 +236,7 @@ class Customer:
         """
         with open(self.path, 'wb') as f:
             pickle.dump(self, f)
-        
+    
     
     # create new account
     def create_account(self):
@@ -187,9 +261,6 @@ class Customer:
     # account_deposit (account, amount)
     def deposit_account(self, account_id, amount):
         # check that the account is indeed owned by this customer
-        if account_id not in self.accounts:
-            print (f"Account ID: {account_id} does not exist or does not belong to you, please check and try agian")
-            return False        
 
         # find and open the account
         with open(f'{self.accounts_path}{os.path.sep}{account_id}.pkl', 'rb') as f:
@@ -200,29 +271,44 @@ class Customer:
     # account_withdraw (account, amount)
     def withdraw_account(self, account_id, amount):
         # check that the account is indeed owned by this customer
-        assert account_id in self.accounts
+        if account_id not in self.accounts:
+            print (f"Account ID: {account_id} does not exist or does not belong to you, please check and try agian")
+            return False
 
         with open(f'{self.accounts_path}{os.path.sep}{account_id}.pkl', 'rb') as f:
             account_object = pickle.load(f)
             # call the deposit function on the account
-            account_object.withdraw(amount)
+            return account_object.withdraw(amount)
+    
+    def check_account(self, account_id):
+        with open(f'{self.accounts_path}{os.path.sep}{account_id}.pkl', 'rb') as f:
+            account_object = pickle.load(f)
+            return account_object.balance
+    
 
+    def close_account(self, closing_account_id, destination_account_id):
+        # process the deposit / withdrawls (eventually, transfers)
+        withdrawn_amt = self.withdraw_account(closing_account_id, self.check_account(closing_account_id))
+        self.deposit_account(destination_account_id, withdrawn_amt)
 
+        # delete the accounts
+        closing_path = f"{self.accounts_path}{os.path.sep}{closing_account_id}.pkl"
+        os.remove(closing_path)
 
-    def close_account(self, account_id):
-        # confirm they want to delete this account with this balance
-        confirm_response = input(f"Please type \"confirm\" to confirm that you want to delete Account{account_id}")
+        # remove it from itself
+        self.accounts.remove(closing_account_id)
+        self.reconcile()
         
-        if confirm_response.lower() == "confirm":
-            # checks if the destination account has positive balance
-            ## load the pickle file
-            ## if it is negative, carry out deletion and finish.
 
-            ## if it 
-
-            # carry out action to move funds and delete the account and print the actions taken
-
+    def transfer(self, source_account_id, destination_account_id, amount):
+        # it SHOULD technically define multi bank features.
+        # withdraw from source_id
+        self.withdraw_account(source_account_id, amount)
+        # deposit to destination_id
         
+        
+        pass
+
         
 
 
@@ -252,24 +338,29 @@ class Account:
         with open(self.path, 'wb') as f:
             pickle.dump(self, f)
 
-
     def deposit(self, amount):
         self.balance += amount
         print(f'deposited {amount}, current balance {self.balance}')
         self.reconcile()
+        return amount
     
+
     def withdraw(self, amount):
         if amount > self.balance:
-            print("Withdrawal unavailable, amount exceeds current balance")
+            print("Amount exceeds current balance")
         else:
             self.balance -= amount
             print(f'withdrew {amount}, current balance {self.balance}')
+            return amount
         self.reconcile()
         
     
     def check_balance(self):
-        print(f'Current balance: ${self.balance}')
+        # print(f'Current balance: ${self.balance}')
         return(self.balance)
+
+
+
 
     
 
@@ -325,7 +416,7 @@ class UI():
                     action_taken = self.loggedin_actions(loggedin_response, loggedin_customer)
                     
                     # check if they chose to log out
-                    if loggedin_response == "log_out":
+                    if loggedin_response == "log_out" or action_taken == "closed_customer":
                         break
                 else:
                     pass
@@ -338,6 +429,10 @@ class UI():
             elif response == "forgot_password":
                 print("You forgot da password!")
     
+
+
+
+
     
     def baseline_options(self):
         """
@@ -449,18 +544,25 @@ class UI():
             
             customer.withdraw_account(customer.accounts[int(index)], int(withdraw_amount))
         
+        elif action == "open_new_acc":
+            customer.create_account()
+
+        elif action == "close_acc":
+            self.bank.close_account(customer)
+
+        elif action == "close_customer":
+            customer_closed = self.bank.close_customer(customer)
+            if customer_closed:
+                return "closed_customer"
+            else:
+                pass
 
         # not yet developed features for customer object
         elif action == "change_info":
             pass
-        elif action == "get_total":
+        elif action == "get_total": # add feature for displaying individual account holdings
             pass
-        elif action == "open_new_acc":
-            pass
-        elif action == "close_acc":
-            pass
-        elif action == "close_customer":
-            pass
+        
 
 
 
@@ -501,21 +603,6 @@ class UI():
 # bank.create_account("18238591")
 
 
-# testing customer file persistence
-# with open(f'{os.getcwd()}{os.path.sep}BOA{os.path.sep}customers{os.path.sep}18238591.pkl', 'rb') as f:
-#     customer = pickle.load(f)
-#     print(customer)
-#     print(customer.name)
-#     print(customer.pin)
-#     print(customer.cid)
-#     print(customer.accounts)
-
-#     customer.withdraw_account('185812959', 1000)
-
-
-# with open(f'{os.getcwd()}{os.path.sep}BOA{os.path.sep}accounts{os.path.sep}185812959.pkl', 'rb') as f:
-#     account = pickle.load(f)
-#     account.check_balance()
 
 user_interface = UI("BOA")
 # user_interface.begin()

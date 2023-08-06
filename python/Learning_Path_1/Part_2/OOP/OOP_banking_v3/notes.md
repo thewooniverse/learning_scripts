@@ -1,22 +1,34 @@
 
-
 To do's:
 
-3. Removing customer and accounts
--- closing a customer means doing closing accounts for all acocunts belonging to customer -> and depositing it to another customer;
+
+
+3. Customer closure
+4. Multi bank transfers of accounts
+
+>>>> Troubleshoot the deposit issue where amount is depositing to the same accoutn always.
+
+
 
 4. Changing details of customers and sum methods to display amounts!
 5. Getpass / password access and controlled access
-
-Forgot password feature + change password feature
--- this entails
-
 6. Datetime of deposit logs / transaction logs into bank's database
+7. Forgot password feature + change password feature
+--------
+
+
+LEARN MATPLOT / Pandas
 7. Graph plot of balances in and out / balances over time from transaction logs both on the user level, and on the bank level.
-8. Encryption features
+-- transaction histories and visualization
+8. Full encryption features of transaction history and data
 9. Transferring balances between accounts and reconciling
 
-Up to this point, would be amazing! I think 3-5 days of dev work can get us there.
+--------
+I think this would be enough function / features for now.
+
+
+
+
 
 
 -- Docstrings and tidy up.
