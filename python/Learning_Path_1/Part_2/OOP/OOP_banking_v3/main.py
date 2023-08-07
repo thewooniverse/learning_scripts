@@ -9,9 +9,6 @@ import pickle
 import random
 
 
-# 18238591
-
-
 
 
 
@@ -298,16 +295,29 @@ class Customer:
         # remove it from itself
         self.accounts.remove(closing_account_id)
         self.reconcile()
+    
+    def display_accounts(self):
+        total = 0
+        for account_id in self.accounts:
+            with open(f"{self.accounts_path}{os.path.sep}{account_id}.pkl", 'rb') as f:
+                account_object = pickle.load(f)
+                print(f"{account_id}: Balance is {account_object.balance}")
+                total += account_object.balance
         
+        print(f"\nTotal balance for {self.cid} is {total}")
+            
+
+
+
+
 
     def transfer(self, source_account_id, destination_account_id, amount):
         # it SHOULD technically define multi bank features.
         # withdraw from source_id
-        self.withdraw_account(source_account_id, amount)
+        # self.withdraw_account(source_account_id, amount)
         # deposit to destination_id
-        
-        
         pass
+    
 
         
 
@@ -469,7 +479,7 @@ class UI():
             "1": "deposit",
             "2": "withdraw",
             "3": "change_info",
-            "4": "get_total",
+            "4": "overview",
             "5": "open_new_acc",
             "6": "close_acc",
             "7": "close_customer"
@@ -481,7 +491,7 @@ class UI():
         1. Deposit Account
         2. Withdraw Account
         3. Change Customer Information
-        4. Get Total Accounts Balance
+        4. Accounts Overview and Total
         5. Open New Account
         6. Close Account
         7. Close All Acounts and Delete Data
@@ -519,7 +529,7 @@ class UI():
                 print(account_options)
                 account_choice = input(">> ")
             
-            customer.deposit_account(customer.accounts[int(index)], int(deposit_amount))
+            customer.deposit_account(customer.accounts[int(account_choice)], int(deposit_amount))
             
         
         elif action == "withdraw":
@@ -557,11 +567,13 @@ class UI():
             else:
                 pass
 
+        elif action == "overview": # add feature for displaying individual account holdings
+            customer.display_accounts()
+        
         # not yet developed features for customer object
         elif action == "change_info":
             pass
-        elif action == "get_total": # add feature for displaying individual account holdings
-            pass
+        
         
 
 
