@@ -427,6 +427,10 @@ Lookaheads and lookbehinds can be very useful in a variety of circumstances when
 
 
 
+
+
+
+
 =========================================================================
 () and grouping
 =========================================================================
@@ -486,3 +490,94 @@ print(re.findall(pattern, text))  # Output: ['ababab', 'ababab']
 ```
 
 In this case, `(?:ab)+` matches one or more repetitions of 'ab', but the parentheses do not create a capturing group.
+
+
+
+
+
+
+
+=========================================================================
+Compiling vs Non Compiling
+=========================================================================
+You don't necessarily have to compile the regular expression pattern with `re.compile()` when using a pattern like `r'\bword\b'`. The `re.compile()` method is used to compile a regular expression pattern into a pattern object, which you can then use multiple times. This can be useful for efficiency when you're using the same pattern many times, but it's not required.
+
+You can use the pattern directly in functions like `re.search()`, `re.match()`, `re.findall()`, etc., without compiling it first.
+
+### Without Compiling:
+
+```python
+import re
+
+pattern = r'\bword\b'
+string = "This is a word in a sentence."
+
+result = re.findall(pattern, string)
+print(result)  # Output: ['word']
+```
+
+### With Compiling:
+
+```python
+import re
+
+pattern = re.compile(r'\bword\b')
+string = "This is a word in a sentence."
+
+result = pattern.findall(string)
+print(result)  # Output: ['word']
+```
+
+Both of these examples will have the same result. Compiling the pattern is optional and is more about code organization and potential performance benefits if the pattern is used repeatedly. If you're using the pattern just once, or if you prefer the more concise syntax, you can use the pattern directly without compiling it.
+
+
+
+
+
+
+
+
+=========================================================================
+Greedy vs Non-Greedy
+=========================================================================
+Regular expressions work based on pattern matching, and the way they match can be influenced by various factors such as the order of elements in the pattern, greedy versus non-greedy matching, and the use of groups.
+
+### 1. Priority in Matching:
+- **Order**: Regular expressions are evaluated from left to right, and the first matching pattern is usually returned. For example, in alternation patterns like `a|ab`, the pattern `a` will be matched first if the input string is `"ab"`.
+- **Greedy vs Non-Greedy**: This plays a crucial role in how much text is matched.
+
+### 2. Greedy Matching:
+By default, quantifiers in regular expressions (like `*`, `+`, and `?`) are "greedy," meaning they will try to match as much text as possible.
+
+Consider the pattern `".*"` applied to the string `"a<b>c<d>e"`. The `.*` will match everything from the first `a` to the last `e`, including the `<` and `>` characters.
+
+Example:
+```python
+import re
+
+pattern = r'<.*>'
+string = "a<b>c<d>e"
+match = re.search(pattern, string)
+
+print(match.group())  # Output: '<b>c<d>'
+```
+
+### 3. Non-Greedy Matching:
+You can make these quantifiers "non-greedy" by following them with a `?`. Non-greedy quantifiers will try to match as little text as possible.
+
+Using the previous example, if you change the pattern to `"<.*?>"`, it will match only `"<b>"`.
+
+Example:
+```python
+pattern = r'<.*?>'
+match = re.search(pattern, string)
+
+print(match.group())  # Output: '<b>'
+```
+
+The non-greedy pattern `.*?` tries to match as little as possible, so it stops at the first `>` it encounters, rather than the last one.
+
+### Summary:
+- Regular expressions prioritize patterns from left to right.
+- Greedy quantifiers try to match as much as possible, whereas non-greedy quantifiers (with a trailing `?`) try to match as little as possible.
+- Choosing between greedy and non-greedy depends on what you want to accomplish with your pattern. Non-greedy matching is often useful when you're working with nested structures, like HTML or XML tags.
