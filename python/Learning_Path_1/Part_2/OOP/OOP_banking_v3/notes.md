@@ -1,23 +1,26 @@
 
 To do's:
 
-
-
 3. Customer closure
 4. Multi bank transfers of accounts
 
->>>> Troubleshoot the deposit issue where amount is depositing to the same accoutn always.
+>>>> Troubleshoot the deposit bug where it deposits to only one account
+5. sum methods to display amounts!
 
-
-
-4. Changing details of customers and sum methods to display amounts!
+(bug) - close account feature is not functioning correctly for single account users;
+4. Changing details of customers
 5. Getpass / password access and controlled access
+
+--- completed above---
+
+
 6. Datetime of deposit logs / transaction logs into bank's database
-7. Forgot password feature + change password feature
+7. Forgot password feature + change PIN (pw) feature
+8. Encryption
 --------
 
 
-LEARN MATPLOT / Pandas
+LEARN MATPLOT / Pandas related features
 7. Graph plot of balances in and out / balances over time from transaction logs both on the user level, and on the bank level.
 -- transaction histories and visualization
 8. Full encryption features of transaction history and data

@@ -129,7 +129,7 @@ class Bank:
 
     def close_account(self, customer):
         # check length of number of accounts
-        if len(customer.accounts) < 1:
+        if len(customer.accounts) < 2:
             print(f"You currently are holding one account with {self.name}, in order to close your accounts out fully with us, please select Delete Account from options")
             return
         
@@ -307,8 +307,13 @@ class Customer:
         print(f"\nTotal balance for {self.cid} is {total}")
             
 
-
-
+    def change_address(self):
+        # take in new address
+        print("Please enter your new address:")
+        new_address = input(">> ")
+        print(f"Your address is now changed from:\n{self.address} to {new_address}")
+        self.address = new_address        
+        self.reconcile()
 
 
     def transfer(self, source_account_id, destination_account_id, amount):
@@ -478,7 +483,7 @@ class UI():
             "0": "log_out",
             "1": "deposit",
             "2": "withdraw",
-            "3": "change_info",
+            "3": "change_address",
             "4": "overview",
             "5": "open_new_acc",
             "6": "close_acc",
@@ -490,7 +495,7 @@ class UI():
         0. Log Out
         1. Deposit Account
         2. Withdraw Account
-        3. Change Customer Information
+        3. Change Address
         4. Accounts Overview and Total
         5. Open New Account
         6. Close Account
@@ -567,12 +572,14 @@ class UI():
             else:
                 pass
 
-        elif action == "overview": # add feature for displaying individual account holdings
+        elif action == "overview":
             customer.display_accounts()
         
-        # not yet developed features for customer object
-        elif action == "change_info":
-            pass
+        elif action == "change_address":
+            customer.change_address()
+
+        
+        
         
         
 
