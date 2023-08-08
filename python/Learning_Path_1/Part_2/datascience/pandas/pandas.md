@@ -1,3 +1,5 @@
+-> learn translating dataframes into csvs, xmls and using SQL on them as well.
+
 =========================================================================
 Overview Notes
 =========================================================================
@@ -108,6 +110,67 @@ These are some of the basics to get you started with Pandas. There's a lot more 
 
 
 
+=========================================================================
+Targeting / indexing dataframes
+=========================================================================
+Indexing and targeting specific elements in a Pandas DataFrame can be achieved through various methods. Here's an overview:
+
+### 1. Using Column Names:
+
+You can access a specific column by its name.
+
+```python
+import pandas as pd
+
+df = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
+column_a = df['A']
+```
+
+### 2. Using `.loc[]` for Label-Based Indexing:
+
+The `.loc[]` method is used to access a group of rows and columns by their labels or a boolean array.
+
+```python
+row_1 = df.loc[0]       # Accessing the first row
+cell_A1 = df.loc[0, 'A']  # Accessing the first row of column 'A'
+```
+
+### 3. Using `.iloc[]` for Positional Indexing:
+
+The `.iloc[]` method is used for indexing by integer location. You can use this to access rows and columns by their integer index.
+
+```python
+row_1 = df.iloc[0]       # Accessing the first row
+cell_A1 = df.iloc[0, 0]  # Accessing the first row of the first column
+```
+
+### 4. Using Boolean Masking:
+
+You can also use conditions to filter the DataFrame and access specific elements.
+
+```python
+mask = df['A'] > 1
+filtered_rows = df[mask]  # Accessing rows where the value in column 'A' is greater than 1
+```
+
+### 5. Slicing:
+
+Slicing allows you to access a range of rows or columns.
+
+```python
+first_two_rows = df[:2]  # Accessing the first two rows
+```
+
+### 6. Using `.at[]` and `.iat[]`:
+
+These methods provide fast access to a single element.
+
+```python
+cell_A1 = df.at[0, 'A']    # Accessing element by row label and column name
+cell_A1 = df.iat[0, 0]     # Accessing element by row and column index
+```
+
+These are some common ways to index and target specific elements, rows, or columns in a Pandas DataFrame. Depending on the situation and the nature of the index (whether it's an integer or a label), you may choose the method that best suits your needs.
 
 
 
