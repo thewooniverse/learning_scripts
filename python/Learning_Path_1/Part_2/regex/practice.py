@@ -29,13 +29,32 @@ down.com
 foobar.vc
 whatever.holdings
 simpleton.group
+
+2019-05-12
+1995-06-06
+06-07-2025
+09-31-1999
+12-31-2090
+10-12-1242
+
+wrong ones:
+75-18-2848
+12-58-3819
+
 """
+
+# date regex:
+mmddyyyy = r"(0[0-9]|1[0-2])[\s._-](3[0-1]|[0-2][0-9])[\s._-](\d\d\d\d)"
+result = re.findall(mmddyyyy, test_text)
+# print(result)
+
+yyyymmdd = r"(\d\d\d\d)[\s._-](0[0-9]|1[0-2])[\s._-](3[0-1]|[0-2][0-9])"
+result = re.findall(yyyymmdd, test_text)
+# print(result)
 
 # eth address regex:
 eth_address_pattern = r"0x[a-fA-F0-9]{40}"
 eth_lookbehind_pattern = r"(?<=0x)[a-fA-F-0-9]{40}" # this does work but matched result excludes 0x so its not useful. good practice tho.
-
-
 
 
 # email regex
@@ -57,6 +76,14 @@ uk_phone_pattern = r"(\+?44|0)([\d\s]{10,15})"
 
 # GPT version
 uk_phone_pattern = r"(\+44\s?|0)[1-9]\d{2}\s?\d{3}\s?\d{4}"
+
+
+
+
+
+
+
+
 """
 Certainly! Let's break down the regex pattern `uk_mobile_pattern = r"(\+44\s?|0)[1-9]\d{2}\s?\d{3}\s?\d{4}"`:
 
