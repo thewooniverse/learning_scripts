@@ -18,6 +18,8 @@ Certainly! Here are a few exercises to help you practice the basics of NumPy:
 2. Extract the first 3 rows and 3 columns as a new array.
 3. Reshape the array into a shape of (9, 4) without changing its data.
 
+-- completed above --
+
 ### Exercise 4: Statistical Functions
 1. Create a one-dimensional array of 100 random numbers.
 2. Compute and print the mean, median, standard deviation, and sum of the array.
@@ -42,3 +44,7 @@ Certainly! Here are a few exercises to help you practice the basics of NumPy:
 3. Print the solution.
 
 Feel free to ask for solutions or further explanations for any of these exercises!
+
+
+
+Complete -> and then get feedback for each question to GPT

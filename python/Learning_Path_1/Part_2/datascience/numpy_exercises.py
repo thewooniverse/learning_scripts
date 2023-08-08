@@ -7,10 +7,10 @@ b = np.array([
     [1, 3, 5]
     ])
 
-c = np.zeros((1,10))
-d = np.zeros((10,1))
-print(c)
-print(d)
+c = np.zeros((1,10)) # one row, 10 columns
+d = np.zeros((10,1)) # ten rows, 1 columns
+# print(c)
+# print(d)
 
 # Shape of the array (rows, columns)
 # print(b.shape)  # Output: (2, 3)
@@ -19,7 +19,6 @@ print(d)
 # print(b.ndim)  # Output: 2
 # print(c.ndim)  # Output: 2
 # print(d.ndim)  # Output: 2
-
 
 
 ###### exercises.md - part 1: #####
@@ -54,15 +53,35 @@ AB_matrix_difference = A - B
 AB_matrix_multiplied = A * B
 AB_matrix_divided = A / B
 
-print(AB_matrix_sum)
-print(AB_matrix_difference)
-print(AB_matrix_multiplied)
-print(AB_matrix_divided)
+# print(AB_matrix_sum)
+# print(AB_matrix_difference)
+# print(AB_matrix_multiplied)
+# print(AB_matrix_divided)
+
+
+
+### Exercise 3: Reshaping and Slicing
+# 1. Create a NumPy array of shape (6, 6) filled with random numbers.
+R = np.random.randint(1, 10, size=(6, 6))
+print(R)
+# 2. Extract the first 3 rows and 3 columns as a new array.
+RS = R[0:3, 0:3]
+print(RS)
+
+# 3. Reshape the array into a shape of (9, 4) without changing its data.
+RR = R.reshape(9,4)
+print(RR)
 
 
 
 
 
+
+### Exercise 4: Statistical Functions
+# 1. Create a one-dimensional array of 100 random numbers.
+r100 = np.random.randint(1, 10, size=(1, 100))
+
+# 2. Compute and print the mean, median, standard deviation, mode, and sum of the array.
 
 
 
