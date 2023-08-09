@@ -446,3 +446,163 @@ These examples showcase basic element-wise arithmetic operations and some matrix
 
 
 
+
+
+
+
+
+=========================================================================
+Unary arithmetic operations
+=========================================================================
+Unary operations are operations that act on a single input (array or element). Here are some common unary operations available in NumPy:
+
+### 1. Arithmetic Operations
+- `np.negative(x)`: Numerical negative, element-wise.
+- `np.positive(x)`: Numerical positive, element-wise.
+
+### 2. Exponential and Logarithmic Functions
+- `np.exp(x)`: Calculate the exponential of all elements in the input array.
+- `np.log(x)`: Natural logarithm, element-wise.
+- `np.sqrt(x)`: Return the non-negative square root of an array, element-wise.
+
+### 3. Trigonometric Functions
+- `np.sin(x)`: Trigonometric sine, element-wise.
+- `np.cos(x)`: Cosine element-wise.
+- `np.tan(x)`: Compute tangent element-wise.
+
+### 4. Hyperbolic Functions
+- `np.sinh(x)`: Hyperbolic sine, element-wise.
+- `np.cosh(x)`: Hyperbolic cosine, element-wise.
+- `np.tanh(x)`: Compute hyperbolic tangent element-wise.
+
+### 5. Rounding
+- `np.round(x)`: Round an array to the given number of decimals.
+- `np.ceil(x)`: Return the ceiling of the input, element-wise.
+- `np.floor(x)`: Return the floor of the input, element-wise.
+
+### 6. Sum, Product, and Differences
+- `np.sum(x)`: Sum of all the elements in the array.
+- `np.prod(x)`: Return the product of all the elements in the array.
+- `np.diff(x)`: Calculate the n-th discrete difference along the given axis.
+
+### 7. Statistics
+- `np.mean(x)`: Compute the arithmetic mean along the specified axis.
+- `np.std(x)`: Compute the standard deviation along the specified axis.
+- `np.var(x)`: Compute the variance along the specified axis.
+- `np.median(x)`: Compute the median along the specified axis.
+
+### 8. Other Mathematical Functions
+- `np.abs(x)`: Calculate the absolute value element-wise.
+- `np.sign(x)`: Returns an element-wise indication of the sign of a number.
+
+These are some of the unary operations that you can use with NumPy arrays. Note that some of these can be used both as functions and as methods on NumPy arrays, depending on the needs of your code.
+
+
+
+
+
+
+
+
+=========================================================================
+Boolean Indexing
+=========================================================================
+Boolean indexing in NumPy refers to the practice of using an array of Boolean values to index or "filter" another array. This can be an extremely powerful tool for selecting or modifying parts of an array based on conditions.
+
+Here's a basic example to illustrate how Boolean indexing works:
+
+1. **Create a NumPy array**:
+
+   ```python
+   import numpy as np
+   a = np.array([10, 20, 30, 40, 50])
+   ```
+
+2. **Create a Boolean condition**:
+
+   You can create a Boolean condition using any of the comparison operators like `<`, `>`, `==`, etc. This will return a Boolean array with the same shape as the original array.
+
+   ```python
+   condition = a > 30
+   print(condition)  # Output: [False False False  True  True]
+   ```
+
+3. **Use the Boolean array to index the original array**:
+
+   You can use the Boolean array `condition` to index the original array `a`. This will return only the elements where the corresponding value in the Boolean array is `True`.
+
+   ```python
+   result = a[condition]
+   print(result)  # Output: [40 50]
+   ```
+
+You can combine these steps into one line:
+
+```python
+result = a[a > 30]
+```
+
+Boolean indexing is often used for filtering data, replacing values under certain conditions, and other data manipulation tasks. It's a concise way to perform these operations without needing to use loops.
+
+### Example: Replacing Values
+
+You can also use Boolean indexing to modify parts of an array based on conditions. Here's an example that replaces all values greater than 30 with the value 999:
+
+```python
+a[a > 30] = 999
+print(a)  # Output: [ 10  20  30 999 999]
+```
+
+Boolean indexing is a fundamental concept in NumPy and is widely used in data preprocessing, cleaning, and transformation tasks.
+
+
+
+
+=========================================================================
+Diagonal and Transposing
+=========================================================================
+Certainly! In NumPy, you can work with diagonals and transposes quite easily. Here's how you can do both:
+
+### Getting the Diagonal of an Array
+
+To get the diagonal of an array, you can use the `np.diag` method.
+
+```python
+import numpy as np
+
+a = np.array([[1, 2, 3],
+              [4, 5, 6],
+              [7, 8, 9]])
+
+diagonal = np.diag(a)
+print(diagonal)  # Output: [1 5 9]
+```
+
+### Transposing an Array
+
+To transpose an array (swap its rows with columns), you can use the `np.transpose` method or simply the `.T` attribute of the array.
+
+```python
+transpose_a = np.transpose(a)
+# or
+transpose_a = a.T
+
+print(transpose_a)
+# Output:
+# [[1 4 7]
+#  [2 5 8]
+#  [3 6 9]]
+```
+
+### Getting the Diagonal of the Transposed Array
+
+You can combine these two to get the diagonal of the transposed array:
+
+```python
+diagonal_transpose_a = np.diag(a.T)
+print(diagonal_transpose_a)  # Output: [1 5 9]
+```
+
+The diagonal of the transposed array is the same as the diagonal of the original array since transposing does not change the diagonal elements.
+
+These methods make it easy to work with basic linear algebra concepts in NumPy.

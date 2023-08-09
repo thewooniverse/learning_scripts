@@ -29,7 +29,7 @@ array_a = np.zeros((1, 10))
 # 2. Change the 5th value to 10.
 array_a[0,5] = 10
 # 3. Print array
-print(array_a)
+# print(array_a)
 
 
 
@@ -63,14 +63,15 @@ AB_matrix_divided = A / B
 ### Exercise 3: Reshaping and Slicing
 # 1. Create a NumPy array of shape (6, 6) filled with random numbers.
 R = np.random.randint(1, 10, size=(6, 6))
-print(R)
+# print(R)
+
 # 2. Extract the first 3 rows and 3 columns as a new array.
 RS = R[0:3, 0:3]
-print(RS)
+# print(RS)
 
 # 3. Reshape the array into a shape of (9, 4) without changing its data.
 RR = R.reshape(9,4)
-print(RR)
+# print(RR)
 
 
 
@@ -82,7 +83,67 @@ print(RR)
 r100 = np.random.randint(1, 10, size=(1, 100))
 
 # 2. Compute and print the mean, median, standard deviation, mode, and sum of the array.
+r100_mean = np.mean(r100)
+r100_std_dev = np.std(r100)
+r100_median = np.median(r100)
+r100_sum = np.sum(r100)
+
+# print(r100_mean, r100_std_dev, r100_median, r100_sum)
+
+
+
+### Exercise 5: Boolean Indexing
+# 1. Create a 5x5 matrix with random integers between 1 and 100.
+r_5x5 = np.random.randint(1, 100, size=(5, 5))
+# print(r_5x5)
+
+# 2. Use boolean indexing to replace all the values greater than 50 with 50.
+condition = r_5x5 > 50
+r_5x5[r_5x5 > 50] = 50
+# print(r_5x5)
+
+
+### Exercise 6: Working with Diagonals and Transpose
+# 1. Create a 4x4 matrix.
+r_4x4 = np.random.randint(1, 10, size=(4, 4))
+# print(r_4x4)
+
+# 2. Print the main diagonal of the matrix.
+diagonal = np.diag(r_4x4)
+# print(diagonal)
+# or, print(np.diag(r_4x4))
+
+# 3. Print the transpose of the matrix.
+transposed_r_4x4 = r_4x4.T
+# print(transposed_r_4x4)
+
+
+
+### Exercise 7: Broadcasting
+# 1. Create a 3x3 array filled with random numbers.
+r_3x3 = np.random.randint(1, 10, size=(3,3))
+print(r_3x3)
+
+# 2. Add the one-dimensional array `[1, 2, 3]` to each row of the 3x3 array.
+array_123 = np.array([1, 2, 3])
+array_sum = r_3x3 + array_123
+
+# 3. Print the result.
+print(array_sum)
 
 
 
 
+
+### Exercise 8: Solving Linear Equations
+# 1. Create a 3x3 matrix `A` and a one-dimensional array `b` of length 3.
+A = np.array(
+    [1,2,3],
+    [4,5,6],
+    [7,8,9]
+    )
+b = np.array([3,3,3])
+
+# 2. Use NumPy's functions to solve the linear equation system `Ax = b`.
+
+# 3. Print the solution.

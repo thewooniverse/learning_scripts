@@ -18,8 +18,6 @@ Certainly! Here are a few exercises to help you practice the basics of NumPy:
 2. Extract the first 3 rows and 3 columns as a new array.
 3. Reshape the array into a shape of (9, 4) without changing its data.
 
--- completed above --
-
 ### Exercise 4: Statistical Functions
 1. Create a one-dimensional array of 100 random numbers.
 2. Compute and print the mean, median, standard deviation, and sum of the array.
@@ -38,13 +36,15 @@ Certainly! Here are a few exercises to help you practice the basics of NumPy:
 2. Add the one-dimensional array `[1, 2, 3]` to each row of the 3x3 array.
 3. Print the result.
 
+-- completed above --
+## for this last bit, I need to better understand mathematics.
+
+
 ### Exercise 8: Solving Linear Equations
 1. Create a 3x3 matrix `A` and a one-dimensional array `b` of length 3.
 2. Use NumPy's functions to solve the linear equation system `Ax = b`.
 3. Print the solution.
 
 Feel free to ask for solutions or further explanations for any of these exercises!
-
-
 
 Complete -> and then get feedback for each question to GPT
