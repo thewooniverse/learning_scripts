@@ -117,3 +117,23 @@ This way, you can handle `datetime` objects when working with JSON data.
 
 
 
+
+
+=========================================================================
+Calendar module
+=========================================================================
+You can use the `calendar` module along with the `datetime` module in Python to determine how many days are in each month for a given year. Here's an example that shows how you can do this:
+
+```python
+import calendar
+
+year = 2022  # Replace with the desired year
+
+for month in range(1, 13):  # Iterate through all months (1 to 12)
+    _, num_days = calendar.monthrange(year, month)  # Returns the number of days in the month
+    print(f"Month {month}: {num_days} days")
+```
+
+The `calendar.monthrange(year, month)` function returns a tuple where the first value is the code of the weekday for the first day of the month (0 for Monday, 1 for Tuesday, etc.), and the second value is the number of days in that month.
+
+Keep in mind that the number of days in February depends on whether the year is a leap year. The `calendar.monthrange` function takes this into account, so you don't have to handle leap years manually. If you want to check if a year is a leap year yourself, you can use the `calendar.isleap(year)` function.

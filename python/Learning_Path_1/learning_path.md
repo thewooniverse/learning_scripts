@@ -1,4 +1,14 @@
-Learning Path for GPT
+=========================================================================
+Learning Path from GPT 4
+=========================================================================
+
+Always refer back to, and add to the syllabus from this as needed:
+https://roadmap.sh/python
+
+You can always double click or go deeper (ask for intermediate, advanced topics) on a certain bullet point topic, and ask for exercises on each level.
+
+
+
 
 **Part 1: Python Fundamentals**
 
@@ -36,17 +46,28 @@ Learning Path for GPT
 - **Project:**
   - Analyze a dataset of your choice (e.g., from Kaggle or the UCI Machine Learning Repository). Clean the data, explore it with different visualizations, and present your findings in a clear, organized way.
 
+
+After part 3 + project completed;
+As I learn part 4, I will start developing my own telegram bots to do various things. Separate repository for this.
+
+
+
+
+
 **Part 4: Advanced Python**
 
 - **Topics:**
   - Multithreading and multiprocessing
   - Network programming (sockets, HTTP requests)
   - Database interaction with SQLite or PostgreSQL
-  - Web scraping with Beautiful Soup
+  - Web scraping with Beautiful Soup and Selenium
   - Testing and test-driven development
 
 - **Project:**
   - Develop a multi-threaded web scraper that retrieves and stores information from a website. Respect the site's terms of service and the legality of web scraping in your jurisdiction.
+
+
+
 
 **Part 5: Python for Web Development**
 

@@ -8,4 +8,4 @@ with open(path, 'rb') as f:
     accounts.append("Another Object")
     print(accounts)
 
-# prints [] so that works and can be manipulated as a list object.
+# prints [] so that works and can be manipulated as a list object

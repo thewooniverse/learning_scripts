@@ -178,6 +178,49 @@ These are some common ways to index and target specific elements, rows, or colum
 
 
 
+=========================================================================
+df.dropna()
+=========================================================================
+
+The `dropna` method in Pandas doesn't actually replace any values; instead, it removes missing values from a DataFrame. Depending on how it's used, it can remove any row or column that contains at least one missing value (NaN or None).
+
+Here's a quick overview of how `dropna` can be used:
+
+- `dropna()`: Removes any row that contains at least one missing value.
+- `dropna(axis=1)`: Removes any column that contains at least one missing value.
+- `dropna(how='all')`: Removes rows where all the elements are missing.
+- `dropna(subset=['column_name'])`: Removes rows where the specified column(s) have missing values.
+
+The DataFrame returned by `dropna` is a new DataFrame with the missing values removed, and it doesn't modify the original DataFrame unless the `inplace` parameter is set to True.
+
+Here's an example:
+
+```python
+import pandas as pd
+import numpy as np
+
+# Creating a DataFrame with some NaN values
+df = pd.DataFrame({
+    'A': [1, 2, np.nan],
+    'B': [5, np.nan, 1]
+})
+
+# Using dropna() to remove rows with any NaN values
+cleaned_df = df.dropna()
+
+print(cleaned_df)
+```
+
+The output would be:
+
+```
+     A    B
+0  1.0  5.0
+```
+
+Row 1 and 2 from the original DataFrame were removed because they contained at least one NaN value.
+
+
 
 
 

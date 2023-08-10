@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 # basics practice
 a = np.array([0, 1, 2])
@@ -45,6 +47,10 @@ B = np.array([
     [3, 4, 10]
 ])
 
+print("The value is:")
+# print(B[1,1]) #indexing, (row, column)
+
+
 ### Exercise 2: Basic Array Operations
 # 2. Perform and print the following operations: `A + B`, `A - B`, `A * B` (element-wise multiplication), 
 # and the matrix multiplication of `A` and `B`.
@@ -66,15 +72,12 @@ R = np.random.randint(1, 10, size=(6, 6))
 # print(R)
 
 # 2. Extract the first 3 rows and 3 columns as a new array.
-RS = R[0:3, 0:3]
+RS = R[0:3, 0:3] #0, 1, 2 columns
 # print(RS)
 
 # 3. Reshape the array into a shape of (9, 4) without changing its data.
 RR = R.reshape(9,4)
 # print(RR)
-
-
-
 
 
 
@@ -99,6 +102,7 @@ r_5x5 = np.random.randint(1, 100, size=(5, 5))
 
 # 2. Use boolean indexing to replace all the values greater than 50 with 50.
 condition = r_5x5 > 50
+print(condition)
 r_5x5[r_5x5 > 50] = 50
 # print(r_5x5)
 
@@ -137,13 +141,21 @@ print(array_sum)
 
 ### Exercise 8: Solving Linear Equations
 # 1. Create a 3x3 matrix `A` and a one-dimensional array `b` of length 3.
-A = np.array(
-    [1,2,3],
-    [4,5,6],
-    [7,8,9]
-    )
-b = np.array([3,3,3])
+A = np.eye(3)
+print(A)
+print(np.eye(5))
+b = np.array([1,2,3])
+
 
 # 2. Use NumPy's functions to solve the linear equation system `Ax = b`.
+x = np.linalg.solve(A, b)
 
 # 3. Print the solution.
+# print(x)
+
+
+# plt.plot(b)
+# plt.title('My NumPy Series')
+# plt.xlabel('Index')
+# plt.ylabel('Value')
+# plt.show()

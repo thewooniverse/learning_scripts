@@ -2,6 +2,10 @@ Great! Let's delve into regular expressions.
 https://regex101.com/
 
 
+=========================================================================
+Basics
+=========================================================================
+
 Regular expressions (regex) are a powerful tool used to match and manipulate strings. In Python, the built-in `re` module is used to work with regular expressions. They can be extremely helpful in extracting information from text such as log files or writing servers, parsing and restructuring text data, or even in machine learning tasks like text preprocessing and cleaning.
 
 Here are the basics of using the `re` module and regular expressions in Python:
