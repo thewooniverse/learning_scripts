@@ -1,6 +1,7 @@
 import numpy as np
 import datetime, calendar
-
+import pandas as pd
+import matplotlib.pyplot as plt
 
 # create / import the dataset
 year = 2021
@@ -64,21 +65,33 @@ for month, (num_days, total_days) in month_days.items():
     dataset: {month_subset}
 ---""")
 
+####
+monthly_temps = []
+for month, mean_temp in monthly_mean.items():
+    monthly_temps.append(mean_temp)
+monthly_temps = np.array(monthly_temps)
+
+
+plt.figure(figsize=(10,6))
+# plt.plot(temperatures, marker='o', linestyle='-', color='b')  # Plotting the sales data
+plt.plot(monthly_temps, marker='o', linestyle='-', color='r')
+plt.title("Temperatures over 2021")
+plt.xlabel("Month")
+plt.ylabel("Temperature")
+plt.grid(True)
+plt.show()
+
+
+
+
+
 
 ## dividing the month using pandas dataframe
+# date_range = pd.date_range(start="1/1/2021", end='12/31/2021', freq='D')
+# df = pd.DataFrame(date_range, columns=['date'])
+# df['temperature'] = temperatures
+# df.set_index('date', inplace=True)
+# print(df)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# monthly_temperatures = df.resample('M').mean()
+# print(monthly_temperatures)
