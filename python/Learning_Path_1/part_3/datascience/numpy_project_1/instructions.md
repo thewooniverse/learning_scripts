@@ -34,6 +34,9 @@ Certainly! Here's a simpler practice project involving NumPy that should help yo
    - Plot the monthly averages to observe seasonal patterns.
    (You might need to use Matplotlib or another plotting library for this step)
 
+
+
+
 5. **Temperature Alert System (Optional Challenge):**
    - Write a function that takes a temperature threshold as an input and returns the days when the temperature was above this threshold. This can simulate a simple alert system for extreme weather conditions.
 
