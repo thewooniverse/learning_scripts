@@ -3,7 +3,9 @@ import re
 #URL Extractor
 url_text = "Visit my blog at http://myblog.com or check out the website https://coolwebsite.net!"
 url_pattern = re.compile(r"(http[s]?://|www.)([\w_-]+).([\w.]{2,14})")
-print(re.findall(url_pattern, url_text))
+result = re.finditer(url_pattern, url_text)
+for group in result:
+    print(group.group())
 
 #DATE extractor
 date_text = "My birthday is on 05/08/1990 and my sister's birthday is on 15-07-1985."
