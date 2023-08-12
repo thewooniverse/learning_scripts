@@ -4,6 +4,9 @@
 
 # import modules
 from getpass import getpass
+import pandas as pd
+import numpy as np
+from matplotlib import pyplot as plt
 import os
 import pickle
 import random
@@ -384,7 +387,23 @@ class Account:
         self.account_id = account_id
         self.bank_path = bank_path
         self.path = f"{bank_path}{os.path.sep}accounts{os.path.sep}{account_id}.pkl"
+        self.csv_path = f"{bank_path}{os.path.sep}accounts{os.path.sep}{account_id}.csv"
+
+        # see if csv file exists
+        # if it does, load it into a pandas dataframe as part of its attributes
+        if not os.path.exists(self.csv_path):
+            columns = ['txid', 'time', 'type', 'is_transaction', 'amount', 'balance_before', 'balance_after']
+            df = pd.DataFrame(columns=columns)
+            df.to_csv(self.csv_path, index=False)
+
+            # add the first row of transaction
+        
+        # at the end of it, load the new dataframe
+        self.txlog_df = pd.read_csv(self.csv_path)
+        
     
+
+
     def reconcile(self):
         """
         account.reconcile()
@@ -394,6 +413,20 @@ class Account:
         """
         with open(self.path, 'wb') as f:
             pickle.dump(self, f)
+        
+    
+    def log_transaction(self, tx_data):
+        """
+        tx_data takes in an ordered list of transaction metadata.
+        it constructs a newrow as a pd.Series object and appends it into the dataframe
+        """
+        # randomly generate a txid with a combination of account ID + RNG
+        pass
+
+        # construct the row with the transaction data passed
+
+        # reconcile the csv there and then, basically without need of reconciling anything further in self.reconcile()
+
 
     def deposit(self, amount):
         self.balance += amount
@@ -411,7 +444,9 @@ class Account:
             return amount
         self.reconcile()
         
-    
+    def transfer(self, target_bank, target_aid):
+        pass
+
     def check_balance(self):
         # print(f'Current balance: ${self.balance}')
         return(self.balance)
