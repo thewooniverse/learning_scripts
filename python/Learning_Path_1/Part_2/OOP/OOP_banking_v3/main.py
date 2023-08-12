@@ -4,6 +4,7 @@
 
 # import modules
 from getpass import getpass
+import datetime
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
@@ -11,6 +12,13 @@ import os
 import pickle
 import random
 
+
+
+"""
+TODO:
+Basically, need to finish off transaction logging in each transaction account level. (after a successful transaction)
+
+"""
 
 
 
@@ -396,7 +404,7 @@ class Account:
             df = pd.DataFrame(columns=columns)
             df.to_csv(self.csv_path, index=False)
 
-            # add the first row of transaction
+            # add the first row of transaction initialize -> balance of 0, istransaction no?
         
         # at the end of it, load the new dataframe
         self.txlog_df = pd.read_csv(self.csv_path)
@@ -415,22 +423,37 @@ class Account:
             pickle.dump(self, f)
         
     
-    def log_transaction(self, tx_data):
+    def log_transaction(self, event_type, is_transaction, amount, balance_before, balance_after):
         """
         tx_data takes in an ordered list of transaction metadata.
+        time, txid are generated on thsi function.
+        passed / received in is type, istx, amt, balance before, balance after
         it constructs a newrow as a pd.Series object and appends it into the dataframe
         """
-        # randomly generate a txid with a combination of account ID + RNG
-        pass
+        # get the current timestamp and format it for later use
+        now = datetime.datetime.now()
+        formatted_date = now.strftime("%d-%m-%Y")
+        # formatted_datetime = now.strftime('%d-%m-%Y %H:%M:%S')
+        
+        # randomly generate a txid with a combination of account AID + DATE + RNG
+        random_number = str(random.randint(1000,9999))
+        txid = f"{self.account_id}{formatted_date}{random_number}"
 
-        # construct the row with the transaction data passed
+        # construct the row with the transaction data passed and append it to the dataframe
+        new_entry = [txid, now, event_type, is_transaction, amount, balance_before, balance_after]
+        self.txlog_df.loc[len(self.txlog_df)] = new_entry
+        
+        print(self.txlog_df)
 
-        # reconcile the csv there and then, basically without need of reconciling anything further in self.reconcile()
+        # save it to the csv to reconcile
+        self.txlog_df.to_csv(self.csv_path, index=False)
 
 
     def deposit(self, amount):
+        balance_before = self.balance
         self.balance += amount
         print(f'deposited {amount}, current balance {self.balance}')
+        self.log_transaction("deposit", True, amount, balance_before, self.balance)
         self.reconcile()
         return amount
     
@@ -439,10 +462,13 @@ class Account:
         if amount > self.balance:
             print("Amount exceeds current balance")
         else:
+            balance_before = self.balance
             self.balance -= amount
+            self.log_transaction("withdraw", True, amount, balance_before, self.balance)
             print(f'withdrew {amount}, current balance {self.balance}')
+            self.reconcile()
+
             return amount
-        self.reconcile()
         
     def transfer(self, target_bank, target_aid):
         pass

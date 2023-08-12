@@ -38,7 +38,11 @@ exists on the customer level
 
 3. Twilio integration for enabling 2FA
 
-4. Debugs / error logs / unit tests and refactoring for maintenance
+
+4. Multi bank functionality
+
+
+5. Debugs / error logs / unit tests and refactoring for maintenance
 - Unit tests
 - Docstrings
 - pdb / debugging
