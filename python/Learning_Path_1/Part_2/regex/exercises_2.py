@@ -14,11 +14,18 @@ print(re.findall(date_pattern, date_text))
 
 
 #CURRENCY extractor
-currency_text = "The laptop costs $1,299.99 while the phone is just $799."
-currency_pattern = re.compile(r'([\$\£])([1-9][0-9]{0,2})(\,[0-9]{3})*(\.[0-9]{0,})?')
+currency_text = "The laptop costs $1,299.99 while the phone is just $799. However, this HOOVERE only costs £6,942.00 and this mop only £30404"
+currency_pattern = re.compile(r'([\$\£](?:[1-9][0-9]{0,2}(?:,?[0-9]{3})*(?:\.[0-9]{2})?))')
+# NOTE:
+# ChatGPT repeatedly got this solution incorrect; which is one of the first few times where it was incorrect in such an isolated issue.
+# This teaches an important lesson about regex patterns that it is not possible to capture "everything" and the solution is to have multiple specific patterns 
+# That you are looking for instead of trying to capture everything in a single regex pattern
+
+
 matches = re.findall(currency_pattern, currency_text)
 for match in matches:
     print(''.join(match))
+
 
 #USERNAME extractor from email
 username_text = "The emails are: john_doe@gmail.com, alice.bob@mywebsite.org"

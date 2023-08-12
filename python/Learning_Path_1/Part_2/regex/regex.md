@@ -585,3 +585,7 @@ The non-greedy pattern `.*?` tries to match as little as possible, so it stops a
 - Regular expressions prioritize patterns from left to right.
 - Greedy quantifiers try to match as much as possible, whereas non-greedy quantifiers (with a trailing `?`) try to match as little as possible.
 - Choosing between greedy and non-greedy depends on what you want to accomplish with your pattern. Non-greedy matching is often useful when you're working with nested structures, like HTML or XML tags.
+
+
+
+
