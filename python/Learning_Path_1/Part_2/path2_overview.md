@@ -46,9 +46,21 @@ Great! I will provide resources and examples for each of the topics in Part 2: I
 
    Python has a rich ecosystem of libraries that you can use in your projects. You can install a library using `pip`, and then `import` it in your script. For example, the `requests` library is used to make HTTP requests.
 
+
+
+
+
+
 **5. Basic Regular Expressions for Pattern Matching**
 
    Regular expressions (regex) are sequences of characters that form a search pattern. Python's `re` module provides functions to work with regex. You can use regex to check if a string matches a pattern, find all substrings that match a pattern, split a string at each match, and more.
+
+
+
+
+
+
+
 
 **Project: Command-line Address Book**
 

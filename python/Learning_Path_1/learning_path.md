@@ -35,6 +35,12 @@ You can always double click or go deeper (ask for intermediate, advanced topics)
 - **Project:**
   - Build a simple command-line address book application. Users should be able to add, edit, delete, and search for contacts, with the contact information stored in a file that persists between program runs.
 
+
+
+
+
+
+
 **Part 3: Python for Data Science**
 
 - **Topics:**

@@ -2,6 +2,13 @@
 **MINDSET**
 ===========
 
+**No Rush**
+You have your clear north star goal of becoming a really good engineer.
+That is not going anywhere, daily, you put in the time to learn and get better and learn better ways to do things.
+So there is no rush, your goals are not going anywhere.
+
+
+
 **Assume stupidity**
 I am not exceptionally talented or gifted with mathematics or algorithms, nor do I have a really strong memory.
 I will most likely need to re-learn things a few times until they stick, and often forget things that I have just learnt.
@@ -18,6 +25,7 @@ There is a solution to the problem out there, I just need to find it.
 I just need to learn how to ask the question properly, or to look in the right places.
 I can solve any problem.
 
+The computer is never wrong.
 
 
 
