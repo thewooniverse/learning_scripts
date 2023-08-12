@@ -126,7 +126,6 @@ class Bank:
                 return None
 
 
-
     def close_account(self, customer):
         # check length of number of accounts
         if len(customer.accounts) < 2:
@@ -192,6 +191,49 @@ class Bank:
         os.remove(f"{self.customers_path}{os.path.sep}{customer.cid}.pkl")
         return True
 
+    def forgot_password(self):
+        # encryption will disable this, likely, the PIN number continues to remain accessible for the customer, however, the important customer details
+        # and transaction history becomes unavailable through encryptio .
+        customer_id = input("Please enter your Customer ID: ")
+
+        # check that the customer_id exists:
+        if not os.path.exists(f"{self.customers_path}{os.path.sep}{customer_id}.pkl"):
+            print(f"Invalid Credentials: Customer does not exist at {self.customers_path}{os.path.sep}{customer_id}.pkl")
+            return None # parent method will call this method again
+        
+        # if it exists, pass the object to customer
+        with open(f"{self.customers_path}{os.path.sep}{customer_id}.pkl", 'rb') as f:
+            customer = pickle.load(f)
+
+            # randomly generate a OTP code
+            otp_code = str(random.randint(100000, 999999))
+            # send / display the OTP code (eventually, this will be sent to an email address and to a phone number using Twilio API)
+            print(otp_code)
+
+            # receive input from user
+            while True:
+                entered_otp = input("Please enter the 6 digit OTP sent to your email and phone number saved:")
+
+                # if the OTP is correct, then ask to change the pin, and change the pin number + reconcile
+                if entered_otp == otp_code:
+                    # take in the new PIN from user, 4 digits only.
+                    new_pin = input("Please enter your new 4 digit PIN number")
+                    while not new_pin.isdigit() and len(new_pin) == 4:
+                        new_pin = input("Please enter your new 4 digit PIN number")
+
+                    # when it is done, change the PIN number for the customer, reconcile the customer object and then return the function to exit
+                    customer.pin = new_pin
+                    customer.reconcile()
+                    return
+
+                # display the incorrect options and handle them accordingly
+                option_chosen = input("To resend the OTP, enter \"resend\" or to cancel out, enter \"x\"")
+                # if they want to exit, press x to cancel and return
+                if option_chosen.lower() == "x":
+                    return None
+                if option_chosen.lower() == "resend":
+                    otp_code_new = str(random.randint(100000, 999999))
+                    otp_code = otp_code_new
         
 
 
@@ -442,7 +484,7 @@ class UI():
                 self.bank.create_customer()
             
             elif response == "forgot_password":
-                print("You forgot da password!")
+                self.bank.forgot_password()
     
 
 

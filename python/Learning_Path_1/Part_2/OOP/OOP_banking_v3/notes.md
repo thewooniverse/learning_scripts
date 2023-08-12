@@ -14,11 +14,41 @@ To do's:
 --- completed above---
 
 
-6. Datetime of deposit logs / transaction logs into bank's database
-7. Forgot password feature + change PIN (pw) feature
-8. Encryption
---------
+7. Forgot password feature + change PIN (pw) feature -> it would be cool to eventually authenticate this somehow;
+-> asks user if they forgot password
+-> A code is randomly generated and sent to user (currently it is printed, later it will be sent to an email or phone number using Twilio)
+-> If the user inputs the number correctly, they are then able to change their PIN.
 
+
+8. Encryption
+
+
+
+
+
+6. Datetime of deposit logs / transaction logs into bank's database
+--> create a new dataframe
+---> transaction logs? or tables
+dataframe where...
+exists on the customer level
+- index is the datetime
+- account that is deposited / withdrawn
+- amount that is deposited / withdrawn
+- amount that the account has before + after the deposit
+- logs all accounts for a given customer
+
+
+6.5. Visualization of accounts and customer;
+- total bar line graph of all account balances over time;
+
+
+
+
+9. debugging / error logging
+
+Each of these last elements introduce a new module to be used: cryptography, datetime and pandas, matplotlib
+
+--------
 
 LEARN MATPLOT / Pandas related features
 7. Graph plot of balances in and out / balances over time from transaction logs both on the user level, and on the bank level.
