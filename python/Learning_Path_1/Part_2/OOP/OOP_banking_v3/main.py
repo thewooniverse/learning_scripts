@@ -267,7 +267,7 @@ class Customer:
         # key attributes
         self.name = name
         self.address = address
-        self.accounts = [] # accounts is a list that stores account_IDs associated with this customer, at init it is empty
+        self.accounts = [] # accounts is a list of strings that stores account_IDs associated with this customer, at init it is empty
         self.cid = cid
         # PIN should be an encrypted result so that the raw object saved does not contain the actual PIN but an encrypted version
         self.pin = pin
@@ -369,12 +369,42 @@ class Customer:
         self.reconcile()
 
 
+    def get_transactions_history(self, entered_account_id=None):
+        # if an account ID is passed, then print the account ID, otherwise
+        if entered_account_id:
+            if entered_account_id not in self.accounts:
+                return ("This account does not exist")
+            csv_path = f'{self.accounts_path}{os.path.sep}{entered_account_id}.csv'
+            df = pd.read_csv(csv_path)
+            print(df)
+            return df
+        
+
+        # otherwise loop through every account held by accounts and add / concatenate til the end of the loop and 
+        columns = ['txid', 'time', 'type', 'is_transaction', 'amount', 'balance_before', 'balance_after']
+        full_df = pd.DataFrame(columns=columns)
+        for account_id in self.accounts:
+            csv_path = f'{self.accounts_path}{os.path.sep}{account_id}.csv'
+            df = pd.read_csv(csv_path)
+            full_df = pd.concat([full_df, df], ignore_index=True)
+
+        # display / return the final result
+        sorted_df = full_df.sort_values(by='time')
+        print(sorted_df)
+
+
+
+
+
+
+
     def transfer(self, source_account_id, destination_account_id, amount):
         # it SHOULD technically define multi bank features.
         # withdraw from source_id
         # self.withdraw_account(source_account_id, amount)
         # deposit to destination_id
         pass
+
     
 
         
@@ -433,7 +463,6 @@ class Account:
         # get the current timestamp and format it for later use
         now = datetime.datetime.now()
         formatted_date = now.strftime("%d-%m-%Y")
-        # formatted_datetime = now.strftime('%d-%m-%Y %H:%M:%S')
         
         # randomly generate a txid with a combination of account AID + DATE + RNG
         random_number = str(random.randint(1000,9999))
@@ -442,8 +471,6 @@ class Account:
         # construct the row with the transaction data passed and append it to the dataframe
         new_entry = [txid, now, event_type, is_transaction, amount, balance_before, balance_after]
         self.txlog_df.loc[len(self.txlog_df)] = new_entry
-        
-        print(self.txlog_df)
 
         # save it to the csv to reconcile
         self.txlog_df.to_csv(self.csv_path, index=False)
@@ -590,8 +617,10 @@ class UI():
             "4": "overview",
             "5": "open_new_acc",
             "6": "close_acc",
-            "7": "close_customer"
-            # "7": "transfer",
+            "7": "close_customer",
+            "8": "get_transactions"
+
+            # "9": "transfer",
 
         ""}
         input_str = f"""Please select from the following: 
@@ -603,6 +632,7 @@ class UI():
         5. Open New Account
         6. Close Account
         7. Close All Acounts and Delete Data
+        8. Get transactions
         """
 
         user_input = input(input_str)
@@ -680,6 +710,9 @@ class UI():
         
         elif action == "change_address":
             customer.change_address()
+        
+        elif action == "get_transactions":            
+            customer.get_transactions_history()
 
         
         

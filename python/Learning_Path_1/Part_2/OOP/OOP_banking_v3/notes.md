@@ -1,3 +1,12 @@
+OVERALL LESSONS:
+Its better to make each class do thigns simply.
+In my case, it is better to allow for the UI class to handle all the UI / inputting functions, and keep things simple on the bank level.
+
+
+
+
+
+
 
 To do's:
 
@@ -22,16 +31,16 @@ To do's:
 1. Txn history
 --> create a new dataframe
 ---> transaction logs? or tables
-dataframe where...
-exists on the customer level
-- index is the datetime
-- account that is deposited / withdrawn
-- amount that is deposited / withdrawn
-- amount that the account has before + after the deposit
-- logs all accounts for a given customer
+-------------
+
+customer level -> overview of all accounts and all accounts transaction history, for eacha ccount held by customer bring in the dataframe and combine it; loop thru.
+
 
 1.5 Visualization of accounts and customer;
 - total bar line graph of all account balances over time;
+visualization on the account level and on the customer level (same stuff being done on different levels)
+- spend by month / spend by day, inflow outflow by the day
+- balance over time
 
 
 2. Encryption of TX history / csvs
@@ -39,14 +48,14 @@ exists on the customer level
 3. Twilio integration for enabling 2FA
 
 
-4. Multi bank functionality
-
+4. Multi bank .transfer() functionality
 
 5. Debugs / error logs / unit tests and refactoring for maintenance
 - Unit tests
 - Docstrings
 - pdb / debugging
 
+6. pay() functionality
 
 
 
