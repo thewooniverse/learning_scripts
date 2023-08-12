@@ -11,22 +11,15 @@ To do's:
 4. Changing details of customers
 5. Getpass / password access and controlled access
 
---- completed above---
-
-
 7. Forgot password feature + change PIN (pw) feature -> it would be cool to eventually authenticate this somehow;
 -> asks user if they forgot password
 -> A code is randomly generated and sent to user (currently it is printed, later it will be sent to an email or phone number using Twilio)
 -> If the user inputs the number correctly, they are then able to change their PIN.
 
-
-8. Encryption
-
+--- completed above---
 
 
-
-
-6. Datetime of deposit logs / transaction logs into bank's database
+1. Txn history
 --> create a new dataframe
 ---> transaction logs? or tables
 dataframe where...
@@ -37,27 +30,24 @@ exists on the customer level
 - amount that the account has before + after the deposit
 - logs all accounts for a given customer
 
-
-6.5. Visualization of accounts and customer;
+1.5 Visualization of accounts and customer;
 - total bar line graph of all account balances over time;
 
 
+2. Encryption of TX history / csvs
+
+3. Twilio integration for enabling 2FA
+
+4. Debugs / error logs / unit tests and refactoring for maintenance
+- Unit tests
+- Docstrings
+- pdb / debugging
 
 
-9. debugging / error logging
 
-Each of these last elements introduce a new module to be used: cryptography, datetime and pandas, matplotlib
 
---------
 
-LEARN MATPLOT / Pandas related features
-7. Graph plot of balances in and out / balances over time from transaction logs both on the user level, and on the bank level.
--- transaction histories and visualization
-8. Full encryption features of transaction history and data
-9. Transferring balances between accounts and reconciling
 
---------
-I think this would be enough function / features for now.
 
 
 
