@@ -104,6 +104,149 @@ These are some of the basics to get you started with Pandas. There's a lot more 
 
 
 
+=========================================================================
+Overview / Usage pt 2
+=========================================================================
+Certainly! DataFrames are a part of the `pandas` library in Python, which is a powerful and popular tool for data analysis and manipulation.
+
+### Basics:
+
+A DataFrame is a 2-dimensional labeled data structure with columns that can be of different types, similar to a spreadsheet, SQL table, or a dictionary of series objects.
+
+### Setting Up:
+
+To work with DataFrames, first, you need to install and import the pandas library:
+
+```bash
+pip install pandas
+```
+
+```python
+import pandas as pd
+```
+
+### Creating DataFrames:
+
+1. **From a Dictionary**:
+
+```python
+data = {
+    'name': ['John', 'Jane', 'Sam'],
+    'age': [28, 24, 22],
+    'city': ['New York', 'San Francisco', 'Los Angeles']
+}
+
+df = pd.DataFrame(data)
+print(df)
+```
+
+2. **From a List of Lists**:
+
+```python
+data = [['John', 28, 'New York'], ['Jane', 24, 'San Francisco'], ['Sam', 22, 'Los Angeles']]
+df = pd.DataFrame(data, columns=['name', 'age', 'city'])
+print(df)
+```
+
+### Accessing Data:
+
+1. **Select a Column**:
+
+```python
+print(df['name'])
+```
+
+2. **Select Multiple Columns**:
+
+```python
+print(df[['name', 'city']])
+```
+
+3. **Select Rows using `.loc` and `.iloc`**:
+
+```python
+print(df.loc[0])  # Returns the first row
+print(df.iloc[1])  # Returns the second row
+```
+
+### Modifying Data:
+
+1. **Adding a Column**:
+
+```python
+df['job'] = ['Engineer', 'Designer', 'Manager']
+```
+
+2. **Deleting a Column**:
+
+```python
+df.drop('job', axis=1, inplace=True)
+```
+
+3. **Adding a Row**:
+
+```python
+new_row = {'name': 'Lucy', 'age': 30, 'city': 'Chicago'}
+df = df.append(new_row, ignore_index=True)
+```
+
+### Basic Operations:
+
+1. **Filter Data**:
+
+```python
+older_than_25 = df[df['age'] > 25]
+print(older_than_25)
+```
+
+2. **Sorting Data**:
+
+```python
+sorted_by_age = df.sort_values(by='age')
+print(sorted_by_age)
+```
+
+3. **Grouping Data**:
+
+```python
+group_by_city = df.groupby('city').size()
+print(group_by_city)
+```
+
+4. **Handling Missing Data**:
+
+```python
+df['salary'] = [50000, None, 60000, 55000]
+df.fillna(0, inplace=True)  # Replaces NaN values with 0
+```
+
+### Statistics:
+
+```python
+print(df.describe())  # Gives a summary of numerical columns
+```
+
+### Saving and Loading Data:
+
+1. **To/From CSV**:
+
+```python
+df.to_csv('data.csv', index=False)
+loaded_df = pd.read_csv('data.csv')
+```
+
+2. **To/From Excel**:
+
+```python
+df.to_excel('data.xlsx', index=False)
+loaded_df = pd.read_excel('data.xlsx')
+```
+
+These are just the basics. `pandas` offers a plethora of functionalities to help you work efficiently with data in Python. If you find yourself working frequently with data, I highly recommend delving deeper into the `pandas` documentation and tutorials.
+
+
+
+
 
 
 
@@ -222,6 +365,36 @@ Row 1 and 2 from the original DataFrame were removed because they contained at l
 
 
 
+
+
+
+=========================================================================
+df.drop()
+=========================================================================
+Certainly! This line of code pertains to the manipulation of a DataFrame (`df`) using the `pandas` library in Python.
+
+Here's a breakdown of the function:
+
+### `df.drop(...)`
+
+The `drop` method of a DataFrame is used to drop specified labels from rows or columns. 
+
+### `'job'`
+
+This specifies which label you want to drop. In this case, you're aiming to drop the column labeled 'job'.
+
+### `axis=1`
+
+The `axis` parameter decides whether you want to drop a row or a column:
+- `axis=0`: This is the default and refers to rows. 
+- `axis=1`: Refers to columns. Here, since `axis=1`, you're indicating that you want to drop a column, not a row.
+
+### `inplace=True`
+
+- By default, operations in `pandas` return a new DataFrame and leave the original untouched.
+- If `inplace=True`, it means the DataFrame will be modified in place and nothing will be returned. The original DataFrame (`df` in this case) will be changed without creating a new object.
+  
+In summary, this line of code is deleting the column named 'job' from the DataFrame `df` without returning a new DataFrame (i.e., modifying `df` directly).
 
 
 

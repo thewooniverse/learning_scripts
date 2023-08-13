@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import datetime, calendar
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -80,6 +81,12 @@ plt.xlabel("Month")
 plt.ylabel("Temperature")
 plt.grid(True)
 plt.show()
+
+df = pd.DataFrame(monthly_temps, columns=["monthly_mean_temperatures"])
+print(df)
+df.to_csv(f'{os.getcwd()}{os.path.sep}monthly_mean_temps.csv', index=False)
+
+
 
 
 

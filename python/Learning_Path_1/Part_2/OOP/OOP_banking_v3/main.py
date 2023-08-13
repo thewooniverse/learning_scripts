@@ -16,7 +16,6 @@ import random
 
 """
 TODO:
-Basically, need to finish off transaction logging in each transaction account level. (after a successful transaction)
 
 """
 

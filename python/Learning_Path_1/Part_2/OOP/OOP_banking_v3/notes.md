@@ -31,10 +31,8 @@ To do's:
 1. Txn history
 --> create a new dataframe
 ---> transaction logs? or tables
--------------
-
 customer level -> overview of all accounts and all accounts transaction history, for eacha ccount held by customer bring in the dataframe and combine it; loop thru.
-
+-------------
 
 1.5 Visualization of accounts and customer;
 - total bar line graph of all account balances over time;
@@ -57,6 +55,8 @@ visualization on the account level and on the customer level (same stuff being d
 
 6. pay() functionality
 
+
+7. Ability to search for transactions
 
 
 
