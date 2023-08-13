@@ -19,7 +19,6 @@ formatted_2 = future_date.strftime('%d-%m-%Y %H:%M:%S')
 # print(formatted)
 # print(formatted_2)
 
-
 year = today.year
 month = today.month
 day = today.day
@@ -39,10 +38,6 @@ print(weekday_num)
 
 iso_format = today.isoformat()
 print(iso_format)
-
-
-
-
 
 tz = pytz.timezone('US/Eastern')
 eastern_time = tz.localize(datetime.datetime.now())
