@@ -2,6 +2,9 @@ import numpy as np
 import pandas as pd
 import os
 
+# This note is one of the good ones that were recently done.
+
+
 
 
 
@@ -19,7 +22,7 @@ random_series = pd.Series(np.random.randn(10), index=['a','b','c','d','e','f','g
 print(random_series) # prints another dataframe with same structure, but with the index as a-j
 
 # simple slicing and indexing of series
-# print(random_series[0]) # prints the first row, value only
+# print(random_series[0]) # prints the first row, value  only
 # print(random_series[:1]) # prints the first row, value and index
 # print(random_series[:3]) # prints the first to third row (0,1,2) or in this case a,b,c
 # print(random_series[[0,1,2,3]]) # prints rows a,b,c,d
@@ -35,6 +38,53 @@ random_series['c'] = 13 # reassigns value of row c
 
 # other slicing / targeting and indexing
 # print(random_series.array) # prints the actual array backing the series
+
+
+
+
+
+"""
+Resetting the index for Series:
+--
+When applied to a Series, 
+the method will return a DataFrame where the old index is turned into a column and the Series values form another column.
+The resulting DataFrame will have a default integer-based index.
+"""
+s = pd.Series([1,2,3,4], index=['a','b','c','d'])
+print(s)
+df_reset = s.reset_index()
+print(df_reset)
+"""
+OUTPUT1:
+a    1
+b    2
+c    3
+d    4
+dtype: int64
+
+OUTPUT 2: index is moved to another column, default index is applied 
+  index  0
+0     a  1
+1     b  2
+2     c  3
+3     d  4
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -107,16 +157,47 @@ OUTPUT:
 1   susan   12     130      45
 2   jimmy   15     155      50
 3  carter   18     180     100
+"""
+df_3.set_index('name', inplace=True) # usually, this would return a new list, but inplace=True makes it replace inplace
 
-the index is a range(n) with n as the array length in the above table, however after I df.set_index() as below, it becomes this:
+new_df = df_3.reset_index(drop=True)
+print(new_df)
+
+
+"""
+Setting and Resetting the index for pandas DataFrames:
+--
+# setting the index
+the index is a range(n) with n as the array length in the first table of df_3, 
+however after I df_3.set_index() as above, it becomes this:
+
         age  height  weight
 name                       
 becky    10     180      65
 susan    12     130      45
 jimmy    15     155      50
 carter   18     180     100
+
+
+# resetting the index -> df.reset_index(drop=True)
+--
+This is particularly useful when the index of a DataFrame becomes messy or unordered, 
+or when you simply want to revert an index to the default integer-based index after some operations.
+
+drop=True parameter will drop and remove the old index.
+
+new_df() above looks like this, where the old index "name" has been ddropped:
+
+   age  height  weight
+0   10     180      65
+1   12     130      45
+2   15     155      50
+3   18     180     100
+
+
 """
-df_3.set_index('name', inplace=True) # usually, this would return a new list, but inplace=True makes it replace inplace
+
+
 
 
 
@@ -185,6 +266,12 @@ carter     180     100   18
 
 
 
+
+
+
+
+
+
 """
 ### INDEXING / SELECTION ###
 More in depth covered here - https://pandas.pydata.org/docs/user_guide/indexing.html#indexing
@@ -206,6 +293,7 @@ It stands for label-based indexing.
 You use it with labels/indices to select rows or columns.
 It can accept boolean data to filter rows.
 When slicing, both the start and stop of the range are included.
+For example 
 
 iloc:
 
@@ -230,8 +318,8 @@ Name: susan, dtype: int64
 """
 
 # loc[:] slicing based on index
-print(df_3.loc['becky':'jimmy'])
-print(df_3.loc['susan':'becky']) # << this would be useful for stuff like if index was time and we wanted to get rows of specific times
+print(df_3.loc['becky':'jimmy']) # << this would be useful for stuff like if index was time and we wanted to get rows of specific times
+print(df_3.loc['susan':'becky']) # < does not output anything since the indexes are not valid / nothing in between
 """
        height  weight  age
 name                      
