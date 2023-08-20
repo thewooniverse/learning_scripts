@@ -53,10 +53,8 @@ visualization on the account level and on the customer level (same stuff being d
 - Docstrings
 - pdb / debugging
 
-6. pay() functionality
 
-
-7. Ability to search for transactions
+6. Ability to search for transactions and filter
 
 
 

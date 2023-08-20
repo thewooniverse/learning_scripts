@@ -17,6 +17,8 @@ import random
 """
 TODO:
 
+test - 5117022679
+testpw - 1234
 """
 
 
@@ -392,9 +394,18 @@ class Customer:
         print(sorted_df)
 
 
+    def visualize_account(self, account_id):
+        """
+        """
+        with open(f"{self.accounts_path}{os.path.sep}{account_id}.pkl", 'rb') as f:
+            account_object = pickle.load(f)
+            account_object.visualize()
+        
 
-
-
+    def visualize_customer(self):
+        """
+        """
+        pass
 
 
     def transfer(self, source_account_id, destination_account_id, amount):
@@ -502,9 +513,13 @@ class Account:
     def check_balance(self):
         # print(f'Current balance: ${self.balance}')
         return(self.balance)
-
-
-
+    
+    def visualize(self):
+        balance_over_time = self.txlog_df[['time', 'balance_after']]
+        balance_over_time.set_index('time', inplace=True)
+        balance_over_time.plot(kind='line')
+        plt.show()
+        plt.clf()
 
     
 
@@ -617,7 +632,8 @@ class UI():
             "5": "open_new_acc",
             "6": "close_acc",
             "7": "close_customer",
-            "8": "get_transactions"
+            "8": "get_transactions",
+            "9": 'visualize_account'
 
             # "9": "transfer",
 
@@ -632,6 +648,7 @@ class UI():
         6. Close Account
         7. Close All Acounts and Delete Data
         8. Get transactions
+        9. Visualize account
         """
 
         user_input = input(input_str)
@@ -654,6 +671,7 @@ class UI():
                 deposit_amount = input("Enter deposit amount")
             
             # Get the accounts available for deposit / withdrawals
+            # this part COULD be abstracted out into a separate function
             account_indexes = [str(i) for i in range(len(customer.accounts))]
             account_options = "Please select from the following accounts to deposit:"
             for index in account_indexes:
@@ -691,8 +709,28 @@ class UI():
             
             customer.withdraw_account(customer.accounts[int(index)], int(withdraw_amount))
         
+
+        elif action == 'visualize_account':
+            # Get the accounts available for visualization
+            account_indexes = [str(i) for i in range(len(customer.accounts))]
+            account_options = "Please select from the following accounts to deposit:"
+            for index in account_indexes:
+                account_options = account_options + f"\n{index}. {customer.accounts[int(index)]}"
+            
+            # receive and verify input is in format / within options
+            print(account_options)
+            account_choice = input(">> ")
+            while account_choice not in account_indexes:
+                print(account_options)
+                account_choice = input(">> ")
+            
+            account_chosen = customer.accounts[int(index)]
+            
+            customer.visualize_account(account_chosen)
+        
         elif action == "open_new_acc":
             customer.create_account()
+        
 
         elif action == "close_acc":
             self.bank.close_account(customer)
