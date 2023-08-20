@@ -1,0 +1,3 @@
+account_id,txid,time,type,is_transaction,amount,balance_before,balance_after
+1401643819,140164381920-08-20233970,2023-08-20 13:43:12.650234,deposit,True,10,0,10
+1401643819,140164381920-08-20231503,2023-08-20 13:43:14.988371,deposit,True,30,10,40

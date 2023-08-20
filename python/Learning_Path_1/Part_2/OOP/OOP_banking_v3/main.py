@@ -17,8 +17,11 @@ import random
 """
 TODO:
 
-test - 5117022679
-testpw - 1234
+Bug fixes around DataFrames, transaction logging / history and transaction visualizations.
+- Refactor beginning from the initial DataFrame initializations and reading CSV standards on the account level, then work your way up to the customer level.
+- Currently, there are too many DataFrames being instantiated and written over in different steps / processes.
+
+There is also another issue with XYZ and creating directory in home dir and not cwd.
 """
 
 
@@ -352,14 +355,21 @@ class Customer:
     
     def display_accounts(self):
         total = 0
+        balance_list = []
+
         for account_id in self.accounts:
             with open(f"{self.accounts_path}{os.path.sep}{account_id}.pkl", 'rb') as f:
                 account_object = pickle.load(f)
-                print(f"{account_id}: Balance is {account_object.balance}")
                 total += account_object.balance
-        
+                balance_list.append(total)
+
+        df = pd.Series(balance_list, index=self.accounts)
+        print(df)
+        # df.plot(type='bar')
+        # plt.show()
+        # plt.clf()
         print(f"\nTotal balance for {self.cid} is {total}")
-            
+        
 
     def change_address(self):
         # take in new address
@@ -377,12 +387,13 @@ class Customer:
                 return ("This account does not exist")
             csv_path = f'{self.accounts_path}{os.path.sep}{entered_account_id}.csv'
             df = pd.read_csv(csv_path)
+            df.set_index('time', inplace=True)
             print(df)
             return df
         
 
         # otherwise loop through every account held by accounts and add / concatenate til the end of the loop and 
-        columns = ['txid', 'time', 'type', 'is_transaction', 'amount', 'balance_before', 'balance_after']
+        columns = ['account_id' 'txid', 'time', 'type', 'is_transaction', 'amount', 'balance_before', 'balance_after']
         full_df = pd.DataFrame(columns=columns)
         for account_id in self.accounts:
             csv_path = f'{self.accounts_path}{os.path.sep}{account_id}.csv'
@@ -440,7 +451,7 @@ class Account:
         # see if csv file exists
         # if it does, load it into a pandas dataframe as part of its attributes
         if not os.path.exists(self.csv_path):
-            columns = ['txid', 'time', 'type', 'is_transaction', 'amount', 'balance_before', 'balance_after']
+            columns = ['account_id', 'txid', 'time', 'type', 'is_transaction', 'amount', 'balance_before', 'balance_after']
             df = pd.DataFrame(columns=columns)
             df.to_csv(self.csv_path, index=False)
 
@@ -479,8 +490,9 @@ class Account:
         txid = f"{self.account_id}{formatted_date}{random_number}"
 
         # construct the row with the transaction data passed and append it to the dataframe
-        new_entry = [txid, now, event_type, is_transaction, amount, balance_before, balance_after]
+        new_entry = [str(self.account_id), txid, now, event_type, is_transaction, amount, balance_before, balance_after]
         self.txlog_df.loc[len(self.txlog_df)] = new_entry
+        self.reconcile()
 
         # save it to the csv to reconcile
         self.txlog_df.to_csv(self.csv_path, index=False)
@@ -506,9 +518,6 @@ class Account:
             self.reconcile()
 
             return amount
-        
-    def transfer(self, target_bank, target_aid):
-        pass
 
     def check_balance(self):
         # print(f'Current balance: ${self.balance}')
@@ -520,6 +529,12 @@ class Account:
         balance_over_time.plot(kind='line')
         plt.show()
         plt.clf()
+        
+
+    
+    def transfer(self, target_bank, target_aid):
+        pass
+
 
     
 
