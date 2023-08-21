@@ -16,12 +16,7 @@ import random
 
 """
 TODO:
-
-Bug fixes around DataFrames, transaction logging / history and transaction visualizations.
-- Refactor beginning from the initial DataFrame initializations and reading CSV standards on the account level, then work your way up to the customer level.
-- Currently, there are too many DataFrames being instantiated and written over in different steps / processes.
-
-There is also another issue with XYZ and creating directory in home dir and not cwd.
+Visualizations on account level, and on customer level.
 """
 
 
@@ -506,7 +501,6 @@ class Account:
         
         # construct the row with the transaction data passed and append it to the dataframe
         account_id = str(self.account_id)
-        print(df)
 
 
         new_entry = [now, txid, account_id, event_type, is_transaction, amount, balance_before, balance_after]
@@ -740,8 +734,11 @@ class UI():
                 print(account_options)
                 account_choice = input(">> ")
             
-            customer.withdraw_account(customer.accounts[int(index)], int(withdraw_amount))
+            customer.withdraw_account(customer.accounts[int(account_choice)], int(withdraw_amount))
         
+
+
+
 
         elif action == 'visualize_account':
             # Get the accounts available for visualization
@@ -757,9 +754,10 @@ class UI():
                 print(account_options)
                 account_choice = input(">> ")
             
-            account_chosen = customer.accounts[int(index)]
-            
+            account_chosen = customer.accounts[int(account_choice)]
+            print(f" ACCOUNT CHOSEN {account_chosen}")
             customer.visualize_account(account_chosen)
+            
         
 
 
