@@ -26,7 +26,6 @@ There is also another issue with XYZ and creating directory in home dir and not 
 
 
 
-
 #################################################################################
 ##############################  Bank CLASS  #####################################
 #################################################################################
@@ -354,22 +353,20 @@ class Customer:
         self.reconcile()
     
     def display_accounts(self):
+        """
+        Displays the overview of all accounts held by a customer
+        """
+        accounts_to_balance = ""
         total = 0
-        balance_list = []
 
         for account_id in self.accounts:
             with open(f"{self.accounts_path}{os.path.sep}{account_id}.pkl", 'rb') as f:
                 account_object = pickle.load(f)
                 total += account_object.balance
-                balance_list.append(total)
+                accounts_to_balance += f'\n{account_object.account_id}: ${account_object.balance}'
 
-        df = pd.Series(balance_list, index=self.accounts)
-        print(df)
-        # df.plot(type='bar')
-        # plt.show()
-        # plt.clf()
-        print(f"\nTotal balance for {self.cid} is {total}")
-        
+        print(f"{self.cid}: Total value ${total}")
+
 
     def change_address(self):
         # take in new address
@@ -380,25 +377,12 @@ class Customer:
         self.reconcile()
 
 
-    def get_transactions_history(self, entered_account_id=None):
-        # if an account ID is passed, then print the account ID, otherwise
-        if entered_account_id:
-            if entered_account_id not in self.accounts:
-                return ("This account does not exist")
-            csv_path = f'{self.accounts_path}{os.path.sep}{entered_account_id}.csv'
-            df = pd.read_csv(csv_path)
-            df.set_index('time', inplace=True)
-            print(df)
-            return df
-        
-
-        # otherwise loop through every account held by accounts and add / concatenate til the end of the loop and 
-        columns = ['account_id' 'txid', 'time', 'type', 'is_transaction', 'amount', 'balance_before', 'balance_after']
-        full_df = pd.DataFrame(columns=columns)
-        for account_id in self.accounts:
-            csv_path = f'{self.accounts_path}{os.path.sep}{account_id}.csv'
-            df = pd.read_csv(csv_path)
-            full_df = pd.concat([full_df, df], ignore_index=True)
+    def get_transactions_history(self, account_id='ALL'):
+        """
+        Gets the transaction history of an account.
+        Default is ALL
+        """
+        # if the account ID is passed, get and display the transaction history for that account, if it doesn't exist.
 
         # display / return the final result
         sorted_df = full_df.sort_values(by='time')
@@ -451,14 +435,13 @@ class Account:
         # see if csv file exists
         # if it does, load it into a pandas dataframe as part of its attributes
         if not os.path.exists(self.csv_path):
-            columns = ['account_id', 'txid', 'time', 'type', 'is_transaction', 'amount', 'balance_before', 'balance_after']
+            columns = ['time', 'txid', 'account_id', 'type', 'is_transaction', 'amount', 'balance_before', 'balance_after']
             df = pd.DataFrame(columns=columns)
             df.to_csv(self.csv_path, index=False)
-
-            # add the first row of transaction initialize -> balance of 0, istransaction no?
+            
         
         # at the end of it, load the new dataframe
-        self.txlog_df = pd.read_csv(self.csv_path)
+        # self.txlog_df = pd.read_csv(self.csv_path) => we don't really need to be reading it at creation or calling it then.
         
     
 
@@ -481,21 +464,26 @@ class Account:
         passed / received in is type, istx, amt, balance before, balance after
         it constructs a newrow as a pd.Series object and appends it into the dataframe
         """
-        # get the current timestamp and format it for later use
+        # open and read the existing csv
+        df = pd.read_csv(self.csv_path)
+
+        # get the current timestamp and format it.
         now = datetime.datetime.now()
         formatted_date = now.strftime("%d-%m-%Y")
         
         # randomly generate a txid with a combination of account AID + DATE + RNG
         random_number = str(random.randint(1000,9999))
         txid = f"{self.account_id}{formatted_date}{random_number}"
-
+        
         # construct the row with the transaction data passed and append it to the dataframe
-        new_entry = [str(self.account_id), txid, now, event_type, is_transaction, amount, balance_before, balance_after]
-        self.txlog_df.loc[len(self.txlog_df)] = new_entry
-        self.reconcile()
+        account_id = str(self.account_id)
+        print(df)
 
+
+        new_entry = [formatted_date, txid, account_id, event_type, is_transaction, amount, balance_before, balance_after]
+        df.loc[len(df)] = new_entry
         # save it to the csv to reconcile
-        self.txlog_df.to_csv(self.csv_path, index=False)
+        df.to_csv(self.csv_path, index=False)
 
 
     def deposit(self, amount):
@@ -524,7 +512,8 @@ class Account:
         return(self.balance)
     
     def visualize(self):
-        balance_over_time = self.txlog_df[['time', 'balance_after']]
+        df = pd.read_csv(self.csv_path)
+        balance_over_time = df[['time', 'balance_after']]
         balance_over_time.set_index('time', inplace=True)
         balance_over_time.plot(kind='line')
         plt.show()
@@ -743,6 +732,10 @@ class UI():
             
             customer.visualize_account(account_chosen)
         
+
+
+
+
         elif action == "open_new_acc":
             customer.create_account()
         
