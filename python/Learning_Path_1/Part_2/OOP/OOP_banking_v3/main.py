@@ -364,8 +364,9 @@ class Customer:
                 account_object = pickle.load(f)
                 total += account_object.balance
                 accounts_to_balance += f'\n{account_object.account_id}: ${account_object.balance}'
-
-        print(f"{self.cid}: Total value ${total}")
+        
+        print(accounts_to_balance)
+        print(f"\n{self.cid}: Total value ${total}")
 
 
     def change_address(self):
@@ -377,20 +378,38 @@ class Customer:
         self.reconcile()
 
 
-    def get_transactions_history(self, account_id='ALL'):
+    def get_transactions_history(self, account_id='all'):
         """
         Gets the transaction history of an account.
-        Default is ALL
+        Default is all transactions from all accounts.
         """
         # if the account ID is passed, get and display the transaction history for that account, if it doesn't exist.
+        if account_id != "all":
+            try:
+                csv_path = f'{self.accounts_path}{os.path.sep}{account_id}.csv'
+                df = pd.read_csv(csv_path)
+                print(df)
+            except:
+                print(f'{account_id} does not exist')
+                return
 
+        # if the account_id is "all", loop through all accounts held by a customer, combining each dataframe, sorting and then printing the sorted df
+        account_id_copy = self.accounts.copy()
+        account_0 = account_id_copy.pop(0)
+        df = pd.read_csv(f'{self.accounts_path}{os.path.sep}{account_0}.csv')
+
+        if len(account_id_copy) >= 1:
+            for account_id in account_id_copy:
+                df_temp = pd.read_csv(f'{self.accounts_path}{os.path.sep}{account_id}.csv')
+                df = pd.concat([df, df_temp])
         # display / return the final result
-        sorted_df = full_df.sort_values(by='time')
+        sorted_df = df.sort_values(by='time')
         print(sorted_df)
 
 
     def visualize_account(self, account_id):
         """
+        visualizes the selected account
         """
         with open(f"{self.accounts_path}{os.path.sep}{account_id}.pkl", 'rb') as f:
             account_object = pickle.load(f)
@@ -399,6 +418,7 @@ class Customer:
 
     def visualize_customer(self):
         """
+        visualizes all accounts in a bar chart
         """
         pass
 
