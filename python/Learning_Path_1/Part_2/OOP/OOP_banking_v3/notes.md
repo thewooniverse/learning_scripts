@@ -25,8 +25,6 @@ To do's:
 -> A code is randomly generated and sent to user (currently it is printed, later it will be sent to an email or phone number using Twilio)
 -> If the user inputs the number correctly, they are then able to change their PIN.
 
---- completed above---
-
 
 1. Txn history
 --> create a new dataframe
@@ -40,6 +38,7 @@ visualization on the account level and on the customer level (same stuff being d
 - spend by month / spend by day, inflow outflow by the day
 - balance over time
 
+--- completed above---
 
 2. Encryption of TX history / csvs
 
@@ -53,19 +52,15 @@ visualization on the account level and on the customer level (same stuff being d
 - Docstrings
 - pdb / debugging
 
+6. Ability to search for transactions and filter for things;
 
-6. Ability to search for transactions and filter
-
-
-
+-- Docstrings and overall tidy up of codebase
 
 
 
 
 
 
-
--- Docstrings and tidy up.
 
 Core functionality / features:
 - Users can access and unencrypt their accounts using their PIN
