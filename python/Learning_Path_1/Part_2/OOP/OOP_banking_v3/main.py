@@ -424,7 +424,20 @@ class Customer:
         """
         visualizes all accounts in a bar chart
         """
-        pass
+        accounts_dict = {}
+        # dictionary of series;
+        for account_id in self.accounts:
+            df = pd.read_csv(f'{self.accounts_path}{os.path.sep}{account_id}.csv')
+            df = df['balance_after']
+            final_balance = df.iloc[-1]
+            accounts_dict[f'{account_id}'] = final_balance
+        df = pd.DataFrame(accounts_dict.values(), index=accounts_dict.keys(), columns=['Balances'])
+        print(df)
+        # df = pd.DataFrame(accounts_dict)
+        # print(df)
+        df.plot(kind='bar')
+        plt.show()
+        plt.clf
 
 
     def transfer(self, source_account_id, destination_account_id, amount):
@@ -660,7 +673,8 @@ class UI():
             "6": "close_acc",
             "7": "close_customer",
             "8": "get_transactions",
-            "9": 'visualize_account'
+            "9": 'visualize_account',
+            "10": 'visualize_customer'
 
             # "9": "transfer",
 
@@ -676,6 +690,7 @@ class UI():
         7. Close All Acounts and Delete Data
         8. Get transactions
         9. Visualize account
+        10. Visualize Customer
         """
 
         user_input = input(input_str)
@@ -776,6 +791,8 @@ class UI():
                 return "closed_customer"
             else:
                 pass
+        elif action == 'visualize_customer':
+            customer.visualize_customer()
 
         elif action == "overview":
             customer.display_accounts()
