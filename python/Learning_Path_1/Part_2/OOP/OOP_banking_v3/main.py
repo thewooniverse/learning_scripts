@@ -381,14 +381,15 @@ class Customer:
     def get_transactions_history(self, account_id='all'):
         """
         Gets the transaction history of an account.
-        Default is all transactions from all accounts.
+        Default is all transactions from all accounts
         """
         # if the account ID is passed, get and display the transaction history for that account, if it doesn't exist.
-        if account_id != "all":
+        if account_id.lower() != "all":
             try:
                 csv_path = f'{self.accounts_path}{os.path.sep}{account_id}.csv'
                 df = pd.read_csv(csv_path)
                 print(df)
+                return
             except:
                 print(f'{account_id} does not exist')
                 return
@@ -405,6 +406,14 @@ class Customer:
         # display / return the final result
         sorted_df = df.sort_values(by='time')
         print(sorted_df)
+
+
+
+
+
+
+
+
 
 
     def visualize_account(self, account_id):
@@ -500,7 +509,7 @@ class Account:
         print(df)
 
 
-        new_entry = [formatted_date, txid, account_id, event_type, is_transaction, amount, balance_before, balance_after]
+        new_entry = [now, txid, account_id, event_type, is_transaction, amount, balance_before, balance_after]
         df.loc[len(df)] = new_entry
         # save it to the csv to reconcile
         df.to_csv(self.csv_path, index=False)
@@ -776,8 +785,25 @@ class UI():
         elif action == "change_address":
             customer.change_address()
         
-        elif action == "get_transactions":            
-            customer.get_transactions_history()
+        elif action == "get_transactions":
+            # choices
+            all_choices = ['all', 'ALL']
+            account_indexes = [str(i) for i in range(len(customer.accounts))]
+            account_options = "Please select from the following accounts to select, or type \"all\" to see transactions from all accounts"
+            for index in account_indexes:
+                account_options = account_options + f"\n{index}. {customer.accounts[int(index)]}"
+            
+            # receive and verify input is in format / within options
+            print(account_options)
+            account_choice = input(">> ")
+            while account_choice not in all_choices + account_indexes:
+                print(account_options)
+                account_choice = input(">> ")            
+            
+            if account_choice in all_choices:
+                customer.get_transactions_history()
+            else:
+                customer.get_transactions_history(customer.accounts[int(index)])
 
         
         
