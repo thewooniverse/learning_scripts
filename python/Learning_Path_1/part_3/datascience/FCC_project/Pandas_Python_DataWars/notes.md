@@ -79,3 +79,37 @@ slow_fast_df = df.loc[
 
 
 
+
+
+
+
+
+
+# 2 - Birthdady Paradox in NBA teams.
+```python
+def nCr(n, k):
+    f = math.factorial
+    return f(n) / (f(k) * f(n-k))
+
+def birthday_probability(number_of_people):
+    return 1 - ((364/365) ** nCr(number_of_people, 2))
+
+teams = df['Team'].unique() # unique gives me a array of the unique instances
+teams = list(teams)
+
+for team in teams:
+    team_df = df.loc[df['Team'] == team]
+    team_player_comb = pd.DataFrame(combinations(team_df['Player'], 2), columns = ['Player 1', 'Player 2'])
+    team_bday_comb = pd.DataFrame(combinations(team_df['Birthday'], 2), columns = ['Birthday 1', 'Birthday 2'])
+    team_full_comb = pd.concat([team_player_comb, team_bday_comb], axis=1)
+#     print(team_full_comb)
+    matching_bdays = team_full_comb.loc[team_full_comb['Birthday 1'] == team_full_comb['Birthday 2']]
+    if len(matching_bdays) != 0:
+        print(f'Matching players in {team}, there were {len(team_df)} players in the team.')
+        print(f"This means, that there were {round(birthday_probability(len(team_df)), 2) * 100}% of two people having the same birthday.\n")
+        print(matching_bdays)
+        print("\n\n")
+
+
+```
+
