@@ -1,3 +1,58 @@
+
+
+
+
+## 1. Continue learning + mastering Dat Scienc Projects
+- Data Wars projects / tasks daily
+
+### CAPSTONE PROJECT x Work:
+Full automation of TallyUP's cashout auditing process
+- Pandas + Numpy usage to analyze and break down data
+- Usage of APIs to download / upload different gameplay history + audit and upload data
+
+
+## 2. Continue bot development project
+Telegram Bots:
+- Peepo price bot
+- GPT based Learning + Langchain personal asisstant bot
+
+### CAPSTONE PROJECT x Work:
+Full langchain based ZenDesk bot to automate zendesk requests
+
+
+## 3. Continue learning advanced python + AWS and DevOps
+
+### CAPSTONE PROJECT x Work:
+hifi farm with private repository :D
+
+
+===== After this, I continue to learn and build matsery in python, automating further parts of TallyUP and for personal life =====
+I then go into do a coding bootcamp to learn further on Full Stack:
+=> JavaScript based fullstack web dev (Codesmith / Codeworks)
+==> Recurse Center
+===> Consensys / Alchemy Web3 developer workshop
+
+
+Then, I am pretty much free to fly :D
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Telegram bots:
 
 GPT Bot - I can have a GPT bot that interacts with Google search as well or discuss / discourse
@@ -13,14 +68,6 @@ I can also write telegram bots that help me to learn with spaced repetition.
 For crypto / profitability I can write a influencer army bot and market it to people. (this could be an extremely profitable business).
 I could also write a telegram sniping bot or investment advisory bot -> that translates into a referral link biz model.
 I could also just write straight up sybil bots.
-
-
-
-
-
-
-
-
 
 ================================
 Current self study track for scripting
@@ -62,17 +109,8 @@ NEW PROJECT:
 CHAT GPT INTEGRATION for Telegram bots
 
 
-
-
-
-
-
 https://www.youtube.com/watch?v=0n809nd4Zu4
 ^ developing a chrome extension.
-
-
-
-
 
 
 Unit testing, devops etc...
