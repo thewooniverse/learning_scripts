@@ -85,7 +85,7 @@ slow_fast_df = df.loc[
 
 
 
-# 2 - Birthdady Paradox in NBA teams.
+# 3 - Birthdady Paradox in NBA teams.
 ```python
 def nCr(n, k):
     f = math.factorial
@@ -112,4 +112,68 @@ for team in teams:
 
 
 ```
+
+
+
+
+
+
+
+# 4 - Matching Strings by Similarity using Levenshtein distance
+```python
+list(df1['CLIENT'].values) # similar to the previous exercises' df['Team].unique(), we can also access the values to attain the list of values
+
+
+df = pd.DataFrame(
+    itertools.product(df1['CLIENT'].values, df2['Firm Name'].values),
+    columns=['CSV 1', 'CSV 2']
+)
+# this example basically uses itertools.product to create a dataframe
+```
+
+
+## Using Apply on single and multiple columns
+```python
+import pandas as pd
+
+# Create DataFrame
+df = pd.DataFrame({'A': [1, 2, 3, 4]})
+
+# Function to square a number
+def square(x):
+    return x ** 2
+
+# Create new column 'B' as square of 'A'
+df['B'] = df['A'].apply(square)
+print(df)
+
+# Create DataFrame
+df = pd.DataFrame({
+    'A': [1, 2, 3, 4],
+    'B': [5, 6, 7, 8]
+})
+
+# Function to add two numbers
+def add_columns(row):
+    return row['A'] + row['B']
+
+# Create new column 'C' as sum of 'A' and 'B'
+df['C'] = df.apply(add_columns, axis=1)
+
+print(df)
+```
+
+
+```Python - example in exercise
+def calc_ratio(row):
+    return fuzz.partial_ratio(row['CSV 1'], row['CSV 2'])
+
+# df['Ratio Score'] = df.apply(calc_ratio, axis=1)
+
+#  another approach
+score = [fuzz.partial_ratio(c1,c2) for c1,c2 in df[['CSV 1', 'CSV 2']].values]
+df['Ratio Score 2'] = score
+```
+
+
 
