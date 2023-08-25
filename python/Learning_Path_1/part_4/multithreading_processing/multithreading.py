@@ -1,3 +1,4 @@
+import queue
 import time
 import threading
 import requests
@@ -23,7 +24,7 @@ urls = ["https://imgs.xkcd.com/comics/choices_part_3.jpg", "https://imgs.xkcd.co
 # for thread in threads:
 #     thread.join()
 
-print("Download completed.")
+# print("Download completed.")
 
 
 
@@ -50,6 +51,39 @@ for thread in threads:
 
 print("This will only print after all threads have finished.")
 
+
+
+
+
+
+
+
+
+
+
+
+def producer(q):
+    for i in range(5):
+        print("Producing", i)
+        q.put(i)
+        time.sleep(1)
+
+def consumer(q):
+    while True:
+        item = q.get()
+        print("Consuming", item)
+        q.task_done()
+
+my_queue = queue.Queue()
+
+producer_thread = threading.Thread(target=producer, args=(my_queue,))
+consumer_thread = threading.Thread(target=consumer, args=(my_queue,))
+
+producer_thread.start()
+consumer_thread.start()
+
+producer_thread.join()
+consumer_thread.join()
 
 
 
