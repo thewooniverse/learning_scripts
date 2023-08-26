@@ -1,0 +1,2 @@
+INFO:root:Type: Single Threaded to download 10 comics. Time elapsed: 11.664827108383179.
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.4125261306762695.

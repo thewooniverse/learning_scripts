@@ -3,11 +3,20 @@ import random
 import os
 import time
 import threading
+import logging
+
 
 # check / create a xkcd dump directory
 xkcd_dump_dir = f'{os.getcwd()}{os.path.sep}xkcd_dump'
 if not os.path.exists(xkcd_dump_dir):
     os.mkdir(xkcd_dump_dir)
+
+# start logging the time and create the log:
+start_time = time.time()
+
+logging.basicConfig(filename='xkcd_time.log', level=logging.INFO)
+
+
 
 
 
@@ -45,27 +54,31 @@ def download_comic(comic_number):
 # Main function
 def download_random_comic():
     latest_comic = get_latest_comic_number()
-    time.sleep(1)
     if latest_comic:
         random_comic = random.randint(1, latest_comic)
         print(f"Downloading comic number {random_comic}...")
         download_comic(random_comic)
 
 
+type = ""
+length = 10
+
+# Multi-Threaded path
 threads = []
 
-for i in range(5):
+# PATH 1 - threaded download of 25 different comics using threads
+for i in range(length):
     thread = threading.Thread(target=download_random_comic)
     threads.append(thread)
     thread.start()
 
-print("Print here for pre-thread join")
 
+# print("Print here for pre-thread join")
 for thread in threads:
     thread.join()
+type = "Multi Threaded"
 
-
-print("Print here for POST-thread join")
+# print("Print here for POST-thread join")
 
 """
 OUTPUT:
@@ -82,3 +95,22 @@ Successfully downloaded comic: Etymology
 Successfully downloaded comic: Namespace Land Rush
 Print here for POST-thread join
 """
+
+
+# PATH 2;
+# for i in range(length):
+#     download_random_comic()
+# type = "Single Threaded"
+
+
+
+
+
+
+# end logging the time
+end_time = time.time()
+elapsed_time = end_time - start_time
+logging.info(f'Type: {type} to download {length} comics. Time elapsed: {elapsed_time}.')
+
+
+
