@@ -55,9 +55,7 @@ You can always double click or go deeper (ask for intermediate, advanced topics)
 
 After part 3 + project completed;
 As I learn part 4, I will start developing my own telegram bots to do various things. Separate repository for this.
-
-
-
+=> learning data science part also means that I can likely audit the gameplay data pretty well, I should do that as a hobby / pet project.
 
 
 
