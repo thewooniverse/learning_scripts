@@ -1,2 +1,19 @@
 INFO:root:Type: Single Threaded to download 10 comics. Time elapsed: 11.664827108383179.
 INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.4125261306762695.
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.7500598430633545.
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.2282037734985352.
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.610598087310791.
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.2830121517181396.
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.5817880630493164.
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.1638381481170654.
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.3618159294128418.
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.4372737407684326.
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.1056041717529297.
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.0483646392822266, total download size: 344711
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.1282031536102295, total download size: 441113
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.1980259418487549, total download size: 480762
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.4139173030853271, total download size: 1041877
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.2109391689300537, total download size: 512219
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.0412540435791016, total download size: 553985
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.284203052520752, total download size: 695355
+INFO:root:Type: Multi Threaded to download 10 comics. Time elapsed: 1.7243049144744873, total download size: 760345
