@@ -375,25 +375,6 @@ df['Data Transferred TB']
 df.loc[df['App'] == 'Tinder'] # double checked value
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```Python 
 df.loc[df['Reviews'].str.contains('M')]
 # returns a dataframe with rows
@@ -412,6 +393,249 @@ pd.to_numeric(df.loc[df['Reviews'].str.contains('M'), 'Reviews'].str.replace('M'
 
 
 
+
+============================================================================================================
+## Premier League Match Analysis
+============================================================================================================
+
+```python
+### Identify and clean invalid results in the result column
+
+df.loc[df['home_goals'] > df['away_goals'], 'result'] = "H"
+df.loc[df['away_goals'] > df['home_goals'], 'result'] = "A"
+df.loc[df['home_goals'] == df['away_goals'], 'result'] = "D"
+df['result'].value_counts()
+# the important part here (and in many other areas) is to target the 'result' column only, after selecting the df.loc to set the values
+
+# Calculate average goals per season
+goals_per_season = df.groupby('season')['total_goals'].mean()
+# groupby is an important one.
+
+
+
+
+
+
+
+
+##### What's the team with most away wins?
+results_series_by_team = df.groupby('away_team')['result'].value_counts().sort_values(ascending=False)
+results_series_by_team
+
+### Model Answer
+df.groupby('away_team').apply(lambda rows: (rows['result'] == 'A').sum()).sort_values(ascending=False).head()
+
+
+##### What's the team that received the least amount of goals while playing at home?
+home_played_ratio = (df.groupby('home_team')['away_goals'].sum().sort_index()) / df.groupby('home_team')['home_team'].value_counts().sort_index()
+home_played_ratio.sort_values(ascending=False)
+
+### model answer
+"""
+We know the team is playing at home, so we need to group by home_team. Then, we can use the .size() method to get a count of how many games were played, and .sum() of away_goals (which are the goals that the home team received).
+"""
+away_goals_df = df.groupby('home_team')[['result', 'away_goals']].agg(
+    {'result': 'size', 'away_goals': 'sum'}
+).sort_values(
+    by=['result', 'away_goals'], ascending=[False, True]
+).rename(columns={'result': 'games_played', 'away_goals': 'goals_received'})
+
+away_goals_df['ratio'] = away_goals_df['goals_received'] / away_goals_df['games_played']
+
+
+##### What's the team with most goals scored playing as a visitor (away from home)?
+df.groupby('away_team')['away_goals'].sum()
+df.groupby('away_team')['away_team'].value_counts()
+most_goals_as_away_team = (df.groupby('away_team')['away_goals'].sum()) / (df.groupby('away_team')['away_team'].value_counts())
+most_goals_as_away_team.sort_values(ascending=False)
+
+## model solution
+away_goals_df = df.groupby('away_team')[['result', 'away_goals']].agg(
+    {'result': 'size', 'away_goals': 'sum'}
+).sort_values(
+    by=['result', 'away_goals'], ascending=[False, False]
+).rename(columns={'result': 'games_played', 'away_goals': 'goals_scored'})
+
+away_goals_df['ratio'] = away_goals_df['goals_scored'] / away_goals_df['games_played']
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+============================================================================================================
+# df.groupby('away_team').apply(lambda rows: (rows['result'] == 'A').sum()).sort_values(ascending=False).head()
+============================================================================================================
+The code performs several operations on a pandas DataFrame (`df`) to find the top away teams based on the number of matches they've won. Let's break it down step by step for a thorough understanding.
+
+### Core Concepts:
+
+1. **DataFrame**: A 2D labeled data structure in pandas.
+2. **Grouping**: Segmenting a DataFrame based on a criterion, in this case, `'away_team'`.
+3. **Lambda Function**: An anonymous function defined using the `lambda` keyword. Here, it's used to apply a custom operation on each group.
+4. **Boolean Masking**: The expression `(rows['result'] == 'A')` produces a boolean Series.
+5. **Aggregation**: Using `sum()` to count the number of `True` values, i.e., the number of away wins for each team.
+
+### Steps:
+
+1. **Grouping by 'away_team'**: `df.groupby('away_team')`
+
+    The DataFrame is grouped by the `'away_team'` column. This results in a GroupBy object where each group corresponds to a unique away team.
+
+2. **Applying Lambda Function**: `.apply(lambda rows: (rows['result'] == 'A').sum())`
+
+    For each group (i.e., for each away team), the lambda function is applied. The lambda function does the following:
+    - It checks if the `'result'` column is equal to `'A'`, which likely stands for "Away Win". This results in a boolean Series.
+    - It then sums this boolean Series, effectively counting the number of `True` values, which represents the number of away wins for the team.
+
+3. **Sorting Values**: `.sort_values(ascending=False)`
+
+    The results are sorted in descending order, so the teams with the most away wins come first.
+
+4. **Top Teams**: `.head()`
+
+    Finally, `head()` is used to get only the top teams (by default, the first 5) based on the number of away wins.
+
+### Example Data:
+
+Let's consider an example DataFrame for context:
+
+```python
+import pandas as pd
+
+data = {
+    'away_team': ['Team1', 'Team2', 'Team1', 'Team2', 'Team1', 'Team3'],
+    'result': ['A', 'H', 'A', 'A', 'H', 'A']
+}
+df = pd.DataFrame(data)
+```
+
+If you run the given code on this DataFrame, you would get:
+
+```
+away_team
+Team1    2
+Team3    1
+Team2    1
+```
+
+### Best Practices:
+
+1. **Column Selection**: After the `groupby`, be explicit about which columns you need for aggregation. This improves readability and may enhance performance.
+
+2. **Method Chaining**: While method chaining (as done in the code snippet) is convenient, ensure that it doesn't compromise readability.
+
+3. **Commenting**: This is a fairly complex one-liner. In a professional setting, adding a comment that explains what the line does can be very helpful for code maintainability.
+
+Understanding each of these components and best practices provides you with a comprehensive view of what the code is doing and how to use similar constructs effectively.
+
+
+============================================================================================================
+# df.groupby() function
+============================================================================================================
+The `groupby()` function in the pandas library is a powerful and flexible method used to split the data into groups based on some criteria. Once data is grouped, you can apply various aggregation functions to each group independently. The function is widely used in data analysis and manipulation tasks.
+
+### Core Concepts:
+
+1. **DataFrame**: A 2D labeled data structure in pandas.
+2. **Grouping**: Segmenting a DataFrame based on criteria.
+3. **Aggregation**: Applying a function to each group of values.
+
+### Syntax:
+
+The basic syntax of `groupby()` is:
+
+```python
+DataFrame.groupby(by, axis, level, as_index, sort, group_keys, squeeze, observed)
+```
+
+- `by`: Specifies the columns you want to use for grouping.
+- `axis`: Specifies the axis along which the function is applied; default is `0` (index).
+- `level`: If the axis is a MultiIndex, group by a particular level or levels.
+- `as_index`: Whether to return object with group labels as the index; default is `True`.
+- `sort`: Sort the groups; default is `True`.
+- `group_keys`: When calling `apply`, add group keys to the index to identify pieces; default is `True`.
+- `squeeze`: Reduce the dimensionality of the return type if possible, otherwise return a consistent type; default is `False`.
+- `observed`: This parameter is useful only when dealing with categorical data. If `True`, only observed categories are returned; default is `False`.
+
+### Basic Usage:
+
+Let's consider a simple DataFrame to illustrate the usage:
+
+```python
+import pandas as pd
+
+# Sample DataFrame
+data = {'Department': ['HR', 'IT', 'Finance', 'HR', 'IT'],
+        'Employee': ['Alice', 'Bob', 'Charlie', 'Dave', 'Eva'],
+        'Salary': [5000, 7000, 5500, 6000, 6500]}
+
+df = pd.DataFrame(data)
+
+# Group by 'Department' and calculate the mean salary for each group
+grouped_df = df.groupby('Department')['Salary'].mean()
+print(grouped_df)
+```
+
+Output:
+
+```
+Department
+Finance    5500.0
+HR         5500.0
+IT         6750.0
+Name: Salary, dtype: float64
+```
+
+### Real-World Example:
+
+Let's assume you have sales data, and you want to find out the total sales for each region for each product:
+
+```python
+# Sample DataFrame
+data = {'Region': ['East', 'West', 'East', 'West', 'East', 'West'],
+        'Product': ['Apple', 'Apple', 'Orange', 'Apple', 'Orange', 'Orange'],
+        'Sales': [100, 150, 200, 50, 75, 300]}
+
+df = pd.DataFrame(data)
+
+# Group by 'Region' and 'Product' and sum the 'Sales'
+grouped_df = df.groupby(['Region', 'Product'])['Sales'].sum().reset_index()
+print(grouped_df)
+```
+
+Output:
+
+```
+  Region Product  Sales
+0   East   Apple    100
+1   East  Orange    275
+2   West   Apple    200
+3   West  Orange    300
+```
+
+### Best Practices:
+
+1. **Column Selection**: After the `groupby` operation, be explicit about which columns you need for aggregation.
+  
+2. **Reset Index**: After aggregation, it’s usually a good idea to reset the index for the resulting DataFrame using `reset_index()`, unless you have a specific reason to keep the index as-is.
+
+3. **Check Groups**: Before applying an aggregation function, you can check the groups that will be formed by calling the `groups` attribute on the GroupBy object.
+
+By adhering to these practices and understanding the core concepts, you can perform effective data analysis and manipulation using the `groupby()` method in pandas.
 
 
 
