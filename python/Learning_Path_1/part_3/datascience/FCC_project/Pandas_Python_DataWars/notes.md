@@ -512,7 +512,7 @@ for s2017_name, playerdf_name in player_mapping.items():
 # then merge the tables.
 df = s2017_df.merge(players_df, how='left', left_on='Player', right_on='name')
 player_misses = list(df.loc[df['name'].isna(), 'Player'])
-player_misses
+player_misses # returns []
 
 
 
@@ -613,7 +613,6 @@ df_fgpct = df[['Player', 'Team', 'FG', 'FGA']].copy()
 # first we need to get accuracy of 3P
 result = (df.groupby('Pos')['3P'].sum()) / (df.groupby('Pos')['3PA'].sum())
 result.sort_values(ascending=False)
-
 result.max() - result.min()
 
 # Alternate Answer:
@@ -625,6 +624,15 @@ top_3p_by_position
 
 
 
+##### 15. Find the best scorers in each team
+# my solution
+df[['Player', 'Team', 'Pos', 'PTS']].sort_values(by='PTS', ascending=False)
+best_scorer_per_team_list = df.groupby('Team')['PTS'].max()
+best_scorers_per_team = pd.merge(df, best_scorer_per_team_list, how='inner', on='PTS')
+best_scorers_per_team = best_scorers_per_team[['Player', 'Team', 'Pos', 'PTS']].sort_values(by='PTS', ascending=False)
+best_scorers_per_team
+
+# model solution
 df["Best Score per Team"] = df.groupby('Team')['PTS'].transform('max')
 best_scorers_per_team = df.loc[
     df['PTS'] == df["Best Score per Team"],
