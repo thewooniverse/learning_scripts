@@ -412,12 +412,6 @@ goals_per_season = df.groupby('season')['total_goals'].mean()
 # groupby is an important one.
 
 
-
-
-
-
-
-
 ##### What's the team with most away wins?
 results_series_by_team = df.groupby('away_team')['result'].value_counts().sort_values(ascending=False)
 results_series_by_team
@@ -458,7 +452,185 @@ away_goals_df = df.groupby('away_team')[['result', 'away_goals']].agg(
 
 away_goals_df['ratio'] = away_goals_df['goals_scored'] / away_goals_df['games_played']
 
+```
 
+
+
+
+
+
+
+============================================================================================================
+## NBA 2017 Season Analysis
+============================================================================================================
+
+
+
+```python
+##### 1. Merge `s2017_df` and `players_df` with a left join
+df = s2017_df.merge(players_df, how='left', left_on='Player', right_on='name') 
+# further notes on joining on the bottom section - however, its very intuitive / straight forward.
+
+
+##### 4. Extract the names of the players that couldn't be matched
+player_misses = list(df.loc[df['name'].isna(), 'Player'])
+# gets the series of the column 'Player' where df['name].isna(), then transforms it into a list
+player_misses
+"""
+OUTPUT:
+['Luc Mbah', 'James Michael', 'Sheldon McClellan', 'Metta World']
+"""
+
+
+##### 5. Modify `players_df` with the correct names to re-try a successful merge
+# find and map out the correct player mapping;
+# this should be done algorithmically, so that in the case there are tons, the maximum amount that can be algorithmically matched / found will be found
+player_mapping = {}
+mismatched_players = {}
+
+# find and match the perfect subset players into player mapping 
+for player in player_misses:
+    potential_player_matches = players_df.loc[players_df['name'].str.contains(player), 'name'].values
+    if len(potential_player_matches) == 1:
+#         print(potential_player_matches[0])
+        player_mapping[player] = potential_player_matches[0]
+    else:
+        mismatched_players[player] = list(potential_player_matches)
+
+# print(player_mapping)
+# print(mismatched_players)
+
+# handle the mismatched or unmatched individually;
+players_df.loc[players_df['name'].str.contains('Sheldon')]
+player_mapping['Sheldon McClellan'] = "Sheldon Mac"
+print(player_mapping)
+
+# use the mapping to edit the 'name' columns players_df
+for s2017_name, playerdf_name in player_mapping.items():
+    players_df.loc[players_df['name'] == playerdf_name, 'name'] = s2017_name
+
+# then merge the tables.
+df = s2017_df.merge(players_df, how='left', left_on='Player', right_on='name')
+player_misses = list(df.loc[df['name'].isna(), 'Player'])
+player_misses
+
+
+
+
+
+
+
+
+
+##### 7. Remove unnecessary columns
+df.drop([
+    "Year",
+    "PER",
+    "TS%",
+    "3PAr",
+    "FTr",
+    "USG%",
+    "blanl",
+    "OWS",
+    "DWS",
+    "WS",
+    "WS/48",
+    "blank2",
+    "OBPM",
+    "DBPM",
+    "BPM",
+    "VORP",
+    "FG%",
+    "3P%",
+    "eFG%",
+    "FT%",
+    "name",
+], axis=1, inplace=True)
+
+
+
+##### 8. Rename teams to their full name
+team_mapping = {
+    "OKC": "Oklahoma City Thunder",
+    "DAL": "Dallas Mavericks",
+    "BRK": "Brooklyn Nets",
+    "SAC": "Sacramento Kings",
+    "NOP": "New Orleans Pelicans",
+    "MIN": "Minnesota Timberwolves",
+    "SAS": "San Antonio Spurs",
+    "IND": "Indiana Pacers",
+    "MEM": "Memphis Grizzlies",
+    "POR": "Portland Trail Blazers",
+    "CLE": "Cleveland Cavaliers",
+    "LAC": "Los Angeles Clippers",
+    "PHI": "Philadelphia 76ers",
+    "HOU": "Houston Rockets",
+    "MIL": "Milwaukee Bucks",
+    "NYK": "New York Knicks",
+    "DEN": "Denver Nuggets",
+    "ORL": "Orlando Magic",
+    "MIA": "Miami Heat",
+    "PHO": "Phoenix Suns",
+    "GSW": "Golden State Warriors",
+    "CHO": "Charlotte Hornets",
+    "DET": "Detroit Pistons",
+    "ATL": "Atlanta Hawks",
+    "WAS": "Washington Wizards",
+    "LAL": "Los Angeles Lakers",
+    "UTA": "Utah Jazz",
+    "BOS": "Boston Celtics",
+    "CHI": "Chicago Bulls",
+    "TOR": "Toronto Raptors"
+}
+df['Team'] = df['Tm'].replace(team_mapping)
+df[['Player', 'Tm', 'Team']].head(10)
+
+
+
+
+##### 10. Delete all players from the `TOT` team
+# using filtering;
+df = df[df['Tm'] != 'TOT']
+# alternate method using df.drop condition
+df.drop(df.loc[df['Tm'] == 'TOT'].index, inplace=True)
+
+
+##### 11. What's the team with the most players in the league?
+df.groupby('Team')['Team'].value_counts().sort_values(ascending=False)
+
+##### 12. What's the team with the lowest `FG`?
+df.groupby('Team')['FG'].sum().sort_values()
+
+
+##### 13. What's the team with the best `FG%`?
+df_fgpct = df[['Player', 'Team', 'FG', 'FGA']].copy()
+(df.groupby('Team')['FG'].sum() / df.groupby('Team')['FGA'].sum()).sort_values().tail(5)
+
+
+
+##### 14. What's the difference between the best and worst 3P shooters (by position)?
+# df.groupby('Pos')
+# first we need to get accuracy of 3P
+result = (df.groupby('Pos')['3P'].sum()) / (df.groupby('Pos')['3PA'].sum())
+result.sort_values(ascending=False)
+
+result.max() - result.min()
+
+# Alternate Answer:
+top_3p_by_position = df.groupby('Pos')[['3P', '3PA']].apply(
+     lambda rows: rows['3P'].sum() / rows['3PA'].sum()
+ ).sort_values(ascending=False)
+top_3p_by_position
+
+
+
+
+df["Best Score per Team"] = df.groupby('Team')['PTS'].transform('max')
+best_scorers_per_team = df.loc[
+    df['PTS'] == df["Best Score per Team"],
+    ['Player', 'Team', 'Pos', 'PTS']
+].sort_values(by='PTS', ascending=False)
+best_scorers_per_team
 
 ```
 
@@ -476,8 +648,219 @@ away_goals_df['ratio'] = away_goals_df['goals_scored'] / away_goals_df['games_pl
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ============================================================================================================
-# df.groupby('away_team').apply(lambda rows: (rows['result'] == 'A').sum()).sort_values(ascending=False).head()
+## df.drop
+============================================================================================================
+The `drop()` method in pandas is used for deleting specified labels from rows or columns of a DataFrame. The method is quite flexible and allows for the dropping of a single label or a list of labels.
+
+### Core Concepts:
+
+- **DataFrame**: A two-dimensional, size-mutable, and potentially heterogeneous tabular data structure with labeled axes (rows and columns) in pandas.
+- **Row and Column Labels**: Indices and column names in a DataFrame.
+- **In-place Operation**: An operation that modifies the DataFrame directly, without returning a new one.
+
+### Method Signature:
+
+```python
+DataFrame.drop(labels=None, axis=0, index=None, columns=None, level=None, inplace=False, errors='raise')
+```
+
+#### Parameters:
+
+- **labels**: The label(s) to drop.
+- **axis**: Axis along which labels will be dropped. `axis=0` (default) for row-wise, `axis=1` for column-wise.
+- **index**: Alias for specifying `labels` when dropping rows.
+- **columns**: Alias for specifying `labels` when dropping columns.
+- **level**: For DataFrames with multi-level index, the level from which to drop.
+- **inplace**: If `True`, the DataFrame is modified in place and nothing is returned. Default is `False`.
+- **errors**: If 'raise', an error is raised if any of the specified labels are not found in the DataFrame.
+
+### Examples:
+
+#### Dropping a Column:
+
+```python
+import pandas as pd
+
+# Create a DataFrame
+df = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'C': [7, 8, 9]})
+print("Original DataFrame:")
+print(df)
+
+# Drop column 'A'
+df_dropped = df.drop('A', axis=1)
+print("DataFrame after dropping column 'A':")
+print(df_dropped)
+```
+
+#### Dropping a Row:
+
+```python
+# Drop row with index label 0
+df_dropped = df.drop(0, axis=0)
+print("DataFrame after dropping row with index label 0:")
+print(df_dropped)
+```
+
+#### Dropping Multiple Columns:
+
+```python
+# Drop columns 'A' and 'B'
+df_dropped = df.drop(['A', 'B'], axis=1)
+print("DataFrame after dropping columns 'A' and 'B':")
+print(df_dropped)
+```
+
+#### Dropping In-Place:
+
+```python
+# Drop column 'A' in-place
+df.drop('A', axis=1, inplace=True)
+print("DataFrame after dropping column 'A' in-place:")
+print(df)
+```
+
+### Best Practices:
+
+1. **Specify Axis Explicitly**: Always specify the `axis` parameter for clarity, even though it has a default value.
+2. **Safety with `inplace`**: Use `inplace=True` with caution, as it will modify the DataFrame in place. Make sure you want to keep the changes.
+3. **Handle Errors**: Use the `errors` parameter to specify how to handle errors like non-existent labels.
+
+By understanding how `df.drop()` works, you can efficiently delete rows and columns from a DataFrame according to your data manipulation needs.
+
+
+
+
+
+
+
+============================================================================================================
+## df.merge
+============================================================================================================
+DataFrames in Python's pandas library can be merged using various methods, each serving specific use cases. The primary types of merges include:
+
+1. **Inner Merge**
+2. **Left Merge (Left Outer)**
+3. **Right Merge (Right Outer)**
+4. **Outer Merge (Full Outer)**
+5. **Cross Merge**
+
+### Core Concepts:
+
+- **DataFrame**: A two-dimensional, size-mutable, and potentially heterogeneous tabular data structure with labeled axes (rows and columns) in pandas.
+  
+- **Merge**: Combining DataFrames based on one or more common columns (keys).
+
+#### 1. Inner Merge:
+
+**Use Case**: Combine rows from two DataFrames based on some common column(s) where keys are present in both DataFrames.
+
+**Real-world example**: Suppose you have one DataFrame containing employee IDs and names and another containing employee IDs and salaries. An inner merge would give you a single DataFrame with employee IDs present in both DataFrames along with their names and salaries.
+
+```python
+import pandas as pd
+
+df1 = pd.DataFrame({'ID': [1, 2, 3], 'Name': ['Alice', 'Bob', 'Charlie']})
+df2 = pd.DataFrame({'ID': [2, 3, 4], 'Salary': [40000, 50000, 60000]})
+
+result = pd.merge(df1, df2, on='ID', how='inner')
+# Output: ID      Name  Salary
+#         2       Bob  40000
+#         3   Charlie  50000
+```
+
+#### 2. Left Merge (Left Outer):
+
+**Use Case**: Combine rows from two DataFrames based on a common column(s), including all records from the left DataFrame.
+
+**Real-world example**: Continuing the above example, suppose you want all the employee names and their corresponding salaries if available. Unmatched IDs from the left DataFrame will have `NaN` for the 'Salary' column.
+
+```python
+result = pd.merge(df1, df2, on='ID', how='left')
+# Output: ID      Name  Salary
+#         1     Alice     NaN
+#         2       Bob  40000
+#         3   Charlie  50000
+```
+
+#### 3. Right Merge (Right Outer):
+
+**Use Case**: Similar to the Left Merge but includes all records from the right DataFrame.
+
+**Real-world example**: If you are interested in all employees who have salaries listed, but also want to know if their names are available.
+
+```python
+result = pd.merge(df1, df2, on='ID', how='right')
+# Output: ID      Name  Salary
+#         2       Bob  40000
+#         3   Charlie  50000
+#         4       NaN  60000
+```
+
+#### 4. Outer Merge (Full Outer):
+
+**Use Case**: To get the union of DataFrames, with `NaN` for missing keys on either side.
+
+**Real-world example**: Suppose you want to have a full list of employees, irrespective of whether the salary or name information is available.
+
+```python
+result = pd.merge(df1, df2, on='ID', how='outer')
+# Output: ID      Name  Salary
+#         1     Alice     NaN
+#         2       Bob  40000
+#         3   Charlie  50000
+#         4       NaN  60000
+```
+
+#### 5. Cross Merge:
+
+**Use Case**: Creates the Cartesian product of both DataFrames.
+
+**Real-world example**: Imagine you have a DataFrame of Customers and another of Products. You want to know all possible combinations of customers and products, for instance, for a marketing study.
+
+```python
+df1 = pd.DataFrame({'Customer': ['A', 'B']})
+df2 = pd.DataFrame({'Product': ['P1', 'P2']})
+result = pd.merge(df1, df2, how='cross')
+# Output:  Customer Product
+#         A       P1
+#         A       P2
+#         B       P1
+#         B       P2
+```
+
+### Best Practices:
+
+1. **Specify Columns**: Be explicit about the columns on which you're merging, using `left_on` and `right_on` if the column names are different in each DataFrame.
+
+2. **Handle Duplicates**: Before merging, ensure that the key columns don't have duplicates unless it's intentional.
+
+3. **Type Consistency**: Ensure that the columns on which you're merging have the same data type in both DataFrames.
+
+By understanding these different types of merges and when to use them, you can efficiently manipulate your DataFrames to fit various real-world scenarios.
+
+============================================================================================================
+## df.groupby('away_team').apply(lambda rows: (rows['result'] == 'A').sum()).sort_values(ascending=False).head()
 ============================================================================================================
 The code performs several operations on a pandas DataFrame (`df`) to find the top away teams based on the number of matches they've won. Let's break it down step by step for a thorough understanding.
 
