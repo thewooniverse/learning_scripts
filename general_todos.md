@@ -13,7 +13,7 @@ Full automation of TallyUP's cashout auditing process
 
 ## 2. Continue bot development project
 Telegram Bots:
-- Peepo price bot
+- Peepo price bot -> forces me to learn AWS
 - GPT based Learning + Langchain personal asisstant bot
 
 ### CAPSTONE PROJECT x Work:
@@ -34,6 +34,10 @@ I then go into do a coding bootcamp to learn further on Full Stack:
 
 
 Then, I am pretty much free to fly :D
+
+
+CS50 and Brilliant.org to improve basic algorithmic thinking and problem solving.
+Python Roadmap.sh to learn about decorators and other python-only syntaxes and tricks.
 
 
 

@@ -3,3 +3,5 @@ __pycache__/
 ssh-agent
 ssh-agent.pub
 .venv
+
+sample_data.csv
