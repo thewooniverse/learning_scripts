@@ -1,5 +1,7 @@
 import pandas as pd
 import os
+import pyperclip
+import datetime
 
 """
 Assumptions:
@@ -25,7 +27,7 @@ columns = ['time', 'type', 'username', 'userid', 'deviceid', 'istransaction',
 df = df[columns]
 
 str_parsed_columns = ', '.join(columns)
-
+print(str_parsed_columns)
 
 
 
@@ -69,7 +71,7 @@ money_from_livegames = livegame_results.sum()
 # take per game
 n_livegame_wins = livegame_df.loc[df['reason'] == 'win'].shape[0]
 n_livegames = livegame_df.shape[0]
-livegame_tpg = money_from_livegames/n_livegames
+livegame_tpg = round(money_from_livegames/n_livegames,2)
 
 
 ## calculating take per game from matchup games;
@@ -81,7 +83,7 @@ money_from_matchups = matchup_results.sum()
 
 n_matchup_wins = livegame_df.loc[df['result'] == 'win'].shape[0]
 n_matchups = matchup_df.shape[0]
-matchup_tpg = money_from_matchups/n_matchups
+matchup_tpg = round(money_from_matchups/n_matchups,2)
 
 
 ## calculating revenue source by player;
@@ -176,12 +178,13 @@ response_string = f"""
 Username: {username}
 Cashout Value: {cashout_value} 
 Audited Value: {total_won_calculated}
+Audit Date: {datetime.datetime.now().strftime("%d/%m/%Y %I:%M %p")}
 
 Revenue Source Breakdown: Amount = % of whole
 |- Mega Spins: {money_from_megaspin} = {calc_pct(money_from_megaspin, total_won_calculated)}%
 |- Live Games: {money_from_livegames} = {calc_pct(money_from_livegames, total_won_calculated)}%
 |- MatchUPs: {money_from_matchups} = {calc_pct(money_from_matchups, total_won_calculated)}%
-|- Goals/Awards: {money_from_matchups} = {calc_pct(money_from_rewards, total_won_calculated)}%
+|- Goals/Awards: {money_from_rewards} = {calc_pct(money_from_rewards, total_won_calculated)}%
 |- Others (to be added) - AdminAddBalance, Tournament Win
 
 --- GamePlay Analysis ---
@@ -204,8 +207,8 @@ NOTE:
 
 INCOMPLETE BUILD
 """
-print(response_string)
-
+# print(response_string)
+pyperclip.copy(response_string)
 
 
 
