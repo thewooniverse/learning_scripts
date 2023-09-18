@@ -3,5 +3,8 @@ __pycache__/
 ssh-agent
 ssh-agent.pub
 .venv
+.env
 
 sample_data.csv
+normal_player_sample.csv
+
