@@ -15,16 +15,16 @@ def download_file(url, filename):
 # URL list for demonstration purposes
 urls = ["https://imgs.xkcd.com/comics/choices_part_3.jpg", "https://imgs.xkcd.com/comics/herpetology.png", "https://imgs.xkcd.com/comics/upcoming_hurricanes.png"]
 
-# threads = []
-# for i, url in enumerate(urls):
-#     thread = threading.Thread(target=download_file, args=(url, f"file{i+1}.jpg"))
-#     threads.append(thread)
-#     thread.start()
+threads = []
+for i, url in enumerate(urls):
+    thread = threading.Thread(target=download_file, args=(url, f"file{i+1}.jpg"))
+    threads.append(thread)
+    thread.start()
 
-# for thread in threads:
-#     thread.join()
+for thread in threads:
+    thread.join()
 
-# print("Download completed.")
+print("Download completed.")
 
 
 
