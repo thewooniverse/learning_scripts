@@ -49,3 +49,9 @@ docs = docsearch.similarity_search(query)
 output = chain.run(input_documents=docs, question=query)
 
 print(output)
+"""
+ Good data science teams often focus on a single class of problems, such as graph algorithms for social network analysis or recommender models for online shopping. 
+ They should also have a mix of existing staff with a high aptitude for data science, formal backgrounds in the three foundational technical skills, and good leadership traits. 
+ Don't discount anyone - you may find data scientists in the strangest places with the oddest combinations of backgrounds.
+"""
+
