@@ -89,8 +89,41 @@ git merge feature/new-feature
 git push origin main
 
 
+### 4. Deleting your branch
+After you've completed the steps, you can also now delete your branch and push the deletion;
+
+git branch -d feature/new-feature-name
+git push origin --delete feature/new-feature-name
 
 
+
+
+
+## Resolving divergent branches:
+### You're given three main options to handle this:
+Merge (git config pull.rebase false): This will merge the remote commits into your branch when you do a git pull. This will result in a merge commit if there are changes in both branches that need to be combined.
+
+Rebase (git config pull.rebase true): This will rebase your local commits on top of the remote commits. In essence, it will take your local changes and "replay" them on top of the remote branch. This can lead to a cleaner history than merging, but it can also be a bit more complicated, especially if you're unfamiliar with rebasing.
+
+Fast-forward only (git config pull.ff only): This will only allow the pull to happen if it can be achieved by a fast-forward merge, meaning the local branch is simply moved forward to match the remote branch without any new commits. If this isn't possible (e.g., because there are new local commits), the pull will fail.
+
+### How to resolve:
+Decide on how you'd like to reconcile the branches. If you're unsure, merging (the first option) is the most straightforward.
+
+Set the configuration accordingly. For example, to set it to merge:
+
+git config pull.rebase false
+
+After setting the config, you can then do a git pull again.
+
+If you encounter any merge conflicts, you'll need to resolve them manually. After resolving, commit the changes.
+
+Once done, you can push your changes (if needed).
+
+Remember, the above git config command only sets the behavior for the current repository. If you want this behavior for all repositories on your system, add --global to the command:
+
+git config --global pull.rebase false
+In practice, many developers prefer rebasing (option 2) because it results in a cleaner, linear commit history. However, it can be a bit more involved, especially if you're new to it or if there are many conflicts to resolve.
 
 
 
