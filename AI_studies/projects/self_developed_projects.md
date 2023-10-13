@@ -31,6 +31,13 @@ This will allow me to learn new libraries faster
 ## PP3: dev_assist GPT
 This will allow me to develop faster;
 
+### Feature 1: Code feedback
+
+
+### Feature 2: Write documentation and bug fix
+
+### Feature 3: Refactoring and performance upgrades
+
 
 
 
