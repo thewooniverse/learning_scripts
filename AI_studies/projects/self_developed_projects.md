@@ -22,9 +22,10 @@ Learning GPT is a continuous project that will assist me with
 
 
 ## PP2: question docs GPT
-doc_question GPT is a general tool for me to be able
+doc_question GPT is a general tool for me to be able to question docs;
 
-This will allow me to learn new libraries faster
+This will allow me to learn new libraries faster.
+
 
 
 
