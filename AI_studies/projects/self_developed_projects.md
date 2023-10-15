@@ -18,8 +18,12 @@ Given a full directory of texts and PDFs... it can:
 -- Spaced recognition and testing
 -- Tracking your progress and mastery towards mastery
 
+
+
 ## PP2: question docs GPT
-question_docs is a practice project that was used to practice
+question_docs is a practice project that was used to practice Langchain, it works well as a initial tool / practice for questioning against documentations.
+
+
 
 ## PP3: dev_assist GPT
 dev_assist GPT is an AI application that helps me leverage LLMs to complete the more tedious parts of the development workflow; 
