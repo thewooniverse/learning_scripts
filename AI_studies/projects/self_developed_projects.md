@@ -5,42 +5,33 @@ Often times projects that increase my own productivity and learning should be pr
 These are projects that I will develop myself, often 
 
 
-## PP1: Learning GPT
-Learning GPT is a continuous project that will assist me with 
+## PP1: learningGPT
+learningGPT is a continuous project that assists and accelerates my learning of new things (primarily, new libraries, programming languages and modules).
 
-### Feature 1: quizzing and testing
-- When given a directory, it will generate quizzes around the content of the directory to test my understanding. This can eventually be expanded into walking through the whole repository of my own learning_scripts - to occasionally test things.
--- This also means that I could add some logic in terms of the way / convention of how files are organized and directory / naming convention is being done.
--- Eventually, this will be run potentailly once per day, or once after every new chapter of things have been learnt.
+Given a full directory of texts and PDFs... it can:
+- Create an overview and summary of the contents of the directory
+- Give its real world / common use cases along with examples
 
-- Spaced Repetition and progress tracking
-
-### Feature 2:
-
-
-
-
+- Develop a learning path from basics to mastery
+- Develop a milestone based project to practice and build mastery
+- Develop quizzes to test your knowledge
+-- Spaced recognition and testing
+-- Tracking your progress and mastery towards mastery
 
 ## PP2: question docs GPT
-doc_question GPT is a general tool for me to be able to question docs;
-
-This will allow me to learn new libraries faster.
-
-
-
+question_docs is a practice project that was used to practice
 
 ## PP3: dev_assist GPT
-This will allow me to develop faster;
+dev_assist GPT is an AI application that helps me leverage LLMs to complete the more tedious parts of the development workflow; 
 
-### Feature 1: Code feedback
-
+### Feature 1: Code feedback 
+Using LLMs to give feedback on how I have written code in general.
 
 ### Feature 2: Write documentation and bug fix
+Using LLMs to generate READMEs, documentations and change / bug fix notes based on the code changes.
 
 ### Feature 3: Refactoring and performance upgrades
-
-
-
+Using LLMs to refactor specific parts of the code, and measure performance etc..
 
 
 
