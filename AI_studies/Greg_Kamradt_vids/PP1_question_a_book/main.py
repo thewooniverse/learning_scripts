@@ -31,19 +31,19 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', 'YourAPIKey')
 embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
 # Loading the PDF into documents
-# loader = PyPDFLoader("./field-guide-to-data-science.pdf") # this is a loader object
+loader = PyPDFLoader("./Mourinho.pdf") # this is a loader object
 # print(type(loader)) # <class 'langchain.document_loaders.pdf.PyPDFLoader'>
 ## Other options for loaders 
 # loader = UnstructuredPDFLoader("../data/field-guide-to-data-science.pdf")
 # loader = OnlinePDFLoader("https://wolfpaulus.com/wp-content/uploads/2017/05/field-guide-to-data-science.pdf")
 
 # loading the PyPDF loader as data
-# data = loader.load() # data is a list collection of documents that have been loaded.
+data = loader.load() # data is a list collection of documents that have been loaded.
 
 # Note: If you're using PyPDFLoader then we'll be splitting for the 2nd time.
 # This is optional, test out on your own data.
-# text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=0)
-# texts = text_splitter.split_documents(data)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=0)
+texts = text_splitter.split_documents(data)
 # Note: If you're using PyPDFLoader then it will split by page for you already
 # print (f'You have {len(data)} document(s) in your data')
 # print (f'There are {len(data[5].page_content)} characters in your document')
@@ -51,25 +51,179 @@ embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
 
 # query for similarity search;
-query = "Who is the author of field guide to data science? And who is Karthik Raghunathan?"
+query = "Who is Joseph Mourinho??"
 
-# Using Chroma wrapper
-# save to disk
-# db2 = Chroma.from_documents(texts, embeddings, persist_directory="./chroma_db", collection_name="DATASCI")
+######## Using Chroma wrapper
+### load from docs and save to disk persistently;
+# db2 = Chroma.from_documents(texts, embeddings, persist_directory="./chroma_db", collection_name='DAGAP')
 # docs = db2.similarity_search(query)
+# print(docs[0].page_content)
 
-# load from disk
-db3 = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
+### load from disk and conduct similarity search
+db3 = Chroma(persist_directory="./chroma_db", embedding_function=embeddings, collection_name='DATASCI')
 # print(type(db3)) # <class 'langchain.vectorstores.chroma.Chroma'>
 docs = db3.similarity_search(query)
 # print(docs[0].page_content)
 
+### constructing the QA chain and querying against relevant documents
 llm = OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY)
 chain = load_qa_chain(llm, chain_type="stuff", verbose=True)
 output = chain.run(input_documents=docs, question=query)
 print(output)
 
+
+### testing for deletion and persist() to update persistent data database;
+# db3.delete_collection()
+# -- it looks like deleting the collection is persistent.
+
+
+### getting more in
+# print(db2._client.get_collection("DAGAP")) # name='DAGAP' id=UUID('cafefa25-a37f-4e6b-a61c-5edd2805a9f2') metadata=None
+# print(db2._client.get_collection("DATASCI")) # name='DATASCI' id=UUID('96f64536-18f6-414b-b277-23a4f08929db') metadata=None
+# db3.add_documents(texts)
+# docs = db3.similarity_search(query)
+# output = chain.run(input_documents=docs, question=query)
+# print(output)
+
+
+
+
+
 """
+
+
+SUMMARY SO FAR:
+- I can save and load specific collections
+- I can target specific collections for deletions by loading specific collections, and then deleting them as a whole vectorstore.
+- Its better to load specific collections rather than loading everything all at once.
+- Deleting and adding is persistent.
+
+
+
+
+
+####################################################################################
+####################################################################################
+####################################################################################
+
+NOTE ON PERSISTENCE;
+Yes, when you load a persistent Chroma object with a specified persist directory, any changes made to the collection, 
+such as adding documents using add_document(), will be persistent. The persistent Chroma object ensures that the 
+collection data is saved to the specified persist directory on disk.
+In your example, when you create a Chroma object with the persist_directory parameter set to "./chroma_db",
+any modifications made to the collection, including adding documents, will be saved to the chroma_db directory on disk.
+This allows the changes to persist across different sessions or when the program is restarted.
+The persistent Chroma object handles the persistence of the collection data, 
+ensuring that modifications are saved and can be retrieved later when the object is loaded again.
+It's important to note that you should have appropriate read and write permissions for the specified persist directory to allow the persistent 
+Chroma object to save and load the collection data successfully.
+
+
+
+
+
+### Trying - adding to specific collections and persistence and testing;
+--- Basic context was that the 
+query = "Who is Joseph Mourinho??"
+db3 = Chroma(persist_directory="./chroma_db", embedding_function=embeddings, collection_name='DATASCI')
+docs = db3.similarity_search(query)
+
+
+OUTPUT:
+ José Mourinho is a Portuguese football manager and former player who is the current manager of Serie A club Roma. 
+ He is widely regarded as one of the greatest and most successful managers in the world. 
+ He has won 25 major honours in his managerial career, including two UEFA Champions League titles, 
+ two UEFA Cup/Europa League titles, eight league titles, and four domestic cup titles. 
+ He is one of only three managers to have won the UEFA Champions League with two different clubs, and 
+ the first to win it in consecutive seasons with different clubs. 
+ He is also the first manager to win the UEFA Europa League with two different clubs.
+
+
+
+
+------------------------------------------------------------------------
+--- Loading and trying the query;
+query = "Who is Joseph Mourinho??"
+db3 = Chroma(persist_directory="./chroma_db", embedding_function=embeddings, collection_name='DATASCI')
+docs = db3.similarity_search(query)
+output = chain.run(input_documents=docs, question=query)
+
+OUTPUT:
+I don't know.
+
+------------------------
+--- THEN, adding documents
+db3.add_documents(texts)
+docs = db3.similarity_search(query)
+output = chain.run(input_documents=docs, question=query)
+
+OUTPUT:
+Joseph Mourinho is a Portuguese professional football manager and former player who is the current head coach of Italian Serie A club Roma.
+
+------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------
+### Trying - loading and deleting one collection.
+
+CONTEXT:
+db3 = Chroma(persist_directory="./chroma_db", embedding_function=embeddings, collection_name='DATASCI')
+AFTER collection_name='DAGAP' was imported, then db3.delete_collection() was run;
+
+The authors of The Field Guide to Data Science are from Booz Allen Hamilton and from the community.
+
+----------------------------------------
+QUERY: Who is the author
+CONTEXT:
+db3.delete_collection() << run previously, then executed query on this
+db3 = Chroma(persist_directory="./chroma_db", embedding_function=embeddings, collection_name='DAGAP')
+- Basically, the chroma_db no longer has
+
+
+OUTPUT:
+Traceback (most recent call last):
+  File "/Users/woo/Desktop/studies/learning_scripts/AI_studies/Greg_Kamradt_vids/PP1_question_a_book/main.py", line 66, in <module>
+    print(docs[0].page_content)
+          ~~~~^^^
+IndexError: list index out of range
+➜  PP1_question_a_book git:(main) ✗ 
+
+----------------------------------------
+QUERY: "Who is the author?"
+CONTEXT: Chroma.from_documents(texts, embeddings, persist_directory="./chroma_db", collection_name="DAGAP")
+
+OUTPUT:
+The author is Karthik Raghunathan.
+----------------------------------------
+QUERY: "Who is the author?"
+CONTEXT: Chroma.from_documents(texts, embeddings, persist_directory="./chroma_db", collection_name="DATASCI")
+
+OUTPUT:
+The authors of The Field Guide to Data Science are from Booz Allen Hamilton and from the community.
+----------------------------------------
+
+
+
+
+
+----------
+OUTPUT: "Who is the author of field guide to data science? And who is Karthik Raghunathan?"
+CONTEXT:
+> Deleted through db2.delete_collection() after loading the whole ./chroma_db;
+--
+The author of the Field Guide to Data Science is Booz Allen Hamilton. Karthik Raghunathan is not mentioned in the context.
+
+
 OUTPUT: "Who is the author of field guide to data science? And who is Karthik Raghunathan?"
 CONTEXT: Same as the below context in loading without specifying collection name, but also commenting out the rest of the vector dance above
 and simply loading the Chroma_db.
@@ -79,10 +233,6 @@ Interesting to note that the model seems to be hallucinating a bit, this
 ---
 The author of the field guide to data science is Karthik Raghunathan.
 He is a data scientist and the founder of the Data Science Lab.
-
-
-
-
 
 
 
