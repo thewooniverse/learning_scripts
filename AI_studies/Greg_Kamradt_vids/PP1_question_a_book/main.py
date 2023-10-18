@@ -21,9 +21,11 @@ from chromadb.utils import embedding_functions
 
 # importing
 from langchain.llms import OpenAI
+from langchain.chat_models import ChatOpenAI
 from langchain.chains.question_answering import load_qa_chain
 
-
+# help(OpenAI)
+# help(ChatOpenAI)
 
 # loading the environment variables
 load_dotenv()
@@ -31,19 +33,19 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', 'YourAPIKey')
 embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
 # Loading the PDF into documents
-loader = PyPDFLoader("./Mourinho.pdf") # this is a loader object
+# loader = PyPDFLoader("./Mourinho.pdf") # this is a loader object
 # print(type(loader)) # <class 'langchain.document_loaders.pdf.PyPDFLoader'>
 ## Other options for loaders 
 # loader = UnstructuredPDFLoader("../data/field-guide-to-data-science.pdf")
 # loader = OnlinePDFLoader("https://wolfpaulus.com/wp-content/uploads/2017/05/field-guide-to-data-science.pdf")
 
 # loading the PyPDF loader as data
-data = loader.load() # data is a list collection of documents that have been loaded.
+# data = loader.load() # data is a list collection of documents that have been loaded.
 
 # Note: If you're using PyPDFLoader then we'll be splitting for the 2nd time.
 # This is optional, test out on your own data.
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=0)
-texts = text_splitter.split_documents(data)
+# text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=0)
+# texts = text_splitter.split_documents(data)
 # Note: If you're using PyPDFLoader then it will split by page for you already
 # print (f'You have {len(data)} document(s) in your data')
 # print (f'There are {len(data[5].page_content)} characters in your document')
@@ -51,25 +53,29 @@ texts = text_splitter.split_documents(data)
 
 
 # query for similarity search;
-query = "Who is Joseph Mourinho??"
+query = "Who is Karthik?"
 
 ######## Using Chroma wrapper
 ### load from docs and save to disk persistently;
-# db2 = Chroma.from_documents(texts, embeddings, persist_directory="./chroma_db", collection_name='DAGAP')
+# db2 = Chroma.from_documents(texts, embeddings, persist_directory="./chroma_db")
 # docs = db2.similarity_search(query)
 # print(docs[0].page_content)
 
 ### load from disk and conduct similarity search
-db3 = Chroma(persist_directory="./chroma_db", embedding_function=embeddings, collection_name='DATASCI')
+db3 = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
 # print(type(db3)) # <class 'langchain.vectorstores.chroma.Chroma'>
 docs = db3.similarity_search(query)
 # print(docs[0].page_content)
 
 ### constructing the QA chain and querying against relevant documents
-llm = OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY)
-chain = load_qa_chain(llm, chain_type="stuff", verbose=True)
+# llm = OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY)
+llm2 = ChatOpenAI(temperature=0.5, openai_api_key=OPENAI_API_KEY)
+
+chain = load_qa_chain(llm2, chain_type="stuff", verbose=True)
 output = chain.run(input_documents=docs, question=query)
 print(output)
+
+# help(load_qa_chain)
 
 
 ### testing for deletion and persist() to update persistent data database;
@@ -86,18 +92,16 @@ print(output)
 # print(output)
 
 
-
-
-
 """
 
 
 SUMMARY SO FAR:
-- I can save and load specific collections
+- I can save and load specific collections, and it is often better to do so;
+- Its better to load specific collections rather than loading everything all at once -> especially if I know what to QA;
 - I can target specific collections for deletions by loading specific collections, and then deleting them as a whole vectorstore.
-- Its better to load specific collections rather than loading everything all at once.
-- Deleting and adding is persistent.
+- Deleting and adding is persistent, as seen in notes below.
 
+- I can flexibly interchange between ChatModels and Language Models as seen in llm and llm2;
 
 
 
@@ -117,6 +121,20 @@ The persistent Chroma object handles the persistence of the collection data,
 ensuring that modifications are saved and can be retrieved later when the object is loaded again.
 It's important to note that you should have appropriate read and write permissions for the specified persist directory to allow the persistent 
 Chroma object to save and load the collection data successfully.
+
+
+
+
+
+
+
+
+
+
+
+
+
+"In the context provided, who is Trump?"
 
 
 
