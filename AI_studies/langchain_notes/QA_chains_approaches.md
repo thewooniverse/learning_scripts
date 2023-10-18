@@ -1,8 +1,37 @@
+
+
 https://towardsdatascience.com/4-ways-of-question-answering-in-langchain-188c6707cc5a
+Notes:
+
+4 different approaches: loadQA, RetrievalQA, VectorStoreIndexCreator, ConversationalRetrievalQA
+
+There are also many different types of things you can control that influencers the outcome of your AI's response:
+- choice of retrievers - 
+- choice of embedding models - Huggingface, OpenAI
+- choice of vectorstore - Chroma, Pinecone etc... each come with different capabilities
+- Search Types - Similarity Search, MMR etc...
+
+
+1. LoadQA chain, unless defined uses all the data it is given. Use it along with vectorstore.docsearch -> in order to
+2. RetrievalQA chain, basically runs on LoadQA chain under the hood, less configurations needed;
+3. Is a wrapper, and uses RetrievalQA under the hood, I don't need this just yet.
+4. RetrievalQA chain + chat history.
+
+
+docsearch.as_retriever(search_kwargs={'k': 1})
+k:1 => How many documents i want to retrieve.
+
+
+
+
+
 
 
 
 ################################################################################################
+DOCS: 
+- https://python.langchain.com/docs/use_cases/question_answering/vector_db_qa
+
 ### Main difference between the two chains
 
 The main difference between the LoadQAChain and RetrievalQAChain in Langchain lies in their functionality and purpose:
@@ -12,8 +41,6 @@ The main difference between the LoadQAChain and RetrievalQAChain in Langchain li
 • RetrievalQAChain: This chain is designed specifically for question-answering tasks over an index of documents. It utilizes a retriever to search for relevant documents based on the query and then passes those documents to a question-answering model to generate an answer. The RetrievalQAChain is focused on retrieving and answering questions efficiently.
 
 In summary, the LoadQAChain is responsible for loading and processing documents, while the RetrievalQAChain is specialized for question-answering tasks using a retriever and a question-answering model.
-
-
 
 
 
