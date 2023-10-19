@@ -29,5 +29,20 @@ Topic mastery;
 - Lanchain
 - OpenAI API
 
+|--/main.py/ --> main script
+|--/documentations/ --> houses the documentations as well as the learning directories for corresponding documentations.
+
+When users deposit a directory within documentation, for example there is /thefuzz/ library in the /learnGPT/documentations/ folder. When the script is run to target this documentation for learning, it will create a /learn-thefuzz/ directory within the documentations library that houses various things such as...
+- chroma_db --> persistent vectorstores for given library
+- conversation_log.md --> houses all conversations
+- overview.md --> overview + exampels and basic usage
+- learning_paths.md --> learning_paths.md
+
+For each topic / milestone there shoudl be a sub directory:
+-- notes.md
+-- test_questions.md
+-- practice_project.md
+
+- learning_progress.pickle --> eventually, will track the progress of my learning, spaced repetition, scores and track what it is that I need to review until mastery.
 
 
