@@ -13,6 +13,10 @@ Given a full directory of texts and PDFs... it can:
 -- Tracking your progress and mastery towards mastery
 - Telegram integration to ping notifications on a timely basis to test.
 
+- Support for updating libraries as they get updated;
+-- This is not a ugent feature, as libraries don't get updated THAT often or have that big of changes in a short timespan.
+-- And therefore, this can be done manually to until this is developed.
+-- The approach to doing this eventually will be using submodules in Git and updating it and updating the embeddigns as well.
 
 ### Development Roadmap:
 - Summarize the directory and the important lessons covered and key concepts
@@ -44,5 +48,17 @@ For each topic / milestone there shoudl be a sub directory:
 -- practice_project.md
 
 - learning_progress.pickle --> eventually, will track the progress of my learning, spaced repetition, scores and track what it is that I need to review until mastery.
+
+
+
+##### TODOs:
+1. Initializing /documents/learn-module/ with the relevant folders
+2. Creating and storing the relevant vectorstores within a given directory
+2.a. This also includes being able to chop large libraries and execute against them part by part to embed them and add them to the vectorstore individually.
+
+3. Loading the correct vectostore-collection when there is a user query
+4. Returning / printing the user query and then storing the conversation history in a persistent db so that it can be used as context in the future.
+
+
 
 
