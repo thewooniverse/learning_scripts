@@ -70,7 +70,7 @@ def get_folder_size_MB(target_directory):
         for filename in filenames:
             file_path = os.path.join(dirpath, filename)
             total_size += os.path.getsize(file_path)
-    return total_size / 1024 / 1024
+    return round((total_size / 1024 / 1024), 2)
 
 
 
@@ -85,41 +85,65 @@ def create_vectostore(target_directory, is_subdir = False):
 
     - You may also target sub directories within the target_directory, such as thefuzz/data/ or thefuzz/thefuzz, but you must turn on the subdir flag as True
 
+    - subdir is something like thefuzz/thefuzz
+    - normal dir is something like thefuzz
+
+
     Args:
     - target_directory - e.g. "thefuzz" this is a string name of the folder within documentations. 
                          The folder must be in documentations otherwise the function will raies an error.
 
     - is_subdir - default=False, use only when a sub directory is passed for example thefuzz/thefuzz
 
+
     Returns:
     None
     """
-    # if it is a sub directory, like thefuzz/data/ -> then we must extract only "thefuzz" 
-    # so that /documentations/learn|thefuzz/ is craeted and not /documentations/learn|thefuzz/data/
-    if is_subdir:
-        target_directory = target_directory.split(os.path.sep)[0]
-    
-    # establish the relevant paths
-    target_path = os.path.join(DOCS_PATH, target_directory) # /learnGPT/documentations/thefuzz/
+    # set the learning path
+    target_path = os.path.join(DOCS_PATH, target_directory) # /thefuzz/data/examples/ -> it could be however long
     learning_path = os.path.join(DOCS_PATH, f'learn|{target_directory}') # /learnGPT/documentations/learn|thefuzz/
+
+    # if it is a subdirectory, then we need to just get the parent directory and set that as the learning path and chroma path is properly set.
+    if is_subdir:
+        parent_directory = target_directory.split(os.path.sep)[0] # /thefuzz/data/examples/ -> thefuzz thereby extracting just the parent directory name
+        learning_path = os.path.join(DOCS_PATH, f'learn|{parent_directory}')
+    
+
     chroma_path = os.path.join(learning_path, 'chroma_db') # /learnGPT/documentations/learn|thefuzz/chroma_db/
+
 
     ## code snippet to calculate the last refreshed for future usage
     # timestamp = os.path.getmtime(target_path)
     # last_modified_date = datetime.datetime.fromtimestamp(timestamp)
 
+
+
     # instantiate the database
     db = Chroma(persist_directory=chroma_path, embedding_function=embeddings, collection_name=f'{target_directory}')
 
+    db.add_documents(documents)
+
     # check the filesize of the database
     size = get_folder_size_MB(target_directory)
-    # if the size is larger than 50
+    # if the size is larger than 50, return and ask for sub directories to be added individually
     if size > 50:
-        print("The library is too big, please target sub directories")
+        print(f"The directory is too big {size}MB, please target sub directories in this case.")
         return
-    else:
-        print(size)
+    
+    # walk the directory, split and load the documents, embed and add it with the relevant embeddings
+    documents = []
 
+    for dirpath, dirnames, filenames in os.walk(target_path):
+        # Go through each file
+        for file in filenames:
+            try: 
+                # Load up the file as a doc and split
+                print (file)
+                loader = TextLoader(os.path.join(dirpath, file), encoding='utf-8')
+                documents.extend(loader.load_and_split())
+            except Exception as e: 
+                pass
+    
 
 
 
@@ -129,7 +153,7 @@ def create_vectostore(target_directory, is_subdir = False):
 
 
 if __name__ == "__main__":
-    test_target_directory_to_learn = "PDF_test"
+    test_target_directory_to_learn = "thefuzz/data"
     test_target_path = os.path.join(DOCS_PATH, test_target_directory_to_learn)
     create_vectostore(test_target_directory_to_learn)
 
