@@ -88,7 +88,6 @@ def create_vectostore(target_directory, is_subdir = False):
     - subdir is something like thefuzz/thefuzz
     - normal dir is something like thefuzz
 
-
     Args:
     - target_directory - e.g. "thefuzz" this is a string name of the folder within documentations. 
                          The folder must be in documentations otherwise the function will raies an error.
@@ -102,13 +101,12 @@ def create_vectostore(target_directory, is_subdir = False):
     # set the learning path
     target_path = os.path.join(DOCS_PATH, target_directory) # /thefuzz/data/examples/ -> it could be however long
     learning_path = os.path.join(DOCS_PATH, f'learn|{target_directory}') # /learnGPT/documentations/learn|thefuzz/
+    parent_directory = target_directory.split(os.path.sep)[0] # /thefuzz/data/examples/ -> thefuzz thereby extracting just the parent directory name
 
     # if it is a subdirectory, then we need to just get the parent directory and set that as the learning path and chroma path is properly set.
     if is_subdir:
-        parent_directory = target_directory.split(os.path.sep)[0] # /thefuzz/data/examples/ -> thefuzz thereby extracting just the parent directory name
         learning_path = os.path.join(DOCS_PATH, f'learn|{parent_directory}')
     
-
     chroma_path = os.path.join(learning_path, 'chroma_db') # /learnGPT/documentations/learn|thefuzz/chroma_db/
 
 
@@ -116,12 +114,8 @@ def create_vectostore(target_directory, is_subdir = False):
     # timestamp = os.path.getmtime(target_path)
     # last_modified_date = datetime.datetime.fromtimestamp(timestamp)
 
-
-
     # instantiate the database
-    db = Chroma(persist_directory=chroma_path, embedding_function=embeddings, collection_name=f'{target_directory}')
-
-    db.add_documents(documents)
+    db = Chroma(persist_directory=chroma_path, embedding_function=embeddings, collection_name=f'{parent_directory}')
 
     # check the filesize of the database
     size = get_folder_size_MB(target_directory)
@@ -138,12 +132,13 @@ def create_vectostore(target_directory, is_subdir = False):
         for file in filenames:
             try: 
                 # Load up the file as a doc and split
-                print (file)
+                print(file)
                 loader = TextLoader(os.path.join(dirpath, file), encoding='utf-8')
                 documents.extend(loader.load_and_split())
             except Exception as e: 
                 pass
     
+    db.add_documents(documents)
 
 
 
@@ -151,11 +146,10 @@ def create_vectostore(target_directory, is_subdir = False):
 
 
 
-
+# testing with __main__ entry:
 if __name__ == "__main__":
     test_target_directory_to_learn = "thefuzz/data"
     test_target_path = os.path.join(DOCS_PATH, test_target_directory_to_learn)
-    create_vectostore(test_target_directory_to_learn)
-
+    create_vectostore(test_target_directory_to_learn, True) # if testing for subdir, remember to put True as arg2
 
 
