@@ -8,6 +8,9 @@ import datetime
 from langchain.vectorstores import Chroma
 from langchain.embeddings.openai import OpenAIEmbeddings
 
+# Loaders;
+from langchain.document_loaders import UnstructuredPDFLoader, OnlinePDFLoader, PyPDFLoader
+
 # Model and chain
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import RetrievalQA
@@ -120,16 +123,26 @@ def create_vectostore(target_directory):
 
     for dirpath, dirnames, filenames in os.walk(target_path):
         # Go through each file
-        ## TODO: test for different supported types
+        
 
         for file in filenames:
-            try: 
-                # Load up the file as a doc and split
-                print(file)
-                loader = TextLoader(os.path.join(dirpath, file), encoding='utf-8')
-                documents.extend(loader.load_and_split())
-            except Exception as e: 
-                pass
+            filetype = file.split(".")[1]
+            if filetype.lower() == "pdf":
+                try:
+                    print(file)
+                    loader = PyPDFLoader(os.path.join(dirpath, file)) # this is a loader object
+                    documents.extend(loader.load_and_split())
+                except Exception as e:
+                    pass
+
+            else:
+                try:
+                    # Load up the file as a doc and split
+                    print(file)
+                    loader = TextLoader(os.path.join(dirpath, file), encoding='utf-8')
+                    documents.extend(loader.load_and_split())
+                except Exception as e: 
+                    pass
     
     db.add_documents(documents)
 
@@ -179,9 +192,10 @@ def search_and_qa(target_directory, query, llm=llm):
 if __name__ == "__main__":
     # target directory is another way of saying target library that is contained within the learnGPT library:
 
-    test_target_directory_to_learn = "thefuzz/data"
+    test_target_directory_to_learn = "PDF_test"
     test_target_path = os.path.join(DOCS_PATH, test_target_directory_to_learn)
-    # create_vectostore(test_target_directory_to_learn, True) # if testing for subdir, remember to put True as arg2
-    search_and_qa(test_target_directory_to_learn, "who is Jose Mourinho")
+    create_vectostore(test_target_directory_to_learn) # if testing for subdir, remember to put True as arg2
+    result = search_and_qa(test_target_directory_to_learn, "Who is the author")
+    print(result)
 
 
