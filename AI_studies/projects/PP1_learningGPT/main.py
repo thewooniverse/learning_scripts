@@ -51,8 +51,6 @@ def initialize_learn_dir(target_directory):
     else:
         pass
 
-
-
 def get_folder_size_MB(target_directory):
     """
     get_folder_size(folder_path):
@@ -74,19 +72,23 @@ def get_folder_size_MB(target_directory):
 
 
 
-
-
-def create_vectostore(target_directory, is_subdir = False):
+def create_vectostore(target_directory):
     """
     create_vectostore(target_directory):
-    - Creates a vectorstore containing of all of the relevant files within the target directory and its sub directories by using os.walk() on the target_path
-    - This creates a chroma_db within the /documentations/learn-target_directory/ path that contains the relevant embeddings.
+    - Creates a vectorstore containing of all of the relevant files and its embeddings
+    - within the target directory and its sub directories by using os.walk() on the target_path
+    - This creates a chroma_db within the /documentations/learn|target_directory/ path that contains the relevant embeddings.
+    -- It also creates the learn|target_directory directory as well if it does not yet exist.
+
+
+    Target Support:
     - File format wise the function currently, supports .txt and PDF
+    - Supported filesize of directory is 50MB, anything larger should be broken up into smaller tasks:
 
-    - You may also target sub directories within the target_directory, such as thefuzz/data/ or thefuzz/thefuzz, but you must turn on the subdir flag as True
+    - You may also target sub directories within the target_directory, such as thefuzz/data/ or thefuzz/thefuzz, but you must turn on the subdir flag as True.
+    -- subdir is something like thefuzz/thefuzz
+    -- normal dir is something like thefuzz
 
-    - subdir is something like thefuzz/thefuzz
-    - normal dir is something like thefuzz
 
     Args:
     - target_directory - e.g. "thefuzz" this is a string name of the folder within documentations. 
@@ -94,25 +96,14 @@ def create_vectostore(target_directory, is_subdir = False):
 
     - is_subdir - default=False, use only when a sub directory is passed for example thefuzz/thefuzz
 
-
     Returns:
     None
     """
     # set the learning path
     target_path = os.path.join(DOCS_PATH, target_directory) # /thefuzz/data/examples/ -> it could be however long
-    learning_path = os.path.join(DOCS_PATH, f'learn|{target_directory}') # /learnGPT/documentations/learn|thefuzz/
-    parent_directory = target_directory.split(os.path.sep)[0] # /thefuzz/data/examples/ -> thefuzz thereby extracting just the parent directory name
-
-    # if it is a subdirectory, then we need to just get the parent directory and set that as the learning path and chroma path is properly set.
-    if is_subdir:
-        learning_path = os.path.join(DOCS_PATH, f'learn|{parent_directory}')
-    
+    parent_directory = target_directory.split(os.path.sep)[0] # absolute parent dir, whether its a subdir or parent dir.
+    learning_path = os.path.join(DOCS_PATH, f'learn|{parent_directory}') # /learnGPT/documentations/learn|thefuzz/
     chroma_path = os.path.join(learning_path, 'chroma_db') # /learnGPT/documentations/learn|thefuzz/chroma_db/
-
-
-    ## code snippet to calculate the last refreshed for future usage
-    # timestamp = os.path.getmtime(target_path)
-    # last_modified_date = datetime.datetime.fromtimestamp(timestamp)
 
     # instantiate the database
     db = Chroma(persist_directory=chroma_path, embedding_function=embeddings, collection_name=f'{parent_directory}')
@@ -129,6 +120,8 @@ def create_vectostore(target_directory, is_subdir = False):
 
     for dirpath, dirnames, filenames in os.walk(target_path):
         # Go through each file
+        ## TODO: test for different supported types
+
         for file in filenames:
             try: 
                 # Load up the file as a doc and split
@@ -140,6 +133,42 @@ def create_vectostore(target_directory, is_subdir = False):
     
     db.add_documents(documents)
 
+    ## code snippet to calculate the last refreshed for future usage
+    # timestamp = os.path.getmtime(target_path)
+    # last_modified_date = datetime.datetime.fromtimestamp(timestamp)
+
+
+
+
+
+def search_and_qa(target_directory, query, llm=llm):
+    """
+    search_and_qa(target_directory, query, llm):
+    1. gets the vectorstore and loads it into a local variable
+    2. run a docsearch on the vectorstore with the query;
+
+    target_directory = library or directory of information to query against
+    query = query to be sent to the LLM
+    llm = LLM used, default is the chat model loaded
+
+    retriever = db.as_retriever()
+    """
+    # check the vectorstore path exists get the vectorstore, then construct the qa chain and retriever
+    parent_directory = target_directory.split(os.path.sep)[0] # absolute parent dir, whether its a subdir or parent dir.
+    learning_path = os.path.join(DOCS_PATH, f"learn|{parent_directory}")
+    chroma_path = os.path.join(learning_path, 'chroma_db') # /learnGPT/documentations/learn|thefuzz/chroma_db/
+    if not os.path.exists(chroma_path):
+        print("VectorStore does not exist")
+        return 
+    
+    db = Chroma(persist_directory=chroma_path, embedding_function=embeddings, collection_name=f'{parent_directory}')
+    retriever = db.as_retriever()
+    qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever, verbose=True)
+    result = qa_chain.run(query)
+    return result    
+
+
+
 
 
 
@@ -148,8 +177,11 @@ def create_vectostore(target_directory, is_subdir = False):
 
 # testing with __main__ entry:
 if __name__ == "__main__":
+    # target directory is another way of saying target library that is contained within the learnGPT library:
+
     test_target_directory_to_learn = "thefuzz/data"
     test_target_path = os.path.join(DOCS_PATH, test_target_directory_to_learn)
-    create_vectostore(test_target_directory_to_learn, True) # if testing for subdir, remember to put True as arg2
+    # create_vectostore(test_target_directory_to_learn, True) # if testing for subdir, remember to put True as arg2
+    search_and_qa(test_target_directory_to_learn, "who is Jose Mourinho")
 
 
