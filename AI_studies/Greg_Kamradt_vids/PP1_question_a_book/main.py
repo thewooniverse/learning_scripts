@@ -53,7 +53,7 @@ embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
 
 # query for similarity search;
-query = "Who is Karthik?"
+query = "What is the data science process??"
 
 ######## Using Chroma wrapper
 ### load from docs and save to disk persistently;

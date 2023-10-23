@@ -33,21 +33,22 @@ llm = ChatOpenAI(temperature=0.5, model_name='gpt-4', openai_api_key=OPENAI_API_
 
 
 # # construct the document embeddings
-# root_dir = './documentations/thefuzz'
-# documents = []
+root_dir = './documentations/thefuzz'
+documents = []
 
 # # Go through each folder
-# for dirpath, dirnames, filenames in os.walk(root_dir):
-    
-#     # Go through each file
-#     for file in filenames:
-#         try: 
-#             # Load up the file as a doc and split
-#             # print (file)
-#             loader = TextLoader(os.path.join(dirpath, file), encoding='utf-8')
-#             documents.extend(loader.load_and_split())
-#         except Exception as e: 
-#             pass
+for dirpath, dirnames, filenames in os.walk(root_dir):
+    print(dirpath)
+    print(dirnames)
+    # Go through each file
+    for file in filenames:
+        try: 
+            # Load up the file as a doc and split
+            print (file)
+            loader = TextLoader(os.path.join(dirpath, file), encoding='utf-8')
+            documents.extend(loader.load_and_split())
+        except Exception as e: 
+            pass
 
 # print (f"You have {len(documents)} documents\n")
 # # print ("------ Start Document ------")
@@ -61,7 +62,7 @@ db = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
 retriever = db.as_retriever()
 
 qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever, verbose=True)
-query = "Who is Joseph Mourinho"
+query = "Who is Donald Trump"
 result = qa_chain.run(query)
 print(result)
 
