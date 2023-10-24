@@ -1,8 +1,8 @@
-# Helper to read local files
+# Helper to read and write local files
 import os
 from dotenv import load_dotenv
 import datetime
-
+import json
 
 # Vector Support
 # from langchain.vectorstores import FAISS >> instead of FAISS we will use Chroma
@@ -24,6 +24,16 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 # Schemas
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
 
+"""
+
+TODO:
+- logging messages
+- different chain types for different usecases in constructing initial learning elements; using chat history as well to construct the actual learning paths
+- and notes for each chapter + exercises and practice projects;
+--> basically, building your own "chain" using langchain instead of just using one or another;
+"""
+
+
 
 
 # load API keys and constants
@@ -31,12 +41,9 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', 'YourAPIKey')
 DOCS_PATH = os.path.join(os.path.dirname(__file__), f"documentations")
 
-# construct models
+# construct models - embekdding and language models
 embeddings = OpenAIEmbeddings(disallowed_special=(), openai_api_key=OPENAI_API_KEY)
 llm = ChatOpenAI(temperature=0.5, model_name='gpt-3.5-turbo', openai_api_key=OPENAI_API_KEY, model="gpt-3.5-turbo")
-
-
-
 
 
 
@@ -89,19 +96,16 @@ def create_vectostore(target_directory, verbose=False):
     - This creates a chroma_db within the /documentations/learn|target_directory/ path that contains the relevant embeddings.
     -- It also creates the learn|target_directory directory as well if it does not yet exist.
 
-
-    Target Support:
-    - File format wise the function currently, supports .txt and PDF
-    - Supported filesize of directory is 50MB, anything larger should be broken up into smaller tasks:
-
-    - You may also target sub directories within the target_directory, such as thefuzz/data/ or thefuzz/thefuzz, but you must turn on the subdir flag as True.
-    -- subdir is something like thefuzz/thefuzz
-    -- normal dir is something like thefuzz
-
-
     Args:
     - target_directory - e.g. "thefuzz" this is a string name of the folder within documentations. 
                          The folder must be in documentations otherwise the function will raies an error.
+
+        File format support:
+            - File format wise the function currently, supports .txt and PDF
+            - Supported filesize of directory is 50MB, anything larger should be broken up into smaller tasks:
+            - You may also target sub directories within the target_directory, such as thefuzz/data/ or thefuzz/thefuzz, but you must turn on the subdir flag as True.
+            -- subdir is something like thefuzz/thefuzz
+            -- normal dir is something like thefuzz
 
     - is_subdir - default=False, use only when a sub directory is passed for example thefuzz/thefuzz
 
@@ -133,9 +137,8 @@ def create_vectostore(target_directory, verbose=False):
         print(f"The directory is too big {size}MB, please target sub directories in this case.")
         return
     
-    # walk the directory, split and load the documents, embed and add it with the relevant embeddings
+    # walk the directory, split and load the documents, add it to the database / Chroma object (which itself already has the embedding functions)
     documents = []
-    
 
     for dirpath, dirnames, filenames in os.walk(target_path):
         # Go through each file
@@ -166,6 +169,7 @@ def create_vectostore(target_directory, verbose=False):
 
                 except Exception as e: 
                     pass
+            # more filetypes can be supported in the future, for example images.
     
     db.add_documents(documents)
 
@@ -177,7 +181,7 @@ def create_vectostore(target_directory, verbose=False):
 
 
 
-def search_and_qa(target_directory, query, k=5, llm=llm, verbose=True):
+def search_and_qa(target_directory, query, k=4, llm=llm, verbose=True):
     """
     search_and_qa(target_directory, query, llm):
     1. gets the vectorstore and loads it into a local variable
@@ -199,10 +203,9 @@ def search_and_qa(target_directory, query, k=5, llm=llm, verbose=True):
         return
 
 
-    # add chat history here for context for chat model
+    # TODO: add chat history here for context for chat model, especially for context and system message.
 
     db = Chroma(persist_directory=chroma_path, embedding_function=embeddings, collection_name=f'{parent_directory}') # See NOTE.
-    retriever = db.as_retriever()
     retrieved_docs = db.similarity_search(query=query, k=k)
 
     if verbose:
@@ -213,14 +216,20 @@ def search_and_qa(target_directory, query, k=5, llm=llm, verbose=True):
             print("----doucment end-----")
 
     qa_chain = load_qa_chain(llm, chain_type="stuff", verbose=True)
-    # qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever, verbose=True)
     result = qa_chain.run(question=query, input_documents=retrieved_docs)
     
+    ## alternative approach using qa_chain
+    # retriever = db.as_retriever()
+    # qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever, verbose=True)
+
+
+    # log the chat into the relevant directory
+
     return result
 
 
 
-def log_chat(target_directory, chat, docs):
+def log_chat(learning_path, query, chat_response):
     """
     log_chat(target_directory, chat):
     - log_chat stores the relevant chat history in the passed target directory along with other metadata
@@ -238,9 +247,26 @@ def log_chat(target_directory, chat, docs):
     - returns -> None
     - creates -> Writes to 
     """
+    # construct the json dump for this current conversation
+    ## gather and parse the relevant information
     current_time = datetime.datetime.now()
 
-    # construct
+    ## construct the logging string with pretty formatting:
+    data = {
+        "timestamp": str(current_time),
+        "Human_Message": query,
+        "AI_message": chat_response
+            }
+
+
+
+    # check if the log_path exists, if it doesn't create it and dump into it.
+    if not os.path.exists(os.path.join(learning_path, "chat_log.json")):
+        pass
+
+    
+
+
 
 
 
@@ -259,6 +285,6 @@ if __name__ == "__main__":
     # test_target_path = os.path.join(DOCS_PATH, test_target_directory_to_learn)
     # create_vectostore(test_target_directory_to_learn) # if testing for subdir, remember to put True as arg2
     q1 = "Can you give me a few real world examples and usecases of thefuzz? Along with code examples"
-    q2 = "Within the provided context, Who is Joe Biden"
+    q2 = "Give me an overview of each of the chapters in the book."
     result = search_and_qa(test_target_directory_to_learn, q2)
     print(result)
