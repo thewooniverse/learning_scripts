@@ -231,7 +231,7 @@ def search_and_qa(target_directory, query, k=4, llm=llm, verbose=True):
 
 def log_chat(learning_path, query, chat_response):
     """
-    log_chat(target_directory, chat):
+    log_chat(learning_path, query, chat_response):
     - log_chat stores the relevant chat history in the passed target directory along with other metadata
 
     Data formatfor example:{
@@ -245,24 +245,23 @@ def log_chat(learning_path, query, chat_response):
 
     resutls:
     - returns -> None
-    - creates -> Writes to 
+    - creates -> Writes to existing
     """
     # construct the json dump for this current conversation
     ## gather and parse the relevant information
     current_time = datetime.datetime.now()
 
     ## construct the logging string with pretty formatting:
-    data = {
-        "timestamp": str(current_time),
-        "Human_Message": query,
-        "AI_message": chat_response
-            }
+    data = {str(current_time): {"Human_Message": query, "AI_message": chat_response}}
+
+
+    # create the log_path
+    formatted_time = datetime.datetime.now().strftime("%Y-%m")
+    log_path = os.path.join(learning_path, f"chat_history{os.path.sep}{formatted_time}.json")
+    
 
 
 
-    # check if the log_path exists, if it doesn't create it and dump into it.
-    if not os.path.exists(os.path.join(learning_path, "chat_log.json")):
-        pass
 
     
 
