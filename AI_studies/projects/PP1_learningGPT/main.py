@@ -224,10 +224,22 @@ def search_and_qa(target_directory, query, k=4, llm=llm, verbose=True):
 
 
     # log the chat into the relevant directory
-
+    log_chat(learning_path, query, result)
     return result
 
 
+
+
+
+
+
+
+def load_data(filename):
+    try:
+        with open(filename, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {"tasks": []}
 
 def log_chat(learning_path, query, chat_response):
     """
@@ -252,16 +264,32 @@ def log_chat(learning_path, query, chat_response):
     current_time = datetime.datetime.now()
 
     ## construct the logging string with pretty formatting:
-    data = {str(current_time): {"Human_Message": query, "AI_message": chat_response}}
-
+    data = {"messages":
+            [ 
+            {"timestamp": str(current_time),
+             "Human_Message": query, 
+             "AI_message": chat_response}]
+            }
 
     # create the log_path
     formatted_time = datetime.datetime.now().strftime("%Y-%m")
-    log_path = os.path.join(learning_path, f"chat_history{os.path.sep}{formatted_time}.json")
+    chat_history_path = os.path.join(learning_path, "chat_history")
+    log_path = os.path.join(chat_history_path, f"{formatted_time}.json")
+
+    # check and create if there is no file at log path or the directory itself, then create the directory and create / dump the initial file
+    if not os.path.exists(chat_history_path):
+        os.mkdir(chat_history_path)
+        with open(log_path, 'w') as f:
+            json.dump(data, f, indent=4)
+        return
     
-
-
-
+    else:
+        new_message = data['messages']
+        existing_data = load_data(log_path)
+        existing_data['messages'].extend(new_message)
+        with open(log_path, 'w') as f:
+            json.dump(existing_data, f, indent=4)
+        return
 
     
 
@@ -280,10 +308,12 @@ def log_chat(learning_path, query, chat_response):
 if __name__ == "__main__":
     # target directory is another way of saying target library that is contained within the learnGPT library:
 
-    test_target_directory_to_learn = "PDF_test"
+    test_target_directory_to_learn = "thefuzz"
     # test_target_path = os.path.join(DOCS_PATH, test_target_directory_to_learn)
     # create_vectostore(test_target_directory_to_learn) # if testing for subdir, remember to put True as arg2
     q1 = "Can you give me a few real world examples and usecases of thefuzz? Along with code examples"
     q2 = "Give me an overview of each of the chapters in the book."
-    result = search_and_qa(test_target_directory_to_learn, q2)
+    q3 = "Give me a summary of the book, what is it about?"
+    q4 = "Give me a few real world examples of using thefuzz, along with real code."
+    result = search_and_qa(test_target_directory_to_learn, q4)
     print(result)
