@@ -27,7 +27,6 @@ from langchain.schema import HumanMessage, SystemMessage, AIMessage
 """
 
 TODO:
-- logging messages
 - different chain types for different usecases in constructing initial learning elements; using chat history as well to construct the actual learning paths
 - and notes for each chapter + exercises and practice projects;
 --> basically, building your own "chain" using langchain instead of just using one or another;
@@ -43,12 +42,12 @@ DOCS_PATH = os.path.join(os.path.dirname(__file__), f"documentations")
 
 # construct models - embekdding and language models
 embeddings = OpenAIEmbeddings(disallowed_special=(), openai_api_key=OPENAI_API_KEY)
-llm = ChatOpenAI(temperature=0.5, model_name='gpt-3.5-turbo', openai_api_key=OPENAI_API_KEY, model="gpt-3.5-turbo")
+llm = ChatOpenAI(temperature=0.5, model_name='gpt-4-0613', openai_api_key=OPENAI_API_KEY, model="gpt-4-0613")
 
 
 
 
-# Define functions
+###### Define functions for basic functionality ######
 def initialize_learn_dir(target_directory):
     """
     initialize_learn_dir(target_directory):
@@ -85,8 +84,6 @@ def get_folder_size_MB(target_directory):
             file_path = os.path.join(dirpath, filename)
             total_size += os.path.getsize(file_path)
     return round((total_size / 1024 / 1024), 2)
-
-
 
 def create_vectostore(target_directory, verbose=False):
     """
@@ -177,11 +174,7 @@ def create_vectostore(target_directory, verbose=False):
     # timestamp = os.path.getmtime(target_path)
     # last_modified_date = datetime.datetime.fromtimestamp(timestamp)
 
-
-
-
-
-def search_and_qa(target_directory, query, k=4, llm=llm, verbose=True):
+def search_and_qa(target_directory, query, k=4, llm=llm, verbose=False):
     """
     search_and_qa(target_directory, query, llm):
     1. gets the vectorstore and loads it into a local variable
@@ -222,17 +215,9 @@ def search_and_qa(target_directory, query, k=4, llm=llm, verbose=True):
     # retriever = db.as_retriever()
     # qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever, verbose=True)
 
-
     # log the chat into the relevant directory
     log_chat(learning_path, query, result)
     return result
-
-
-
-
-
-
-
 
 def load_data(filename):
     try:
@@ -293,6 +278,12 @@ def log_chat(learning_path, query, chat_response):
 
     
 
+###### Define functions for constructing the initial learning syllabus ######
+
+
+
+
+
 
 
 
@@ -315,5 +306,7 @@ if __name__ == "__main__":
     q2 = "Give me an overview of each of the chapters in the book."
     q3 = "Give me a summary of the book, what is it about?"
     q4 = "Give me a few real world examples of using thefuzz, along with real code."
-    result = search_and_qa(test_target_directory_to_learn, q4)
+    q5 = "Please write me an overview of thefuzz and its main usecases. Use markdown in your response."
+    q6 = "Outside of the context provided. I would like to know which OpenAI language model are you?"
+    result = search_and_qa(test_target_directory_to_learn, q6)
     print(result)
