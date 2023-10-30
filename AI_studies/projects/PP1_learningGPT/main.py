@@ -24,13 +24,33 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 # Schemas
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
 
+# import context
+import prompts
+
 """
 
 TODO:
+
+1. Initializing syllabus:
+- Basically, creates everything.
+1.a. Creates overview + real world example.
+1.b. Creates a learning path
+1.b.i. For each step in the learning path - create a new note for that file, expanding on each topic in-depth with code examples.
+1.b.ii. Then for each step having practice exercises, quiz & answers(simple encryption) and a practice project.
+/// all the while, these steps are logged.
+
+
+
+
+Exploring:
 - different chain types for different usecases in constructing initial learning elements; using chat history as well to construct the actual learning paths
 - and notes for each chapter + exercises and practice projects;
 --> basically, building your own "chain" using langchain instead of just using one or another;
+- Experimenting with different types of searches, retrievers, vectostores, embedding models and different number of documents,
 """
+
+
+
 
 
 
@@ -84,6 +104,9 @@ def get_folder_size_MB(target_directory):
             file_path = os.path.join(dirpath, filename)
             total_size += os.path.getsize(file_path)
     return round((total_size / 1024 / 1024), 2)
+
+
+
 
 def create_vectostore(target_directory, verbose=False):
     """
@@ -144,17 +167,19 @@ def create_vectostore(target_directory, verbose=False):
             chunk_overlap  = 100,)
 
         for file in filenames:
-            filetype = file.split(".")[1]
-            if filetype.lower() == "pdf":
-                try:
-                    loader = PyPDFLoader(os.path.join(dirpath, file)) # this is a loader object
-                    documents.extend(loader.load_and_split(text_splitter=text_splitter))
-                    if verbose:
-                        print(f"{file} has been added to vectostore")
+            try:
+                filetype = file.split(".")[1]
+                if filetype.lower() == "pdf":
+                    try:
+                        loader = PyPDFLoader(os.path.join(dirpath, file)) # this is a loader object
+                        documents.extend(loader.load_and_split(text_splitter=text_splitter))
+                        if verbose:
+                            print(f"{file} has been added to vectostore")
 
-                except Exception as e:
-                    pass
-
+                    except Exception as e:
+                        pass
+            except:
+                pass
             else:
                 try:
                     # Load up the file as a doc and split
@@ -174,7 +199,9 @@ def create_vectostore(target_directory, verbose=False):
     # timestamp = os.path.getmtime(target_path)
     # last_modified_date = datetime.datetime.fromtimestamp(timestamp)
 
-def search_and_qa(target_directory, query, k=4, llm=llm, verbose=False):
+
+
+def search_and_qa(target_directory, query, k=10, llm=llm, verbose=False, addl_chat=None):
     """
     search_and_qa(target_directory, query, llm):
     1. gets the vectorstore and loads it into a local variable
@@ -185,7 +212,6 @@ def search_and_qa(target_directory, query, k=4, llm=llm, verbose=False):
     llm = LLM used, default is the chat model loaded
 
     result / returns:
-    - 
     """
     # check the vectorstore path exists get the vectorstore, then construct the qa chain and retriever
     parent_directory = target_directory.split(os.path.sep)[0] # absolute parent dir, whether its a subdir or parent dir.
@@ -194,30 +220,42 @@ def search_and_qa(target_directory, query, k=4, llm=llm, verbose=False):
     if not os.path.exists(chroma_path):
         print("VectorStore does not exist")
         return
+    
 
+    # if additional context is provided, add the additional context / chat history to the chat;
+    chat = ([
+        SystemMessage(content=prompts.SYSMTEM_MESSAGE),
+        HumanMessage(content=query)
+        ])
+    if addl_chat:
+        addl_chat.extend(chat)
+        chat = addl_chat
+    
 
-    # TODO: add chat history here for context for chat model, especially for context and system message.
 
     db = Chroma(persist_directory=chroma_path, embedding_function=embeddings, collection_name=f'{parent_directory}') # See NOTE.
     retrieved_docs = db.similarity_search(query=query, k=k)
-
+    
     if verbose:
-        print(query)
+        # print(chat)
         for document in retrieved_docs:
             print("----document start-----")
             print(document.page_content)
             print("----doucment end-----")
 
     qa_chain = load_qa_chain(llm, chain_type="stuff", verbose=True)
-    result = qa_chain.run(question=query, input_documents=retrieved_docs)
+    result = qa_chain.run(question=chat, input_documents=retrieved_docs)
     
-    ## alternative approach using qa_chain
+    ## alternative approach using qa_chain and retrievers
     # retriever = db.as_retriever()
     # qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever, verbose=True)
 
     # log the chat into the relevant directory
     log_chat(learning_path, query, result)
     return result
+
+
+
 
 def load_data(filename):
     try:
@@ -279,6 +317,64 @@ def log_chat(learning_path, query, chat_response):
     
 
 ###### Define functions for constructing the initial learning syllabus ######
+def initialize_materials():
+    """
+    initialize_materials():
+    - initialize all learning materials for a given library: overview, real world examples, learning path, step by step expansion of each learning path
+    - practice exercises, quizzes and answers, capstone projects.
+    """
+    pass
+
+
+
+
+def create_overview(target_directory):
+    """
+    create_overview(target_directory):
+    - creates the overview by querying
+
+    first creates the overview + asks for real world examples, then uses the response as additional context
+    written in .md file format.
+    """
+    learning_path = os.path.join(DOCS_PATH, f'learn|{target_directory}')
+    overview_path = os.path.join(learning_path, 'overview.md')
+
+    write_output_str = ""
+    output_divider = "\n\n//////////////////////////////////////////////////////////////////\n\n"
+    # create and query / get the initial response;
+    overview_prompt = prompts.overview_prompt(target_directory)
+    overview_result = search_and_qa(target_directory, overview_prompt)
+    # add to the output string
+    write_output_str += output_divider + overview_result
+
+    # use the result to call into the second function;
+    # add it to the chat history 
+    chat_history = ([
+        SystemMessage(content=prompts.SYSMTEM_MESSAGE),
+        HumanMessage(content=overview_prompt),
+        AIMessage(content=overview_result)
+        ])
+    divider = "&"*20
+    examples_extracted = overview_result.split(divider)[1]
+    
+    examples_prompt = prompts.real_world_example_prompt(target_directory, examples_extracted)
+    examples_result = search_and_qa(target_directory, examples_prompt, addl_chat=chat_history)
+    write_output_str += output_divider + examples_result
+
+    chat_history.extend([HumanMessage(content=examples_prompt),
+                         AIMessage(content=examples_result)])
+    
+    # improve the code provideda bove
+    improvement_prompt = prompts.improve_code_prompt(target_directory, examples_result)
+    improvements_result = search_and_qa(target_directory, improvement_prompt, addl_chat=chat_history)
+
+    write_output_str += output_divider + improvements_result
+
+    # create the relevant files and write to it
+    with open(overview_path, 'w') as wf:
+        wf.write(write_output_str)
+    
+
 
 
 
@@ -297,16 +393,42 @@ def log_chat(learning_path, query, chat_response):
 
 # testing with __main__ entry:
 if __name__ == "__main__":
+    print(prompts.SYSMTEM_MESSAGE)
     # target directory is another way of saying target library that is contained within the learnGPT library:
 
     test_target_directory_to_learn = "thefuzz"
     # test_target_path = os.path.join(DOCS_PATH, test_target_directory_to_learn)
     # create_vectostore(test_target_directory_to_learn) # if testing for subdir, remember to put True as arg2
-    q1 = "Can you give me a few real world examples and usecases of thefuzz? Along with code examples"
-    q2 = "Give me an overview of each of the chapters in the book."
-    q3 = "Give me a summary of the book, what is it about?"
-    q4 = "Give me a few real world examples of using thefuzz, along with real code."
-    q5 = "Please write me an overview of thefuzz and its main usecases. Use markdown in your response."
-    q6 = "Outside of the context provided. I would like to know which OpenAI language model are you?"
-    result = search_and_qa(test_target_directory_to_learn, q6)
-    print(result)
+    q1 = f"Give me an overview of what {test_target_directory_to_learn} is and a few real world examples."
+    q2 = f"What is the pyperclip module?"
+    q3 = """ For each use case below, please give me a short code snippet as examples:
+
+1. **Data Cleaning**: Suppose you have customer data from different sources and the city names are not standardized (for example, 'New York', 'new york', 'NY', etc.). You can use TheFuzz to identify and merge these similar entries.
+
+2. **Autocomplete Systems**: When a user starts typing in a search box, you can use fuzzy string matching to suggest the most relevant options even if the user makes a typo.
+
+3. **Spell Checkers**: Similar to autocomplete systems, you can use fuzzy string matching to suggest the correct spelling of a word if a user makes a typo.
+"""
+    q4 = "Write me a learning path to understand and master the core concepts and common use cases / functions of the library thefuzz."
+    q5 ="""I would like to expand on this, please elaborate each element, core concepts with real code examples:
+
+    4. **Exploring the Library**: Start exploring the library by importing it in your Python environment. Start with the basic functions like `fuzz.ratio`, `fuzz.partial_ratio`, `fuzz.token_sort_ratio`, `fuzz.token_set_ratio`, and `fuzz.partial_token_sort_ratio`. These functions compare two strings and return a number indicating how similar they are.
+
+"""
+    # testing basic QA
+    # result = search_and_qa(test_target_directory_to_learn, q5)
+    # print(result)
+
+    create_overview(test_target_directory_to_learn)
+
+
+
+"""
+Prompt Testing - what's been learnt:
+Behaviour between the query, and the similarity search, and matched documents.
+1. When I ask for just the overivew, it matched the GPL license document, which led to it summarizing the overview for the GPL documents.
+2. When I asked for Pyperclip module using the systems messages
+
+In general, it works better without the summary.
+
+"""
