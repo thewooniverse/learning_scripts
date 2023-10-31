@@ -399,27 +399,15 @@ if __name__ == "__main__":
     test_target_directory_to_learn = "thefuzz"
     # test_target_path = os.path.join(DOCS_PATH, test_target_directory_to_learn)
     # create_vectostore(test_target_directory_to_learn) # if testing for subdir, remember to put True as arg2
-    q1 = f"Give me an overview of what {test_target_directory_to_learn} is and a few real world examples."
-    q2 = f"What is the pyperclip module?"
-    q3 = """ For each use case below, please give me a short code snippet as examples:
-
-1. **Data Cleaning**: Suppose you have customer data from different sources and the city names are not standardized (for example, 'New York', 'new york', 'NY', etc.). You can use TheFuzz to identify and merge these similar entries.
-
-2. **Autocomplete Systems**: When a user starts typing in a search box, you can use fuzzy string matching to suggest the most relevant options even if the user makes a typo.
-
-3. **Spell Checkers**: Similar to autocomplete systems, you can use fuzzy string matching to suggest the correct spelling of a word if a user makes a typo.
-"""
-    q4 = "Write me a learning path to understand and master the core concepts and common use cases / functions of the library thefuzz."
-    q5 ="""I would like to expand on this, please elaborate each element, core concepts with real code examples:
-
-    4. **Exploring the Library**: Start exploring the library by importing it in your Python environment. Start with the basic functions like `fuzz.ratio`, `fuzz.partial_ratio`, `fuzz.token_sort_ratio`, `fuzz.token_set_ratio`, and `fuzz.partial_token_sort_ratio`. These functions compare two strings and return a number indicating how similar they are.
-
-"""
     # testing basic QA
-    # result = search_and_qa(test_target_directory_to_learn, q5)
+    syllabus_prompt = """
+Could you develop a learning pathway / syllabus for me with key concepts and functions of thefuzz?
+"""
+
+    result = search_and_qa(test_target_directory_to_learn, syllabus_prompt)
     # print(result)
 
-    create_overview(test_target_directory_to_learn)
+    # create_overview(test_target_directory_to_learn)
 
 
 
