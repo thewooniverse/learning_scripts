@@ -7,6 +7,8 @@ These projects help me explore the boundaries of what can be achieved by AI and 
 - Agents with persistent memories and up to date domain expertise (RSS feeds for new best practices, summarizations etc...)
 - AI committee - digital marketing / ECOM, legal / Regulatory advisor, COO business process
 
+I would need to develop a self developed langchain agent that will help me develop first to unlock token limits;
+
 
 
 ## AP2: Develop a wrapper-as-a-service type saas products
