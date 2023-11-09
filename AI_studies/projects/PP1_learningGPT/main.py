@@ -234,7 +234,7 @@ def search_and_qa(target_directory, query, k=10, llm=llm, verbose=False, addl_ch
 
 
     db = Chroma(persist_directory=chroma_path, embedding_function=embeddings, collection_name=f'{parent_directory}') # See NOTE.
-    retrieved_docs = db.similarity_search(query=query, k=k)
+    retrieved_docs = db.max_marginal_relevance_search(query=query, k=k)
     
     if verbose:
         # print(chat)
@@ -293,6 +293,7 @@ def log_chat(learning_path, query, chat_response):
              "Human_Message": query, 
              "AI_message": chat_response}]
             }
+    print(data)
 
     # create the log_path
     formatted_time = datetime.datetime.now().strftime("%Y-%m")
@@ -300,8 +301,9 @@ def log_chat(learning_path, query, chat_response):
     log_path = os.path.join(chat_history_path, f"{formatted_time}.json")
 
     # check and create if there is no file at log path or the directory itself, then create the directory and create / dump the initial file
-    if not os.path.exists(chat_history_path):
-        os.mkdir(chat_history_path)
+    if not os.path.exists(log_path):
+        if not os.path.exists(chat_history_path):
+            os.mkdir(chat_history_path)
         with open(log_path, 'w') as f:
             json.dump(data, f, indent=4)
         return
@@ -309,6 +311,7 @@ def log_chat(learning_path, query, chat_response):
     else:
         new_message = data['messages']
         existing_data = load_data(log_path)
+        print(existing_data)
         existing_data['messages'].extend(new_message)
         with open(log_path, 'w') as f:
             json.dump(existing_data, f, indent=4)
@@ -324,6 +327,10 @@ def initialize_materials():
     - practice exercises, quizzes and answers, capstone projects.
     """
     pass
+
+
+
+
 
 
 
@@ -401,10 +408,10 @@ if __name__ == "__main__":
     # create_vectostore(test_target_directory_to_learn) # if testing for subdir, remember to put True as arg2
     # testing basic QA
     syllabus_prompt = """
-Could you develop a learning pathway / syllabus for me with key concepts and functions of thefuzz?
+Develop a learning path for me.
 """
 
-    result = search_and_qa(test_target_directory_to_learn, syllabus_prompt)
+    result = search_and_qa(test_target_directory_to_learn, syllabus_prompt, k=15)
     # print(result)
 
     # create_overview(test_target_directory_to_learn)

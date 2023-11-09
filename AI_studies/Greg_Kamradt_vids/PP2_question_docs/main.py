@@ -10,7 +10,6 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 # Model and chain
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import RetrievalQA
-from langchain.chains import RetrievalQA
 
 
 # Text splitters
@@ -60,7 +59,6 @@ for dirpath, dirnames, filenames in os.walk(root_dir):
 db = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
 
 retriever = db.as_retriever()
-
 qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever, verbose=True)
 query = "Who is Donald Trump"
 result = qa_chain.run(query)
