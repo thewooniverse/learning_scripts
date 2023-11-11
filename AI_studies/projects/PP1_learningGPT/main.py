@@ -227,10 +227,11 @@ def search_and_qa(target_directory, query, k=10, llm=llm, verbose=False, addl_ch
         SystemMessage(content=prompts.SYSMTEM_MESSAGE),
         HumanMessage(content=query)
         ])
+    
+
     if addl_chat:
         addl_chat.extend(chat)
         chat = addl_chat
-    
 
 
     db = Chroma(persist_directory=chroma_path, embedding_function=embeddings, collection_name=f'{parent_directory}') # See NOTE.
@@ -408,7 +409,7 @@ if __name__ == "__main__":
     # create_vectostore(test_target_directory_to_learn) # if testing for subdir, remember to put True as arg2
     # testing basic QA
     syllabus_prompt = """
-Develop a learning path for me.
+Develop a learning path for me for thefuzz .
 """
 
     result = search_and_qa(test_target_directory_to_learn, syllabus_prompt, k=15)
