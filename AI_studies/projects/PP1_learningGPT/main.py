@@ -244,7 +244,7 @@ def search_and_qa(target_directory, query, k=10, llm=llm, verbose=False, addl_ch
             print(document.page_content)
             print("----doucment end-----")
 
-    qa_chain = load_qa_chain(llm, chain_type="stuff", verbose=True)
+    qa_chain = load_qa_chain(llm, chain_type="map_reduce", verbose=True)
     result = qa_chain.run(question=chat, input_documents=retrieved_docs)
     
     ## alternative approach using qa_chain and retrievers
@@ -409,7 +409,7 @@ if __name__ == "__main__":
     # create_vectostore(test_target_directory_to_learn) # if testing for subdir, remember to put True as arg2
     # testing basic QA
     syllabus_prompt = """
-Develop a learning path for me for thefuzz .
+What is thefuzz?
 """
 
     result = search_and_qa(test_target_directory_to_learn, syllabus_prompt, k=15)
