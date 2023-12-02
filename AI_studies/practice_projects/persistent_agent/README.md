@@ -2,13 +2,17 @@
 Persistent Agent is simply a GPT-4 wrapper that has persistent memory storage.
 
 Procedure:
--> Saves all new chat interactions (new query + resposne) in the ChromaDB
--> When a new query is made, the Chroma database is searched using a retrieval / search algorithm - likely it will be MMR
--> The retrieved documents will be summarized to a few key points of the conversation history, and passed as chat history
--> Step 1 is executed again to store the chat interaction in the ChromaDB
+-> Agent is asked a new query
+-> Chroma Database is searched using a retrieval / search algorithm to get relevant documents - using MMR
+-> The retrieved documents are then summarized as context in the form of a template as a AIMessage as part of the chat history.
+-> The new query is appended to the chat history as a HumanMessage schema to the chat history
+-> The completed chat history is then passed onto the chat model for a response
+-> Response is returned / printed; and the chat interaction (new HumanMessage + AIMesage) is embedded and saved into the Chorma database.
+
 
 
 
 Testing:
--> Asking questions like "Which hotel did I ask the review for in Tokyo?"
+-> Asking questions like "Which hotel did I ask the review for in Tokyo?"; this information will not be available to GPT, but only available as context in the chat history / ChromaDB.
+
 
