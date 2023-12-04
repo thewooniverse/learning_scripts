@@ -17,11 +17,26 @@ openai_api_key=os.getenv('OPENAI_API_KEY', 'YourAPIKey_BACKUP')
 # print(openai_api_key) # check
 
 
+CHROMA_DIR = os.path.join(os.path.dirname(__file__), f"Chroma_DB_store")
+test_chroma_path = os.path.join(CHROMA_DIR, 'test_chroma') 
+# /.../persistent_agent/test_chroma/ -- I can also later change the test_chroma to something else.
+# I could use it for different Databases for different projects;
+# And even within the database, I could have different collection names
+
+
+
+
+
+
 """
 Development workflow:
-Build and test querying and logging - 
+Build and test querying and logging 
+- 
 Then build and test retrieval engines
 """
+
+
+
 
 
 
@@ -66,11 +81,12 @@ AI RESPONSE:
     return log_entry
 
 
-def save_log(log_entry):
+def save_log(log_entry, chroma_path):
     """
-    Takes the log entry and saves it to the ChromaDB
+    Takes the log entry and saves it to the persistent ChromaDB designated;
     """
-    
+    # get the chroma path and open the persistent library to that destination when it is called;
+    pass 
 
 
 
@@ -82,15 +98,3 @@ def save_log(log_entry):
 
 
 
-
-
-
-
-
-response = chat(
-    [
-        SystemMessage(content="You are a helpful AI agent like SIRI."),
-        HumanMessage(content="What is a Bildungsroman.")
-    ]
-)
-print(response)
