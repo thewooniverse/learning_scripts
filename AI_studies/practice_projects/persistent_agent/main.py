@@ -9,6 +9,10 @@ from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
 from templates import system_template
 
+# Vector Support
+# from langchain.vectorstores import FAISS >> instead of FAISS we will use Chroma
+from langchain.vectorstores import Chroma
+from langchain.embeddings.openai import OpenAIEmbeddings
 
 
 # env variables, constants and API keys
@@ -22,8 +26,6 @@ test_chroma_path = os.path.join(CHROMA_DIR, 'test_chroma')
 # /.../persistent_agent/test_chroma/ -- I can also later change the test_chroma to something else.
 # I could use it for different Databases for different projects;
 # And even within the database, I could have different collection names
-
-
 
 
 
@@ -86,7 +88,11 @@ def save_log(log_entry, chroma_path):
     Takes the log entry and saves it to the persistent ChromaDB designated;
     """
     # get the chroma path and open the persistent library to that destination when it is called;
-    pass 
+    db_temp = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
+
+
+    #
+    pass
 
 
 
