@@ -27,6 +27,7 @@ test_chroma_path = os.path.join(CHROMA_DIR, 'test_chroma')
 # I could use it for different Databases for different projects;
 # And even within the database, I could have different collection names
 
+embeddings = OpenAIEmbeddings(disallowed_special=(), openai_api_key=OPENAI_API_KEY)
 
 
 
@@ -34,7 +35,7 @@ test_chroma_path = os.path.join(CHROMA_DIR, 'test_chroma')
 Development workflow:
 Build and test querying and logging 
 - 
-Then build and test retrieval engines
+Then build and test retrieval engines to pass into as contexts.
 """
 
 
@@ -74,6 +75,7 @@ def create_log(query, response):
     Takes the query and response, and combine it into a log entry.
     """
     log_entry = f"""
+
 HUMAN QUERY:
 {query}
 --------
@@ -89,10 +91,7 @@ def save_log(log_entry, chroma_path):
     """
     # get the chroma path and open the persistent library to that destination when it is called;
     db_temp = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
-
-
     #
-    pass
 
 
 

@@ -8,9 +8,9 @@ For example, when the user queries for things like "What is the name of the Cafe
 The model can answer based on the previously retrieved chat histories in the context provided.
 The context should be used ONLY if it is helpful.
 If the context provided or matched is not helpful, simply rely on your own knowledge. 
-context retrieved and summarized is below section.
+All of the context retrieved and summarized is below section.
 
 ----
-CONTEXT:
+Context  from previous conversations:
 
 """
