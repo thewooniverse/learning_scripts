@@ -14,10 +14,18 @@ from templates import system_template
 from langchain.vectorstores import Chroma
 from langchain.embeddings.openai import OpenAIEmbeddings
 
+# Text loading and splitting
+from langchain.docstore.document import Document
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+
+
+
+
 
 # env variables, constants and API keys
 load_dotenv()
-openai_api_key=os.getenv('OPENAI_API_KEY', 'YourAPIKey_BACKUP')
+OPENAI_API_KEY=os.getenv('OPENAI_API_KEY', 'YourAPIKey_BACKUP')
 # print(openai_api_key) # check
 
 
@@ -64,8 +72,8 @@ def chat_agent(chat_history):
     """
     Calls the Chat Model to give a response to the given chat history.
     """
-    chat = ChatOpenAI(model='gpt-4-0613', openai_api_key=openai_api_key, model_name="gpt-4-0613")
-    response = chat(chat_history)
+    agent = ChatOpenAI(model='gpt-4-0613', openai_api_key=OPENAI_API_KEY, model_name="gpt-4-0613")
+    response = agent(chat_history)
     return response
 
 
@@ -85,20 +93,43 @@ AI RESPONSE:
     return log_entry
 
 
+
+
 def save_log(log_entry, chroma_path):
     """
     Takes the log entry and saves it to the persistent ChromaDB designated;
     """
     # get the chroma path and open the persistent library to that destination when it is called;
-    db_temp = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
-    #
+    vectorstore = Chroma(persist_directory=chroma_path, embedding_function=embeddings)
+
+    embedded_document = embeddings.embed_documents(log_entry)
+    document = Document(page_content=log_entry, embedding=embedded_document)
+    vectorstore.add_documents([document])
+    vectorstore.persist()
 
 
 
 
 
+# define overarching querying function
+def persistent_chat(query):
+    """
+    Function to bring context, query and
+    """
+    # extract the contexts from the database and construct the query/chat_history
+    context = "" # later to be replaced by context extracting function
+    chat_history = construct_chat_history(query, context)
+    response = chat_agent(chat_history)
+
+    log_entry = create_log(query, response)
+    save_log(log_entry, test_chroma_path)
+
+    print(log_entry)
+    print("Saved")
 
 
+
+persistent_chat("What is the best place to eat in Shanghai? Give me 5 restaurants and a single line on why.")
 
 
 
