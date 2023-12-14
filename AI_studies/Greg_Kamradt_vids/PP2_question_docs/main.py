@@ -15,6 +15,8 @@ from langchain.chains import RetrievalQA
 # Text splitters
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.document_loaders import TextLoader
+from langchain.docstore.document import Document
+
 
 # Schemas
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
