@@ -17,6 +17,7 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 # Text loading and splitting
 from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.chains.summarize import load_summarize_chain
 
 
 
@@ -41,14 +42,28 @@ embeddings = OpenAIEmbeddings(disallowed_special=(), openai_api_key=OPENAI_API_K
 
 """
 Development workflow:
-Build and test querying and logging 
-- 
 Then build and test retrieval engines to pass into as contexts.
+Need to now build the retrieval engines;
+
 """
 
 
 
+# define function for getting documents with relevant contexts:
+def get_relevant_documents(query, chroma_path, k=3):
+    """
+    Returns: matched documents from the database to the query.
+    query - plaintext str query
+    chroma_path - PATH towards the database to search against.
+    k - number of documents to retrieve, default = 3
 
+    default search algorithm is MMR;
+    
+    """
+    # search algorithms
+    vectorstore = Chroma(persist_directory=chroma_path, embedding_function=embeddings)
+    retrieved_docs = vectorstore.max_marginal_relevance_search(query=query, k=k)
+    return retrieved_docs
 
 
 
@@ -68,11 +83,10 @@ def construct_chat_history(query, context=""):
     ]
     return chat_history
 
-def chat_agent(chat_history):
+def chat_agent(chat_history, agent):
     """
     Calls the Chat Model to give a response to the given chat history.
     """
-    agent = ChatOpenAI(model='gpt-4-0613', openai_api_key=OPENAI_API_KEY, model_name="gpt-4-0613")
     response = agent(chat_history)
     return response
 
@@ -93,8 +107,6 @@ AI RESPONSE:
     return log_entry
 
 
-
-
 def save_log(log_entry, chroma_path):
     """
     Takes the log entry and saves it to the persistent ChromaDB designated;
@@ -112,25 +124,45 @@ def save_log(log_entry, chroma_path):
 
 
 
+
 # define overarching querying function
 def persistent_chat(query):
     """
     Function to bring context, query and
     """
-    # extract the contexts from the database and construct the query/chat_history
-    context = "" # later to be replaced by context extracting function
-    chat_history = construct_chat_history(query, context)
-    response = chat_agent(chat_history)
+    # instantiate the agent;
+    agent = ChatOpenAI(model='gpt-4-0613', openai_api_key=OPENAI_API_KEY, model_name="gpt-4-0613")
 
+    # extract the contexts from the database and construct the query/chat_history
+    chain = load_summarize_chain(agent, chain_type="stuff")
+    retrieved_docs = get_relevant_documents(query, test_chroma_path)
+    context = chain.run(retrieved_docs) # context now contains the summarized string of context;
+    
+    # query the LLM with context provided
+    chat_history = construct_chat_history(query, context)
+    response = chat_agent(chat_history, agent)
+
+    # save the chat into the persistent chroma database
     log_entry = create_log(query, response)
     save_log(log_entry, test_chroma_path)
-
     print(log_entry)
-    print("Saved")
+    print("Saved Entry")
 
 
 
-persistent_chat("What is my name?")
+
+
+
+
+####### testing #######
+persistent_chat("Which area of tokyo specifically did I ask you about? A temple?")
+# retrieved_docs = get_relevant_documents("What did I ask you to call me in the past?", test_chroma_path)
+
+
+
+
+
+
 
 
 
