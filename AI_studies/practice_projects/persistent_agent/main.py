@@ -111,6 +111,7 @@ def save_log(log_entry, chroma_path):
 
 
 
+
 # define overarching querying function
 def persistent_chat(query):
     """
@@ -129,7 +130,7 @@ def persistent_chat(query):
 
 
 
-persistent_chat("What is the best place to eat in Shanghai? Give me 5 restaurants and a single line on why.")
+persistent_chat("What is my name?")
 
 
 
