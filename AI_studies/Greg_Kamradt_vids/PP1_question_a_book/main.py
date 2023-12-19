@@ -63,6 +63,7 @@ query = "What is the data science process??"
 
 ### load from disk and conduct similarity search
 db3 = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
+db3.add_
 # print(type(db3)) # <class 'langchain.vectorstores.chroma.Chroma'>
 docs = db3.similarity_search(query)
 # print(docs[0].page_content)

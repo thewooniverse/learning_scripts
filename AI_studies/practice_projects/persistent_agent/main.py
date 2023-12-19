@@ -155,7 +155,11 @@ def persistent_chat(query):
 
 
 ####### testing #######
-persistent_chat("Which area of tokyo specifically did I ask you about? A temple?")
+test_query ="""
+I'm getting this error, how do I solve it?:
+
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 243"""
+persistent_chat(test_query)
 # retrieved_docs = get_relevant_documents("What did I ask you to call me in the past?", test_chroma_path)
 
 
