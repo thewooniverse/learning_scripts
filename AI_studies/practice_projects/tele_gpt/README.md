@@ -14,7 +14,7 @@ For example, you may have a new group with each topic with the bot:
 ## Features and Commands
 /start or /settings - opens the basic set up / settings message and a list of commands and examples
 /chat "query" - returns context aware responses to the query from the chat agent
-/get_current_config - gets the current configuration (minus the api key)
+/get_config - gets the current configuration (minus the api key)
 /set_api_key "api_key" - sets API key and erases both messages + deleting the message after setting the config to use the stored API keys;
 /persistent_off /persistent_on - turns the persistent settings on or off
 /clear_chat_history - clears the context / chat history completely
@@ -22,7 +22,7 @@ For example, you may have a new group with each topic with the bot:
 /set_temp - allows user to change the temperature (0-1).
 
 /chat_history "query" - returns the documents and queries and response from the persistent chat history that best match the query
-/add_system_message - adds system message / instructions to the bot
+/set_system_message - sets system message / instructions to the bot
 
 
 
@@ -34,14 +34,20 @@ For example, you may have a new group with each topic with the bot:
 3. Formatting of the query responses - Markdown -> completed
 -- completed above --
 4. Settings and configuration commands:
-    - API key provisions and entering
-    - Turning on add off
+    - API key provisions and entering <- completed
     - Getting / Setting new additional system messages (max word count)
+    - More settings;
 
+
+
+Complete settings then; move into Saving chat stores and RAG
 
 6. Saving chat history to chat stores
 7. RAG based on chat history
 8. Clearing chat history
+
+
+Overall - complete the development features above; and learn to push the bot into a VPS to get it set up and running all the time with bis.
 
 
 

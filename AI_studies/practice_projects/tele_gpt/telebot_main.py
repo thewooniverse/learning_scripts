@@ -10,6 +10,7 @@ import telebot
 ## config support
 import json
 import requests
+import re
 
 ## OpenAI libraries
 import openai
@@ -65,8 +66,12 @@ def load_config(group_id):
 
 def set_config(group_id, new_config):
     """
+    Returns - None
+    --
+    Params
     group_id == chatid
-    new_config should be a dict config that has the same structure but with new settings
+    new_config - a dict config that has the same structure but with new settings; saves the newly passed config into the correct path for the chat.
+    --
     """
     chat_path = f'{os.getcwd()}{os.path.sep}chats'
     group_path = f'{chat_path}{os.path.sep}{group_id}'
@@ -99,6 +104,39 @@ def check_can_delete(group_id):
         print("Error in fetching chat member details.")
 
 
+def construct_config_string(config):
+    """
+    Returns - A formatted Config string with markdown
+    --
+    config - python dict unpacked from loaded json configuration file
+    """
+    base_string = "Current configurations:"
+    key_value_strings = "-----------------------"
+    excluded_config_keys = ['group_id', 'OPENAI_API_KEY']
+    for key,value in config.items():
+        if key not in excluded_config_keys:
+            key_value_string = f"*{key}*: {value}"
+            key_value_strings += "\n"+key_value_string
+        else:
+            key_string = f"*{key}*: XXXXX"
+            key_value_strings += "\n"+key_string
+    
+    complete_string = f"{base_string}\n{key_value_strings}"
+    return complete_string
+
+
+def is_valid_temp(temp):
+    """
+    Return - True / False
+    --
+    Returns true or false based on whether temp is between 0 and 1
+    """
+    return 0 <= temp <= 1
+
+def is_decimal_num(num_str):
+
+    pattern = r"^\d*\.?\d+$"
+    return bool(re.match(pattern, num_str))
 
 
 
@@ -108,13 +146,20 @@ def check_can_delete(group_id):
 
 
 
-## settings comamands ##
-# Defining a command handler
+
+
+## settings and configuration comamands ##
+# Defining basic /start and /help commands
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
     bot.reply_to(message, f"{start_template}", parse_mode='HTML')
     # all the configurations / guide tutorial strings here
 
+@bot.message_handler(commands=['get_config'])
+def get_config(message):
+    config = load_config(message.chat.id) # message.chat.id == group_id
+    response = construct_config_string(config)
+    bot.reply_to(message, response, parse_mode="Markdown")
 
 @bot.message_handler(commands=['set_apikey'])
 def set_api_key(message):
@@ -129,6 +174,57 @@ def set_api_key(message):
         bot.delete_message(message.chat.id, message.message_id)
     else:
         bot.reply_to(message, "API Key was saved, however I do not have permission to delete this message. Please delete this message and set me as an admin.")
+
+@bot.message_handler(commands=['set_model'])
+def set_model(message):
+    config = load_config(message.chat.id)
+    accepted_models = ["gpt-3.5-turbo", "gpt-4-0613", "gpt-4", 'gpt-3.5-turbo-0613']
+    model_selection = " ".join(message.text.split()[1:])
+
+    # check if the selected model is in accepted models
+    if model_selection.lower() in accepted_models:
+        config['model_name'] = model_selection.lower()
+        set_config(message.chat.id, config)
+        bot.reply_to(message, f"Model is changed to {model_selection.lower()}")
+    else:
+        bot.reply_to(message, f"[{model_selection.lower()}] is not a valid model, please select from the following: {accepted_models}")
+
+@bot.message_handler(commands=['set_temp'])
+def set_temp(message):
+    config = load_config(message.chat.id)
+    passed_temp = " ".join(message.text.split()[1:])
+
+    # check that the 
+    if passed_temp.isnumeric() or is_decimal_num(passed_temp):
+        passed_temp = float(passed_temp)
+        if is_valid_temp(passed_temp):
+            config['temperature'] = passed_temp
+            set_config(message.chat.id, config)
+            bot.reply_to(message, f"Model Temperature changed to: {passed_temp}")
+        else:
+            bot.reply_to(message, f"{passed_temp} is not a valid temperature, please pass a number between 0 and 1 inclusive. E.g. 0.56")
+    else:
+        bot.reply_to(message, f"{passed_temp} is not a valid temperature, please pass a number between 0 and 1 inclusive. E.g. 0.56")
+
+@bot.message_handler(commands=['set_system_message'])
+def set_system_message(message):
+    config = load_config(message.chat.id)
+    new_system_message = " ".join(message.text.split()[1:])
+    config['additional_system_message'] = new_system_message
+    set_config(message.chat.id, config)
+    bot.reply_to(message, f"System Message has been set as below: \n{new_system_message}")
+
+
+
+
+# define set persistence
+@bot.message_handler(commands=['persistence_on'])
+
+@bot.message_handler(commands=['persistence_off'])
+
+
+
+
 
 
 
@@ -146,7 +242,7 @@ def send_chat_response(message):
     query = " ".join(message.text.split()[1:])
 
     # get the context / retrieved summary of documents
-    context = "" # later this will
+    context = "" # later this will use RAG to retrieve relevant documents and summarize it.
 
     # construct the chat history based on the context and configurations
     context_aware_chat_history = construct_chat_history(query, config['additional_system_message'], context)
@@ -157,7 +253,6 @@ def send_chat_response(message):
         bot.reply_to(message, "API Key is invalid, please /set_apikey to set your OpenAI API Key again")
     else:
         bot.reply_to(message, response.content, parse_mode='Markdown')
-
 
 
 ### Defining ChatGPT query related functionality ###
@@ -184,7 +279,7 @@ def construct_chat_history(query, addl_system_message, context=""):
     
     chat_history = [
         SystemMessage(content=system_message),
-        SystemMessage(content=f"Additional System Messages:\n{addl_system_message}"),
+        SystemMessage(content=f"\n{addl_system_message}\n"),
         HumanMessage(content=query)
     ]
     return chat_history
@@ -193,6 +288,7 @@ def construct_chat_history(query, addl_system_message, context=""):
 
 ### Starting the bot ###
 bot.polling()
+
 
 
 
