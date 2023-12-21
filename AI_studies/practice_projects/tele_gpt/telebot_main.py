@@ -217,14 +217,35 @@ def set_system_message(message):
 
 
 
-# define set persistence
-@bot.message_handler(commands=['persistence_on'])
+# define logging commands
+@bot.message_handler(commands=['logging_on'])
+def persistence_off(message):
+    config = load_config(message.chat.id)
+    config['logging'] = "True"
+    set_config(message.chat.id, config)
+    bot.reply_to(message, f"Chat logging has been turned on, your conversations are being stored persistently.")
 
-@bot.message_handler(commands=['persistence_off'])
+@bot.message_handler(commands=['logging_off'])
+def persistence_off(message):
+    config = load_config(message.chat.id)
+    config['logging'] = "False"
+    set_config(message.chat.id, config)
+    bot.reply_to(message, f"Chat logging has been turned off, your conversations are no longer being stored persistently.")
 
+# define context awareness commands
+@bot.message_handler(commands=['context_on'])
+def persistence_off(message):
+    config = load_config(message.chat.id)
+    config['context'] = "True"
+    set_config(message.chat.id, config)
+    bot.reply_to(message, f"Context awareness has been turned on, Agent will now search chat history for relevant context.")
 
-
-
+@bot.message_handler(commands=['context_off'])
+def persistence_off(message):
+    config = load_config(message.chat.id)
+    config['context'] = "False"
+    set_config(message.chat.id, config)
+    bot.reply_to(message, f"Context awareness has been turned off, chat history is no longer being searched for relevant context.")
 
 
 
@@ -283,6 +304,16 @@ def construct_chat_history(query, addl_system_message, context=""):
         HumanMessage(content=query)
     ]
     return chat_history
+
+
+
+
+
+
+
+
+
+
 
 
 

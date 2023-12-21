@@ -32,11 +32,12 @@ For example, you may have a new group with each topic with the bot:
 1. Complete simple message sending / response telegram bots -> completed 
 2. Integrate simple version of querying chat agent via Telegram bot /chat "query" feature -> completed
 3. Formatting of the query responses - Markdown -> completed
--- completed above --
 4. Settings and configuration commands:
     - API key provisions and entering <- completed
     - Getting / Setting new additional system messages (max word count)
     - More settings;
+-- completed above --
+
 
 
 
