@@ -39,7 +39,9 @@ The bot is built with langchain, Chroma vectorstores, telebot and openai librari
 
 - /set_api_key "api_key" - sets API key and erases both messages + tries to delete the message after setting the config to use the stored API keys for safety;
 
-- /persistent_off /persistent_on - turns the persistent settings on or off
+- /logging_on /logging_off - turns the chat logging feature (saving chat history persistently), on or off.
+
+- /context_on /context_off - turns off context awareness of the model, model no longer refers to persistent chat history for context.
 
 - /set_model - allows user to use different chat models, accepted are ["gpt-3.5-turbo", "gpt-4-0613", "gpt-4", 'gpt-3.5-turbo-0613']
 
