@@ -21,6 +21,8 @@ from msg_templates import system_template, start_template
 # Vector Support
 from langchain.vectorstores import Chroma
 from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.docstore.document import Document
+from langchain.chains.summarize import load_summarize_chain
 
 
 
@@ -33,7 +35,7 @@ OPENAI_API_KEY = os.getenv('OPEN_AI_API_KEY')
 
 
 bot = telebot.TeleBot(TG_API_KEY)
-embeddings = OpenAIEmbeddings(disallowed_special=(), openai_api_key=OPENAI_API_KEY)
+# default_embeddings = OpenAIEmbeddings(disallowed_special=(), openai_api_key=OPENAI_API_KEY)
 # default_agent = ChatOpenAI(model='gpt-4-0613', openai_api_key=OPENAI_API_KEY, model_name="gpt-4-0613", temperature=0.7)
 
 
@@ -73,8 +75,9 @@ def set_config(group_id, new_config):
     new_config - a dict config that has the same structure but with new settings; saves the newly passed config into the correct path for the chat.
     --
     """
-    chat_path = f'{os.getcwd()}{os.path.sep}chats'
-    group_path = f'{chat_path}{os.path.sep}{group_id}'
+
+    chats_path = os.path.join(os.path.dirname(__file__), f"chats")
+    group_path = f'{chats_path}{os.path.sep}{group_id}'
     config_path = f"{group_path}{os.path.sep}config.json"
 
     with open(config_path, 'w') as wf:
@@ -252,42 +255,58 @@ def persistence_off(message):
 
 
 
-## chatting commands ##
+## chatting commands and helper functions ##
 # Defining the query command handler
 @bot.message_handler(commands=['chat'])
-def send_chat_response(message):
-    # load the config
+def respond_chat(message):
+    # load the config and construct the agent and embeddings
     config = load_config(message.chat.id)
+    agent = ChatOpenAI(model=config['model_name'], openai_api_key=config['OPENAI_API_KEY'], model_name=config['model_name'], temperature=config['temperature'])
+    embeddings = OpenAIEmbeddings(disallowed_special=(), openai_api_key=config['OPENAI_API_KEY'])
+    chats_path = os.path.join(os.path.dirname(__file__), f"chats")
+    group_path = f'{chats_path}{os.path.sep}{message.chat.id}'
+    chroma_path = os.path.join(group_path, "chroma_db")
+    
 
     # split the query:
     query = " ".join(message.text.split()[1:])
 
-    # get the context / retrieved summary of documents
-    context = "" # later this will use RAG to retrieve relevant documents and summarize it.
+    # get the context / retrieved summary of documents based on configuration
+    if config['context'] == "True":
+        retrieved_docs = get_relevant_documents(query, chroma_path, embeddings)
+        context = summarize_docs(query, chroma_path, retrieved_docs, embeddings, agent)
+    else:
+        context = ""
 
     # construct the chat history based on the context and configurations
     context_aware_chat_history = construct_chat_history(query, config['additional_system_message'], context)
 
     # construct the chat agent and query it;
-    response = chat_agent(context_aware_chat_history, config)
+    response = chat_agent(context_aware_chat_history, agent)
     if not response:
         bot.reply_to(message, "API Key is invalid, please /set_apikey to set your OpenAI API Key again")
     else:
+        # save the log if logging = True
+        if config['logging'] == "True":
+            new_log = create_log(query, response)
+            save_log(new_log, chroma_path, embeddings)
+
         bot.reply_to(message, response.content, parse_mode='Markdown')
 
 
+
 ### Defining ChatGPT query related functionality ###
-def chat_agent(chat_history, configurations):
+def chat_agent(chat_history, agent):
     """
     Creates a chat model based on the configurations passed to it by unpacking it;
     """
-    agent = ChatOpenAI(model=configurations['model_name'], openai_api_key=configurations['OPENAI_API_KEY'], model_name=configurations['model_name'], temperature=configurations['temperature'])
+    
     try:
         response = agent(chat_history)
         return response
     except openai.AuthenticationError:
         return False
-        
+    
 
 def construct_chat_history(query, addl_system_message, context=""):
     """
@@ -304,6 +323,64 @@ def construct_chat_history(query, addl_system_message, context=""):
         HumanMessage(content=query)
     ]
     return chat_history
+
+
+## chat history and RAG commands and helper functions ##
+# define creating chat logs and history
+# create log script
+def create_log(query, response):
+    """
+    Takes the query and response, and combine it into a log entry.
+    """
+    log_entry = f"""
+
+HUMAN QUERY:
+{query}
+--------
+AI RESPONSE:
+{response}
+"""
+    return log_entry
+
+# define persistently saving chat logs
+def save_log(log_entry, chroma_path, embeddings):
+    """
+    Takes the log entry and saves it to the persistent ChromaDB designated;
+    """
+    # get the chroma path and open the persistent library to that destination when it is called;
+    vectorstore = Chroma(persist_directory=chroma_path, embedding_function=embeddings)
+
+    embedded_document = embeddings.embed_documents(log_entry)
+    document = Document(page_content=log_entry, embedding=embedded_document)
+    vectorstore.add_documents([document])
+    vectorstore.persist()
+
+# define functions for context retrieval and summarizing
+def get_relevant_documents(query, chroma_path, embeddings, k=5):
+    """
+    Returns: matched documents from the database to the query.
+    query - plaintext str query
+    chroma_path - PATH towards the database to search against.
+    k - number of documents to retrieve, default = 3
+
+    default search algorithm is MMR;
+    
+    """
+    # search algorithms
+    vectorstore = Chroma(persist_directory=chroma_path, embedding_function=embeddings)
+    retrieved_docs = vectorstore.max_marginal_relevance_search(query=query, k=k)
+    return retrieved_docs
+
+def summarize_docs(query, chroma_path, retrieved_docs, embeddings, agent):
+    chain = load_summarize_chain(agent, chain_type="stuff")
+    retrieved_docs = get_relevant_documents(query, chroma_path, embeddings)
+    context = chain.run(retrieved_docs) # context now contains the summarized string of context;
+    return context
+    
+
+
+
+
 
 
 

@@ -37,7 +37,7 @@ The bot is built with langchain, Chroma vectorstores, telebot and openai librari
 -- settings --
 - /get_config - gets the current configuration (minus the api key)
 
-- /set_api_key "api_key" - sets API key and erases both messages + tries to delete the message after setting the config to use the stored API keys for safety;
+- /set_apikey "api_key" - sets API key and erases both messages + tries to delete the message after setting the config to use the stored API keys for safety;
 
 - /logging_on /logging_off - turns the chat logging feature (saving chat history persistently), on or off.
 

@@ -39,8 +39,6 @@ For example, you may have a new group with each topic with the bot:
 -- completed above --
 
 
-
-
 Complete settings then; move into Saving chat stores and RAG
 
 6. Saving chat history to chat stores
