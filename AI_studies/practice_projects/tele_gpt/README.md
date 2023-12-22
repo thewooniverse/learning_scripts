@@ -36,13 +36,10 @@ For example, you may have a new group with each topic with the bot:
     - API key provisions and entering <- completed
     - Getting / Setting new additional system messages (max word count)
     - More settings;
--- completed above --
-
-
-Complete settings then; move into Saving chat stores and RAG
-
 6. Saving chat history to chat stores
 7. RAG based on chat history
+-- completed above --
+
 8. Clearing chat history
 
 
