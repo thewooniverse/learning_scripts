@@ -2,6 +2,7 @@
 
 ### importing modules ###
 import os
+import shutil
 from dotenv import load_dotenv
 
 ## Telegram + formatting libraries
@@ -251,6 +252,18 @@ def persistence_off(message):
     bot.reply_to(message, f"Context awareness has been turned off, chat history is no longer being searched for relevant context.")
 
 
+@bot.message_handler(commands=['clear_history'])
+def clear_history(message):
+    chats_path = os.path.join(os.path.dirname(__file__), f"chats")
+    group_path = f'{chats_path}{os.path.sep}{message.chat.id}'
+    chroma_path = os.path.join(group_path, "chroma_db")
+    try:
+        shutil.rmtree(chroma_path)
+        print(f"The directory {chroma_path} has been removed")
+    except OSError as e:
+        print(f"Error: {e.strerror}")
+    
+
 
 
 
@@ -376,9 +389,6 @@ def summarize_docs(query, chroma_path, retrieved_docs, embeddings, agent):
     retrieved_docs = get_relevant_documents(query, chroma_path, embeddings)
     context = chain.run(retrieved_docs) # context now contains the summarized string of context;
     return context
-    
-
-
 
 
 

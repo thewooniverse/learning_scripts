@@ -51,7 +51,7 @@ The bot is built with langchain, Chroma vectorstores, telebot and openai librari
 
 -- chat history --
 - /chat_history "query" - returns the documents and queries and response from the persistent chat history that best match the query
-- /clear_chat_history - clears the context / chat history completely
+- /clear_history - clears the context / chat history completely
 """
 
 
