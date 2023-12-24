@@ -38,9 +38,10 @@ For example, you may have a new group with each topic with the bot:
     - More settings;
 6. Saving chat history to chat stores
 7. RAG based on chat history
--- completed above --
-
 8. Clearing chat history
+-- completed above --
+9. Buttons testing.
+
 
 
 Overall - complete the development features above; and learn to push the bot into a VPS to get it set up and running all the time with bis.
