@@ -259,9 +259,11 @@ def clear_history(message):
     chroma_path = os.path.join(group_path, "chroma_db")
     try:
         shutil.rmtree(chroma_path)
-        print(f"The directory {chroma_path} has been removed")
+        # print(f"The directory {chroma_path} has been removed")
+        bot.reply_to(message, "Your chat history has been cleared - all context has been removed!")
     except OSError as e:
         print(f"Error: {e.strerror}")
+        bot.reply_to(message, "Your chat history is already.")
     
 
 

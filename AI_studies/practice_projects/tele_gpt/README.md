@@ -20,8 +20,6 @@ For example, you may have a new group with each topic with the bot:
 /clear_chat_history - clears the context / chat history completely
 /set_model - allows user to use different chat models
 /set_temp - allows user to change the temperature (0-1).
-
-/chat_history "query" - returns the documents and queries and response from the persistent chat history that best match the query
 /set_system_message - sets system message / instructions to the bot
 
 
@@ -40,7 +38,9 @@ For example, you may have a new group with each topic with the bot:
 7. RAG based on chat history
 8. Clearing chat history
 -- completed above --
-9. Buttons testing.
+9. /chat_history
+10. Buttons testing.
+
 
 
 

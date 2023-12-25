@@ -49,8 +49,6 @@ The bot is built with langchain, Chroma vectorstores, telebot and openai librari
 
 - /set_system_message - sets additional System Messages to the agent, for example "You are an expert chef or travel guide" to further personalize the model.
 
--- chat history --
-- /chat_history "query" - returns the documents and queries and response from the persistent chat history that best match the query
 - /clear_history - clears the context / chat history completely
 """
 
