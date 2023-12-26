@@ -44,6 +44,10 @@ And for each group chat, you may configure the model in each group to have diffe
 7. RAG based on chat history
 8. Clearing chat history
 -- completed above --
-10. VPS hosting and testing.
+10. VPS hosting and testing;
+- Webhooks, reconnects and other concepts.
+
+
+
 
 
