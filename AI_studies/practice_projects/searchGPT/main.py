@@ -23,12 +23,15 @@ from langchain.chains.summarize import load_summarize_chain
 from langchain.agents import load_tools
 from langchain.agents import initialize_agent
 
+# baseline fucntion complete
+
 
 # env variables, constants and API keys
 load_dotenv()
 openai_api_key=os.getenv('OPENAI_API_KEY', 'YourAPIKey_BACKUP')
 serpapi_api_key=os.getenv("SERPAPI_API_KEY", "YourAPIKey_Backup")
-# print(serpapi_api_key) # check
+print(serpapi_api_key) # check
+print(openai_api_key)
 
 # loading toolkits
 llm = OpenAI(temperature=0, openai_api_key=openai_api_key)
