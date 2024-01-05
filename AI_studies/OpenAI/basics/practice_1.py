@@ -33,4 +33,7 @@ Next up - study chat completion object / quickstart guide below:
  |          A dictionary representation of the model.
 """
 # help(response)
-print(response['message'])
+print(response.dict()['choices'][0]['message']['content'])
+"""
+The World Series in 2020 was played at Globe Life Field in Arlington, Texas.
+"""
