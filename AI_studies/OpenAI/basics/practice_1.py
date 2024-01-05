@@ -7,11 +7,8 @@ from openai import OpenAI
 load_dotenv()
 openai_api_key=os.getenv('OPENAI_API_KEY', 'YourAPIKey_BACKUP')
 serpapi_api_key=os.getenv("SERPAPI_API_KEY", "YourAPIKey_Backup")
-print(serpapi_api_key) # check
-print(openai_api_key)
-
-
-
+# print(serpapi_api_key) # check
+# print(openai_api_key)
 
 client = OpenAI()
 
@@ -32,4 +29,8 @@ index=0, message=ChatCompletionMessage(content='The 2020 World Series was played
 created=1704375096, model='gpt-3.5-turbo-0613', object='chat.completion', system_fingerprint=None, usage=CompletionUsage(completion_tokens=17, prompt_tokens=53, total_tokens=70))
 
 Next up - study chat completion object / quickstart guide below:
+ |      Returns:
+ |          A dictionary representation of the model.
 """
+# help(response)
+print(response['message'])
