@@ -37,3 +37,6 @@ print(response.dict()['choices'][0]['message']['content'])
 """
 The World Series in 2020 was played at Globe Life Field in Arlington, Texas.
 """
+help(response)
+
+
