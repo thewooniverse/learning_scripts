@@ -12,6 +12,11 @@ serpapi_api_key=os.getenv("SERPAPI_API_KEY", "YourAPIKey_Backup")
 
 client = OpenAI()
 
+
+"""
+/// QUICKSTART ///
+"""
+
 response = client.chat.completions.create(
   model="gpt-3.5-turbo",
   messages=[
@@ -32,11 +37,42 @@ Next up - study chat completion object / quickstart guide below:
  |      Returns:
  |          A dictionary representation of the model.
 """
+print(response.choices[0].message)
+"""
+ChatCompletionMessage(content='The World Series in 2020 was played in Arlington, Texas at the Globe Life Field.',
+role='assistant', function_call=None, tool_calls=None)
+"""
 # help(response)
 print(response.dict()['choices'][0]['message']['content'])
 """
 The World Series in 2020 was played at Globe Life Field in Arlington, Texas.
 """
-help(response)
 
 
+# help(response)
+"""
+https://platform.openai.com/docs/api-reference/chat
+-> goes into detail on chat completion, chat completion objects, and chat completion chunk objects.
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+/// WALKTRHOUGH - https://platform.openai.com/docs/guides/text-generation ///
+"""
