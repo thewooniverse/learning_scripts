@@ -12,6 +12,16 @@ serpapi_api_key=os.getenv("SERPAPI_API_KEY", "YourAPIKey_Backup")
 
 client = OpenAI()
 
+"""
+/// Study Plans ///
+1. Read the text completion + test out more examples.
+
+
+
+"""
+
+
+
 
 """
 /// QUICKSTART ///
@@ -54,6 +64,10 @@ The World Series in 2020 was played at Globe Life Field in Arlington, Texas.
 https://platform.openai.com/docs/api-reference/chat
 -> goes into detail on chat completion, chat completion objects, and chat completion chunk objects.
 """
+
+"""
+"""
+
 
 
 
