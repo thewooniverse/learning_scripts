@@ -17,7 +17,6 @@ client = OpenAI()
 1. Read the text completion + test out more examples.
 
 
-
 """
 
 
@@ -82,11 +81,7 @@ https://platform.openai.com/docs/api-reference/chat
 
 
 
-
-
-
-
-
 """
 /// WALKTRHOUGH - https://platform.openai.com/docs/guides/text-generation ///
 """
+
