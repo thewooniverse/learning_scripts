@@ -21,7 +21,6 @@ client = OpenAI()
 
 
 
-
 """
 /// QUICKSTART ///
 """
@@ -46,13 +45,13 @@ Next up - study chat completion object / quickstart guide below:
  |      Returns:
  |          A dictionary representation of the model.
 """
-print(response.choices[0].message)
+# print(response.choices[0].message)
 """
 ChatCompletionMessage(content='The World Series in 2020 was played in Arlington, Texas at the Globe Life Field.',
 role='assistant', function_call=None, tool_calls=None)
 """
 # help(response)
-print(response.dict()['choices'][0]['message']['content'])
+# print(response.dict()['choices'][0]['message']['content'])
 """
 The World Series in 2020 was played at Globe Life Field in Arlington, Texas.
 """
@@ -60,30 +59,14 @@ The World Series in 2020 was played at Globe Life Field in Arlington, Texas.
 
 # help(response)
 """
+https://platform.openai.com/docs/guides/text-generation/
+-> Basic documentation on chat completion
 https://platform.openai.com/docs/api-reference/chat
 -> goes into detail on chat completion, chat completion objects, and chat completion chunk objects.
 """
 
 """
-"""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-/// WALKTRHOUGH - https://platform.openai.com/docs/guides/text-generation ///
-
+/// WALKTRHOUGH - https://platform.openai.com/docs/guides/text-generation/chat-completions-api ///
 
 Chat completion example:
 {
@@ -111,4 +94,39 @@ Chat completion example:
 
 
 """
+
+
+
+
+
+
+
+r2 = client.chat.completions.create(
+  model="gpt-4",
+  messages=[
+    {"role": "system", "content": "You are an expert chef that can help me decide what to cook at home based on the ingredients I have"},
+    {"role": "user", "content": "My name El Jeffe, please call me this"},
+    {"role": "assistant", "content": "I will remember your name as El Jeffe"},
+    {"role": "user", "content": "Whats my name"}
+  ]
+)
+print(r2)
+print(r2.dict()['choices'][0]['message']['content'])
+"""
+ChatCompletion(id='chatcmpl-8flUGu4wmDVLXJLiz9loIKrtMkg34', 
+choices=[Choice(finish_reason='stop', 
+index=0, 
+message=ChatCompletionMessage(content='Your name is El Jeffe.', role='assistant', function_call=None, tool_calls=None), logprobs=None)], 
+created=1704964680, 
+model='gpt-4-0613', 
+object='chat.completion', 
+system_fingerprint=None, 
+usage=CompletionUsage(completion_tokens=7, 
+prompt_tokens=62, 
+total_tokens=69))
+---
+Your name is El Jeffe.
+"""
+
+
 
