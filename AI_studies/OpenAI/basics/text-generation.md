@@ -134,6 +134,8 @@ frequency_penalty: Number between -2.0 and 2.0. Positive values penalize new tok
 
 presence_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
 
+
+
 ### explainer into frequency and presence penalties
 
 Imagine you're telling a story with your friends, and you all take turns adding one sentence at a time. You wouldn't want the story to repeat the same things over and over, and you also wouldn't want everyone to keep mentioning something that's only supposed to be a small part of the story. To keep the story interesting, you'd want new ideas and events to come up.

@@ -173,3 +173,19 @@ print(response.choices[0].message.content)
 
 
 
+
+"""
+// Frequency and Presence Penalties testing //
+
+"""
+r3 = client.chat.completions.create(
+  model="gpt-4",
+  frequency_penalty = 2, # positive value decreases the likelihood of repeating itself.
+  presence_penalty =  2, # positive value increases the likelihood of new topics by penalizing older topics
+  messages=[
+    {"role": "system", "content": "You are a creative poet who rambles on about things"},
+    {"role": "user", "content": "write me a 10 line poem about computers, AI and whatever else."}
+  ]
+)
+print(r3.choices[0].message.content)
+
