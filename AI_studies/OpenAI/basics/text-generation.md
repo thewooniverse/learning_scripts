@@ -1,5 +1,10 @@
 
 
+Chat completion has replaced completion API endpoint.
+Chat completion API allows for more conversation, context (system message, AI message equivalent in langchain) to be provided, whereas simple completion API takes a single text (known as prompt) as input.
+
+
+
 
 ## Example code / calling OpenAI API
 from openai import OpenAI
@@ -109,4 +114,35 @@ Note that very long conversations are more likely to receive incomplete replies.
 
 
 
+## Reproducible outputs
+Chat Completions are non-deterministic by default (which means model outputs may differ from request to request). That being said, we offer some control towards deterministic outputs by giving you access to the seed parameter and the system_fingerprint response field.
+
+To receive (mostly) deterministic outputs across API calls, you can:
+- Set the seed parameter to any integer of your choice and use the same value across requests you'd like deterministic outputs for.
+- Ensure all other parameters (like prompt or temperature) are the exact same across requests.
+- Sometimes, determinism may be impacted due to necessary changes OpenAI makes to model configurations on our end. To help you keep track of these changes, we expose the system_fingerprint field. If this value is different, you may see different outputs due to changes we've made on our systems.
+
+https://cookbook.openai.com/examples/reproducible_outputs_with_the_seed_parameter
+
+
+## Frequency and presence penalties
+The frequency and presence penalties found in the Chat Completions API and Legacy Completions API can be used to reduce the likelihood of sampling repetitive sequences of tokens.
+
+Reasonable values for the penalty coefficients are around 0.1 to 1 if the aim is to just reduce repetitive samples somewhat. If the aim is to strongly suppress repetition, then one can increase the coefficients up to 2, but this can noticeably degrade the quality of samples. Negative values can be used to increase the likelihood of repetition.
+
+frequency_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
+
+presence_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
+
+### explainer into frequency and presence penalties
+
+Imagine you're telling a story with your friends, and you all take turns adding one sentence at a time. You wouldn't want the story to repeat the same things over and over, and you also wouldn't want everyone to keep mentioning something that's only supposed to be a small part of the story. To keep the story interesting, you'd want new ideas and events to come up.
+
+In the world of language models, like the one you're using to chat with me now, "frequency penalty" and "presence penalty" are tools used to make the model's responses more varied and interesting, kind of like how you'd want your friends' additions to the story to be:
+
+Frequency Penalty: This is like telling your friends, "Try not to repeat things too much." If you set a frequency penalty, the language model tries not to repeat the same words and phrases within a response. The higher the penalty, the less likely the model is to repeat itself.
+
+Presence Penalty: This is like saying, "Don't keep bringing up the same topic." The presence penalty makes the model less likely to keep mentioning the same thing over and over throughout the conversation. So if you've already talked about dragons in your story, a higher presence penalty would make the model try to move on to other subjects rather than bringing up dragons again.
+
+Both of these penalties help the language model make the conversation or the text it's generating more diverse and prevent it from getting stuck on a loop, repeating the same words or topics too much. It keeps the "story" it's telling you fresh and more engaging.
 

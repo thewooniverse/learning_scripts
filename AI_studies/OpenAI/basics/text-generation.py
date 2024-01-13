@@ -12,13 +12,11 @@ serpapi_api_key=os.getenv("SERPAPI_API_KEY", "YourAPIKey_Backup")
 
 client = OpenAI()
 
+
 """
 /// Study Plans ///
 1. Read the text completion + test out more examples.
-
-
 """
-
 
 
 """
@@ -65,8 +63,36 @@ https://platform.openai.com/docs/api-reference/chat
 -> goes into detail on chat completion, chat completion objects, and chat completion chunk objects.
 """
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """
-/// WALKTRHOUGH - https://platform.openai.com/docs/guides/text-generation/chat-completions-api ///
+//////////// Text Generation Capabilities walkthrough ////////////
+
+https://platform.openai.com/docs/guides/text-generation/chat-completions-api
 
 Chat completion example:
 {
@@ -91,15 +117,7 @@ Chat completion example:
     "total_tokens": 74
   }
 }
-
-
 """
-
-
-
-
-
-
 
 r2 = client.chat.completions.create(
   model="gpt-4",
@@ -130,7 +148,6 @@ Your name is El Jeffe.
 
 
 
-
 """
 JSON mode:
 """
@@ -153,3 +170,6 @@ print(response.choices[0].message.content)
   "coach": "Didier Deschamps"
 }
 """
+
+
+
