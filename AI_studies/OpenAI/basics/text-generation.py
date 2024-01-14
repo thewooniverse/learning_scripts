@@ -2,6 +2,8 @@
 from dotenv import load_dotenv
 import os
 from openai import OpenAI
+from pprint import PrettyPrinter
+pp = PrettyPrinter(indent=4, width=80, depth=2)
 
 # env variables, constants and API keys
 load_dotenv()
@@ -14,25 +16,18 @@ client = OpenAI()
 
 
 """
-/// Study Plans ///
-1. Read the text completion + test out more examples.
-"""
-
-
-"""
 /// QUICKSTART ///
 """
 
-response = client.chat.completions.create(
-  model="gpt-3.5-turbo",
-  messages=[
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "Who won the world series in 2020?"},
-    {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
-    {"role": "user", "content": "Where was it played?"}
-  ]
-)
-print(response)
+# response = client.chat.completions.create(
+#   model="gpt-3.5-turbo",
+#   messages=[
+#     {"role": "system", "content": "You are a helpful assistant."},
+#     {"role": "user", "content": "Who won the world series in 2020?"},
+#     {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
+#     {"role": "user", "content": "Where was it played?"}
+#   ])
+# print(response)
 """
 ChatCompletion(id='chatcmpl-8dI6qmgl3tR0iBo5cn9xyiCDsNqgD', 
 choices=[Choice(finish_reason='stop', 
@@ -129,7 +124,10 @@ r2 = client.chat.completions.create(
   ]
 )
 print(r2)
-print(r2.dict()['choices'][0]['message']['content'])
+# print(r2.dict()['choices'][0]['message']['content']) << method is deprecated
+dump = r2.model_dump()
+print(dump)
+print(type(dump)) # class 'dict'
 """
 ChatCompletion(id='chatcmpl-8flUGu4wmDVLXJLiz9loIKrtMkg34', 
 choices=[Choice(finish_reason='stop', 
@@ -152,18 +150,15 @@ Your name is El Jeffe.
 JSON mode:
 """
 
-from openai import OpenAI
-client = OpenAI()
-
-response = client.chat.completions.create(
-  model="gpt-3.5-turbo-1106",
-  response_format={ "type": "json_object" },
-  messages=[
-    {"role": "system", "content": "You are a helpful assistant designed to output JSON."},
-    {"role": "user", "content": "Who won the last world cup, and who was their coach?"}
-  ]
-)
-print(response.choices[0].message.content)
+# response = client.chat.completions.create(
+#   model="gpt-3.5-turbo-1106",
+#   response_format={ "type": "json_object" },
+#   messages=[
+#     {"role": "system", "content": "You are a helpful assistant designed to output JSON."},
+#     {"role": "user", "content": "Who won the last world cup, and who was their coach?"}
+#   ]
+# )
+# print(response.choices[0].message.content)
 """
 {
   "winner": "France",
@@ -178,14 +173,94 @@ print(response.choices[0].message.content)
 // Frequency and Presence Penalties testing //
 
 """
-r3 = client.chat.completions.create(
-  model="gpt-4",
-  frequency_penalty = 2, # positive value decreases the likelihood of repeating itself.
-  presence_penalty =  2, # positive value increases the likelihood of new topics by penalizing older topics
+# r3 = client.chat.completions.create(
+#   model="gpt-4",
+#   frequency_penalty = 2, # positive value decreases the likelihood of repeating itself.
+#   presence_penalty =  2, # positive value increases the likelihood of new topics by penalizing older topics
+#   messages=[
+#     {"role": "system", "content": "You are a creative poet who rambles on about things"},
+#     {"role": "user", "content": "write me a 10 line poem about computers, AI and whatever else."}
+#   ]
+# )
+# print(r3.choices[0].message.content)
+
+
+
+
+
+
+
+
+
+
+
+"""
+// API reference playground //
+"""
+# userid
+completion = client.chat.completions.create(
+  model="gpt-3.5-turbo",
+  user="150235",
+  n=3,
   messages=[
-    {"role": "system", "content": "You are a creative poet who rambles on about things"},
-    {"role": "user", "content": "write me a 10 line poem about computers, AI and whatever else."}
-  ]
-)
-print(r3.choices[0].message.content)
+    {"role": "system", "content": "You are a creative poet"},
+    {"role": "user", "content": "Please write me a haiku about Artificial Intellgience"}
+  ])
+pp.pprint(completion.model_dump())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+//////////// Chat completion objects ////////////
+"""
+{
+  "id": "chatcmpl-123", # A unique identifier for the chat completion.
+  "object": "chat.completion", # The object type, which is always chat.completion.
+  "created": 1677652288, # The Unix timestamp (in seconds) of when the chat completion was created.
+  "model": "gpt-3.5-turbo-0613", # The model used for the chat completion.
+
+  "system_fingerprint": "fp_44709d6fcb", # This fingerprint represents the backend configuration that the model runs with.
+  # Can be used in conjunction with the seed request parameter to understand when backend changes have been made that might impact determinism.
+
+  "choices": [{ # A list of chat completion choices. Can be more than one if n is greater than 1.
+    "index": 0, # The index of the choice in the list of choices.
+
+    "message": { # A chat completion message generated by the model.
+      "role": "assistant", # The role of the author of this message.
+      "content": "\n\nHello there, how may I assist you today?", # The contents of the message.
+      # The tool calls generated by the model, such as function calls.
+
+    },
+
+    "logprobs": 0, # null, # Log probability information for the choice. 
+    "finish_reason": "stop" 
+    # The reason the model stopped generating tokens. 
+    # This will be:
+    # stop if the model hit a natural stop point or a provided stop sequence,
+    # length if the maximum number of tokens specified in the request was reached, 
+    # content_filter if content was omitted due to a flag from our content filters, 
+    # tool_calls if the model called a tool, or 
+    # function_call (deprecated) if the model called a function. << function call is deprecated
+  }],
+
+  "usage": {# Usage statistics for the completion request.
+    "prompt_tokens": 9,
+    "completion_tokens": 12,
+    "total_tokens": 21
+    } 
+}
+
+
+
 
