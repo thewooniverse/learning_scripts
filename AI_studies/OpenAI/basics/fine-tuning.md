@@ -2,6 +2,7 @@
 ## Personal Notes
 - Finetuning is more suitable than RAG in things like social media agent
 - RAG is better when it comes to something like CS reesponse agent.
+- Embedding, fine tuning and all that is harder to do than just engineering better prompts, however, for specific use cases it is worth doing over a long term.
 
 
 ## Overview

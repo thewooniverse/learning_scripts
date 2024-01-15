@@ -18,7 +18,9 @@ An embedding is a vector (list) of floating point numbers. The distance between 
 
 
 ## How to get embeddings
-To get an embedding, send your text string to the embeddings API endpoint along with the embedding model ID (text-embedding-ada-002). The response will contain an embedding, which you can extract, save, and use.
+To get an embedding, send your text string to the embeddings API endpoint along with the embedding model ID (text-embedding-ada-002). The response will contain an embedding, which you can extract, save, and use. (examples / exercises in embeddings.py)
+
+https://cookbook.openai.com/examples/get_embeddings_from_dataset
 
 
 
