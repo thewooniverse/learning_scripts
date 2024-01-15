@@ -142,7 +142,10 @@ ChatCompletion(id='chatcmpl-8gpEwUU2ZBRl99IfkYmofg2LdBzRk',
 """
 
 
+
 """
+response object 2:
+
 ChatCompletion(id='chatcmpl-8gppIsRCNZTCKWuoQKwD2AlFkI5qu', 
                choices=[
                    Choice(finish_reason='stop', 
@@ -165,6 +168,8 @@ ChatCompletion(id='chatcmpl-8gppIsRCNZTCKWuoQKwD2AlFkI5qu',
 
 
 """
+This is messages that is sent
+
 [   {   'content': "What's the weather like in San Francisco, Tokyo, and "
                    'Paris?',
         'role': 'user'},
