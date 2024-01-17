@@ -10,5 +10,8 @@ While learning the OpenAI API directly can provide more fine-grained control and
 
 
 
+### General Notes:
+OpenAI Assistant generally replaces langchain agents.
+
 
 

@@ -17,7 +17,6 @@ client = OpenAI()
 
 
 
-#
 # Example dummy function hard coded to return the same weather
 # In production, this could be your backend API or an external API
 def get_current_weather(location, unit="fahrenheit"):
