@@ -1,6 +1,6 @@
 
 ## Personal Notes
-- Finetuning is more suitable than RAG in things like social media agent
+- Finetuning is more suitable than RAG in things like social media agent or copywriting agent.
 - RAG is better when it comes to something like CS reesponse agent.
 - Embedding, fine tuning and all that is harder to do than just engineering better prompts, however, for specific use cases it is worth doing over a long term.
 
@@ -48,4 +48,20 @@ Embeddings with retrieval is best suited for cases when you need to have a large
 By default OpenAI’s models are trained to be helpful generalist assistants. Fine-tuning can be used to make a model which is narrowly focused, and exhibits specific ingrained behavior patterns. Retrieval strategies can be used to make new information available to a model by providing it with relevant context before generating its response. Retrieval strategies are not an alternative to fine-tuning and can in fact be complementary to it.
 
 You can explore the differences between these options further in our Developer Day talk:
+
+
+## Common use cases
+Some common use cases where fine-tuning can improve results:
+
+- Setting the style, tone, format, or other qualitative aspects
+- Improving reliability at producing a desired output
+- Correcting failures to follow complex prompts
+- Handling many edge cases in specific ways
+- Performing a new skill or task that’s hard to articulate in a prompt
+
+One high-level way to think about these cases is when it’s easier to "show, not tell". In the sections to come, we will explore how to set up data for fine-tuning and various examples where fine-tuning improves the performance over the baseline model.
+
+Another scenario where fine-tuning is effective is in reducing costs and / or latency, by replacing GPT-4 or by utilizing shorter prompts, without sacrificing quality. If you can achieve good results with GPT-4, you can often reach similar quality with a fine-tuned gpt-3.5-turbo model by fine-tuning on the GPT-4 completions, possibly with a shortened instruction prompt.
+
+
 
