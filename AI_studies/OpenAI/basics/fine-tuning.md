@@ -66,6 +66,63 @@ Another scenario where fine-tuning is effective is in reducing costs and / or la
 
 
 ## Preparing your dataset
-Once you have determined that fine-tuning is the right solution (i.e. you’ve optimized your prompt as far as it can take you and identified problems that the model still has), you’ll need to prepare data for training the model. You should create a diverse set of demonstration conversations that are similar to the conversations you will ask the model to respond to at inference time in production.
+Once you have determined that fine-tuning is the right solution (i.e. you’ve optimized your prompt as far as it can take you and identified problems that the model still has), you’ll need to prepare data for training the model. You should create a diverse set of *demonstration conversations that are similar to the conversations you will ask the model to respond to at inference time in production.*
 
-Each example in the dataset should be a conversation in the same format as our Chat Completions API, specifically a list of messages where each message has a role, content, and optional name. At least some of the training examples should directly target cases where the prompted model is not behaving as desired, and the provided assistant messages in the data should be the ideal responses you want the model to provide.
+Each example in the dataset should be a conversation in the same format as our Chat Completions API, specifically a list of messages where each message has a role, content, and optional name. *At least some of the training examples should directly target cases where the prompted model is not behaving as desired, and the provided assistant messages in the data should be the ideal responses you want the model to provide.*
+
+
+## Example:
+
+{"messages": [{"role": "system", "content": "Marv is a factual chatbot that is also sarcastic."}, {"role": "user", "content": "What's the capital of France?"}, {"role": "assistant", "content": "Paris, as if everyone doesn't know that already."}]}
+
+{"messages": [
+    {"role": "system", "content": "Marv is a factual chatbot that is also sarcastic."}, 
+    {"role": "user", "content": "Who wrote 'Romeo and Juliet'?"}, 
+    {"role": "assistant", "content": "Oh, just some guy named William Shakespeare. Ever heard of him?"}]}
+
+{"messages": [
+    {"role": "system", "content": "Marv is a factual chatbot that is also sarcastic."}, 
+    {"role": "user", "content": "How far is the Moon from Earth?"}, 
+    {"role": "assistant", "content": "Around 384,400 kilometers. Give or take a few, like that really matters."}]}
+
+
+
+## Crafting prompts
+*We generally recommend taking the set of instructions and prompts that you found worked best for the model prior to fine-tuning, and including them in every training example.* 
+*This should let you reach the best and most general results, especially if you have relatively few (e.g. under a hundred) training examples.*
+
+If you would like to shorten the instructions or prompts that are repeated in every example to save costs, keep in mind that the model will likely behave as if those instructions were included, and it may be hard to get the model to ignore those "baked-in" instructions at inference time.
+
+It may take more training examples to arrive at good results, as the model has to learn entirely through demonstration and without guided instructions.
+
+## Example count recommendations
+To fine-tune a model, you are required to provide at least 10 examples. *We typically see clear improvements from fine-tuning on 50 to 100 training examples with gpt-3.5-turbo but the right number varies greatly based on the exact use case.*
+
+
+We recommend starting with 50 well-crafted demonstrations and seeing if the model shows signs of improvement after fine-tuning. In some cases that may be sufficient, but even if the model is not yet production quality, clear improvements are a good sign that providing more data will continue to improve the model. No improvement suggests that you may need to rethink how to set up the task for the model or restructure the data before scaling beyond a limited example set.
+
+## Train and test splits
+After collecting the initial dataset, we recommend splitting it into a training and test portion. When submitting a fine-tuning job with both training and test files, we will provide statistics on both during the course of training. These statistics will be your initial signal of how much the model is improving. Additionally, constructing a test set early on will be useful in making sure you are able to evaluate the model after training, by generating samples on the test set.
+
+
+## Token limits
+Token limits depend on the model you select. For gpt-3.5-turbo-1106, the maximum context length is 16,385 so each training example is also limited to 16,385 tokens. For gpt-3.5-turbo-0613, each training example is limited to 4,096 tokens. Examples longer than the default will be truncated to the maximum context length which removes tokens from the end of the training example(s). To be sure that your entire training example fits in context, consider checking that the total token counts in the message contents are under the limit.
+
+You can compute token counts using our counting tokens notebook from the OpenAI cookbook.
+https://cookbook.openai.com/examples/How_to_count_tokens_with_tiktoken.ipynb
+
+
+
+
+---
+
+
+## Data Formatting
+Once you have compiled a dataset and before you create a fine-tuning job, it is important to check the data formatting. To do this, we created a simple Python script which you can use to find potential errors, review token counts, and estimate the cost of a fine-tuning job.
+https://cookbook.openai.com/examples/chat_finetuning_data_prep
+
+
+
+
+
+
